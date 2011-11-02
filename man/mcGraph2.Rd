@@ -1,0 +1,63 @@
+\name{mcGraph2}
+\alias{mcGraph2}
+\title{mcGraph2 draws a 3-D representation of a scatterplot with shadows in the x1-x2 plane.}
+\usage{
+  mcGraph2(x1, x2, y, rescaley = 1, ...)
+}
+\arguments{
+  \item{x1}{a predictor vector}
+
+  \item{x2}{a predictor vector}
+
+  \item{y}{the dependent variable}
+
+  \item{rescaley}{a single scalar value or a vector of the
+  same length as y.}
+
+  \item{...}{arguments passed to persp}
+}
+\value{
+  The perspective matrix from persp (that can be used with
+  trans3d to add more details in the plot)
+}
+\description{
+  The observations are represented by blue points floating
+  above the x1-x2 plane. If scaley=1, the end result is a
+  scatterplot "cloud" of the y points above the x1-x2
+  plane, and gray shadows of the points are cast down from
+  the cloud onto the x1-x2 plane itself. This uses persp to
+  make the actual drawing.
+}
+\examples{
+set.seed(12345)
+## Create data with x1 and x2 correlated at 0.10
+dat <- genCorrelatedData(rho=.1, stde=7)
+## This will "grow" the "cloud" of points up from the
+## x1-x2 axis
+mcGraph2(dat$x1, dat$x2, dat$y, rescaley = 0.0, theta = 0)
+mcGraph2(dat$x1, dat$x2, dat$y, rescaley = 0.1, theta = 0)
+mcGraph2(dat$x1, dat$x2, dat$y, rescaley = 0.2, theta = 0)
+mcGraph2(dat$x1, dat$x2, dat$y, rescaley = 0.3, theta = 0)
+mcGraph2(dat$x1, dat$x2, dat$y, rescaley = 0.4, theta = 0)
+mcGraph2(dat$x1, dat$x2, dat$y, rescaley = 0.5, theta = 0)
+mcGraph2(dat$x1, dat$x2, dat$y, rescaley = 0.6, theta = 0)
+mcGraph2(dat$x1, dat$x2, dat$y, rescaley = 0.7, theta = 0)
+mcGraph2(dat$x1, dat$x2, dat$y, rescaley = 0.8, theta = 0)
+mcGraph2(dat$x1, dat$x2, dat$y, rescaley = 0.9, theta = 0)
+mcGraph2(dat$x1, dat$x2, dat$y, rescaley = 1, theta = 0)
+
+##rotate this
+mcGraph2(dat$x1, dat$x2, dat$y, rescaley = 1, theta = 20)
+mcGraph2(dat$x1, dat$x2, dat$y, rescaley = 1, theta = 40)
+mcGraph2(dat$x1, dat$x2, dat$y, rescaley = 1, theta = 60)
+mcGraph2(dat$x1, dat$x2, dat$y, rescaley = 1, theta = 80)
+
+## once they reach the top, make them glitter a while
+for(i in 1:20){
+mcGraph2(dat$x1, dat$x2, dat$y, rescaley = runif(length(dat$x1), .9,1.1), theta = 0)
+}
+}
+\author{
+  Paul E. Johnson <pauljohn@ku.edu>
+}
+
