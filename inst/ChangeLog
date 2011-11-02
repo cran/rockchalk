@@ -1,0 +1,16 @@
+2011-11-05  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/mcGraph.R (mcGraph3): insert invisible() on returns
+
+	* ../R/rockchalk-package.R: insert dataset religioncrime and
+	documentation.
+	* data/religioncrime.RData: new dataset with beautiful example
+	of suppression
+
+2011-11-02  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* rockchalk/rockchalk/R/mcGraph.R (mcGraph3): more fiddling
+	with interaction
+
+	* mcGraph.R (mcGraph3): fix interaction code in lm
+

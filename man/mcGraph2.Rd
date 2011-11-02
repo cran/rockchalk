@@ -2,7 +2,7 @@
 \alias{mcGraph2}
 \title{mcGraph2 draws a 3-D representation of a scatterplot with shadows in the x1-x2 plane.}
 \usage{
-  mcGraph2(x1, x2, y, rescaley = 1, ...)
+  mcGraph2(x1, x2, y, rescaley = 1, drawArrows = TRUE, ...)
 }
 \arguments{
   \item{x1}{a predictor vector}
@@ -13,6 +13,9 @@
 
   \item{rescaley}{a single scalar value or a vector of the
   same length as y.}
+
+  \item{drawArrows}{TRUE or FALSE, do you want arrows from
+  the bottom up to observed y?}
 
   \item{...}{arguments passed to persp}
 }

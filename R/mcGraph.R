@@ -27,6 +27,7 @@ mcGraph1 <- function (x1, x2, y, ...){
   yMinimum <- rep(yrange[1] , length(x1))
   mypoints1 <- trans3d ( x1, x2, yMinimum, pmat = res )
   points( mypoints1, pch = 16, col= "blue")
+  invisible(res)
 }
 
 ##' mcGraph2 draws a 3-D representation of a scatterplot with shadows in the x1-x2 plane.
@@ -41,6 +42,7 @@ mcGraph1 <- function (x1, x2, y, ...){
 ##' @param x2 a predictor vector
 ##' @param y  the dependent variable
 ##' @param rescaley a single scalar value or a vector of the same length as y. 
+##' @param drawArrows TRUE or FALSE, do you want arrows from the bottom up to observed y?
 ##' @param ... arguments passed to persp
 ##' @return The perspective matrix from persp (that can be used with trans3d to add more details in the plot) 
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
@@ -74,7 +76,7 @@ mcGraph1 <- function (x1, x2, y, ...){
 ##'   mcGraph2(dat$x1, dat$x2, dat$y, rescaley = runif(length(dat$x1), .9,1.1), theta = 0)
 ##' }
 ##'
-mcGraph2 <- function(x1, x2, y, rescaley=1, ...){
+mcGraph2 <- function(x1, x2, y, rescaley=1, drawArrows=TRUE, ...){
   x1range <- magRange(x1, 1.25)
   x2range <- magRange(x2, 1.25)
   yrange <- magRange(y, 1.5)
@@ -88,8 +90,8 @@ mcGraph2 <- function(x1, x2, y, rescaley=1, ...){
   points( mypoints1, pch = 16, col=gray(0.8))
   points( mypoints2, pch = 1, col= "blue") 
   mypoints2s <- trans3d ( x1, x2, (0.8)*newy, pmat =res )
-  arrows ( mypoints1$x , mypoints1$y , mypoints2s$x , mypoints2s$y , col="red" , lty = 2, lwd=0.3, length=0.1)
-  res
+  if (drawArrows) arrows ( mypoints1$x , mypoints1$y , mypoints2s$x , mypoints2s$y , col="red" , lty = 2, lwd=0.3, length=0.1)
+  invisible(res)
 }
 
 ##' mcGraph3 draws a 3-dimensional scatter and a regression plane
@@ -176,7 +178,7 @@ mcGraph3 <- function(x1, x2, y, interaction = FALSE, ...){
   mypoints2s <- trans3d ( x1, x2, newy, pmat =res )
    
   arrows ( mypoints4$x , mypoints4$y , mypoints2s$x , mypoints2s$y , col = "red" , lty = 4, lwd = 0.3, length = 0.1)
-  list(m1, res)
+  invisible(list(m1, res))
 }
 
 
