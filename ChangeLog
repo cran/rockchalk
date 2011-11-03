@@ -1,0 +1,7 @@
+2011-11-02  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* rockchalk/rockchalk/R/mcGraph.R (mcGraph3): more fiddling
+	with interaction
+
+	* mcGraph.R (mcGraph3): fix interaction code in lm
+
