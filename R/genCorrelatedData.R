@@ -12,10 +12,9 @@ genCorrelatedData <- function(N = 100, means = c(50,50), sds = c(10,10), rho = 0
   require(MASS)
   if (length(beta)> 4) stop("beta vector can have at most 4 values")
   corr.mat <- matrix(c(1,rho,rho,1), nrow = 2)
-  stds.vec <- c(10,10)
   sigma <- diag(sds) %*% corr.mat %*% diag(sds)
   x.mat <-  mvrnorm(n = N, mu = means, Sigma = sigma)
-  y = beta[1] + beta[2] * x.mat[,1] + beta[3] * x.mat[,2] + beta[4] * x.mat[,1] * x.mat[ ,2] +  stde*rnorm (100,m = 0, s = 1)
+  y = beta[1] + beta[2] * x.mat[,1] + beta[3] * x.mat[,2] + beta[4] * x.mat[,1] * x.mat[ ,2] +  stde*rnorm (N, m = 0, s = 1)
   dat <- data.frame(x.mat, y)
   names(dat) <- c("x1", "x2", "y")
   dat
