@@ -22,6 +22,6 @@ myDat <- data.frame(x=rnorm(100), y=rpois(100,l=4), z = cut(rnorm(100), c(-10,-1
 centralValues(myDat)
 }
 \author{
-  Paul E. Johnson <pauljohn@ku.edu>
+  Paul E. Johnson \email{pauljohn@ku.edu}
 }
 

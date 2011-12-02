@@ -2,7 +2,8 @@
 \alias{mcGraph3}
 \title{mcGraph3 draws a 3-dimensional scatter and a regression plane}
 \usage{
-  mcGraph3(x1, x2, y, interaction = FALSE, ...)
+  mcGraph3(x1, x2, y, interaction = FALSE,
+    drawArrows = TRUE, x1lab, x2lab, ylab, ...)
 }
 \arguments{
   \item{x1}{a predictor vector}
@@ -13,6 +14,18 @@
 
   \item{interaction}{a TRUE or FALSE request for inclusion
   of the x1-x2 interaction in the regression calculation}
+
+  \item{drawArrows}{TRUE or FALSE, do you want arrows from
+  the plane to observed y?}
+
+  \item{x1lab}{label for the x1 axis, (the one called
+  "xlab" inside persp)}
+
+  \item{x2lab}{label for the x2 axis, (the one called
+  "ylab" inside persp)}
+
+  \item{ylab}{label for the y (vertical) axis (the one
+  called "zlab" inside persp)}
 
   \item{...}{optional arguments passed to persp}
 }
@@ -43,18 +56,18 @@ mcGraph3(dat2$x1, dat2$x2, dat2$y, theta = -30, phi = -15)
 ## Run regressions with not-strongly correlated data
 modset1 <- list()
 for(i in 1:20){
-dat2 <- genCorrelatedData(rho = .1, stde = 7)
-summary(lm( y ~ x1 + x2 , data = dat2))
-modset1[[i]] <- mcGraph3(dat2$x1, dat2$x2, dat2$y, theta = -30)
+  dat2 <- genCorrelatedData(rho = .1, stde = 7)
+  summary(lm( y ~ x1 + x2 , data = dat2))
+  modset1[[i]] <- mcGraph3(dat2$x1, dat2$x2, dat2$y, theta = -30)
 }
 
 
 ## Run regressions with strongly correlated data
 modset2 <- list()
 for(i in 1:20){
-dat2 <- genCorrelatedData(rho = .981, stde = 7)
-summary(lm( y ~ x1 + x2 , data = dat2))
-modset2[[i]] <- mcGraph3(dat2$x1, dat2$x2, dat2$y, theta = -30)
+  dat2 <- genCorrelatedData(rho = .981, stde = 7)
+  summary(lm( y ~ x1 + x2 , data = dat2))
+  modset2[[i]] <- mcGraph3(dat2$x1, dat2$x2, dat2$y, theta = -30)
 }
 
 dat3 <- genCorrelatedData(rho = .981, stde = 100, beta=c(0.1, 0.2, 0.3, -0.1))

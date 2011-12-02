@@ -2,7 +2,7 @@
 \alias{mcGraph1}
 \title{Illustrate the effect of multicollinearity in regression.}
 \usage{
-  mcGraph1(x1, x2, y, ...)
+  mcGraph1(x1, x2, y, x1lab, x2lab, ylab, ...)
 }
 \arguments{
   \item{x1}{a predictor vector}
@@ -10,6 +10,15 @@
   \item{x2}{a predictor vector}
 
   \item{y}{the dependent variable}
+
+  \item{x1lab}{label for the x1 axis, (the one called
+  "xlab" inside persp)}
+
+  \item{x2lab}{label for the x2 axis, (the one called
+  "ylab" inside persp)}
+
+  \item{ylab}{label for the y (vertical) axis (the one
+  called "zlab" inside persp)}
 
   \item{...}{additional parameters passed to persp}
 }

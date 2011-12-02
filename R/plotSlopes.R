@@ -23,6 +23,7 @@
 ##' drawn for each level of the factor. That is a shortcoming in the
 ##' current implementation.
 ##' @param plotPoints Should the plot include the scatterplot points along with the lines.
+##' @param ... further arguments that are passed to plot
 ##' @export
 ##' @import car
 ##' @return If modx is the name of a numeric variable, will return a
@@ -117,109 +118,103 @@
 ##' summary(m9)
 ##' plotSlopes(m9, modx = "income", plotx = "educationn")
 
-plotSlopes <- function(model=NULL, plotx=NULL, modx=NULL, modxVals=NULL, plotPoints=TRUE){
-  if (is.null(model)) stop("plotSlopes requires a fitted regression model.")
-  if (is.null(plotx)) stop("plotSlopes requires the name of the variable to be drawn on the x axis")
-  if (is.null(modx)) stop("plotSlopes requires the name of moderator variable for which several slopes are to be drawn")
-  ##grab model matrix
+plotSlopes <-
+  function (model = NULL, plotx = NULL, modx = NULL, modxVals = NULL, 
+            plotPoints = TRUE, ...) 
+{
+  if (is.null(model)) 
+    stop("plotSlopes requires a fitted regression model.")
+  if (is.null(plotx)) 
+    stop("plotSlopes requires the name of the variable to be drawn on the x axis")
+  if (is.null(modx)) 
+    stop("plotSlopes requires the name of moderator variable for which several slopes are to be drawn")
   mm <- model.matrix(model)
-  depVar <- model$model[ ,1] #first column is DV
-  modxVar <- model$model[ , modx]
-  plotxVar <- model$model[ ,plotx]
-  if(!is.numeric(plotxVar)) stop(paste("plotSlopes: The variable", plotx, "should be a numeric variable"))
+  depVar <- model$model[, 1]
+  modxVar <- model$model[, modx]
+  plotxVar <- model$model[, plotx]
+  if (!is.numeric(plotxVar)) 
+    stop(paste("plotSlopes: The variable", plotx, "should be a numeric variable"))
   ylab <- colnames(model$model)[1]
   plotyRange <- range(depVar)
-  plotxRange <- range(mm[ , plotx])
-  plotxSeq <- plotSeq(plotxRange, l=40)
-
-  if (is.factor(modxVar)){
-    if (is.null(modxVals)){
+  plotxRange <- range(mm[, plotx])
+  plotxSeq <- plotSeq(plotxRange, l = 40)
+  if (is.factor(modxVar)) {
+    if (is.null(modxVals)) {
       modxVals <- levels(modxVar)
     }
     lmx <- length(modxVals)
-  }else{                      
-    modxRange <- range(mm[ , modx])
-    ## use quantile values of modx unless told othewise
+  }
+  else {
+    modxRange <- range(mm[, modx])
     if (is.null(modxVals)) {
-      modxVals <- quantile(mm[ , modx])
-      ##    names(modxVals) <- round(modxVals , 2)
+      modxVals <- quantile(mm[, modx])
     }
     lmx <- length(modxVals)
   }
-    
   predictors <- colnames(model$model)[-1]
-  predictors <- setdiff(predictors, c(modx,plotx))
-  
-  newdf <-data.frame(expand.grid(plotxRange, modxVals))
+  predictors <- setdiff(predictors, c(modx, plotx))
+  newdf <- data.frame(expand.grid(plotxRange, modxVals))
   colnames(newdf) <- c(plotx, modx)
-  if (length(predictors) > 0) newdf <- cbind(newdf, centralValues(model$model[ ,predictors]))
-  newdf$pred <- predict(model, newdata=newdf)
-  
-##  mmmeans <- apply(mm, 2, mean)
-##  ##  remove plotx and modx variables from means
-##  mmmeans <- mmmeans[ -which(names(mmmeans) %in% c(plotx, modx))]
-  ##
-##  newdf <- vector(length(modxRange), mode="list")
-##  for( i in 1:length(modxVals)){
-##    newdf[[i]] <- data.frame(plotxSeq)
-##    colnames(newdf[[i]]) <- c(plotx)
-##    newdf[[i]][ , modx] <- modxVals[i]
-##    newdf[[i]] <- data.frame(newdf[[i]], t(mmmeans))
-##    newdf[[i]]$pred <-predict(model, newdata=newdf[[i]])
-##  }
-  
-#  plot( mm[, plotx], dat$y)
-#  lapply(newdf, function(mydat) { lines (mydat[[plotx]] , mydat$pred)} )
-  if (!plotPoints) plot(mm[, plotx], depVar, xlab=plotx, ylab=ylab, type="n")
-  else {
-    if (is.factor(modxVar)){
-       plot( mm[, plotx], depVar, xlab=plotx, ylab=ylab, col=modxVar)
-     }else{
-       plot( mm[, plotx], depVar, xlab=plotx, ylab=ylab)
-     }
+  if (length(predictors) > 0) 
+    newdf <- cbind(newdf, centralValues(model$model[, predictors]))
+  newdf$pred <- predict(model, newdata = newdf)
+  dotargs <- list(...)
+  if (!plotPoints){
+    parms <- list(mm[, plotx], depVar, xlab = plotx, ylab = ylab, 
+         type = "n")
+    parms <- modifyList(parms, dotargs)
+    do.call("plot", parms)
+  } else {
+    if (is.factor(modxVar)) {
+      parms <- list(mm[, plotx], depVar, xlab = plotx, ylab = ylab, 
+           col = modxVar)
+      parms <- modifyList(parms, dotargs)
+      do.call("plot", parms)
+    }
+    else {
+      parms <- list(mm[, plotx], depVar, xlab = plotx, ylab = ylab)
+      parms <- modifyList(parms, dotargs)
+      do.call("plot", parms)
+    }
   }
-#  for(i in 1:length(modxVals)){
-#    lines (newdf[[i]][[plotx]] , newdf[[i]][["pred"]], lty=i, col=i)
-#  }
-
-  for( i in 1:lmx){
-    pdat <- newdf[ newdf[, modx]  %in% modxVals[i], ]
-    lines( pdat[ , plotx] , pdat$pred, lty=i, col=i, lwd=2 )
+  for (i in 1:lmx) {
+    pdat <- newdf[newdf[, modx] %in% modxVals[i], ]
+    lines(pdat[, plotx], pdat$pred, lty = i, col = i, lwd = 2)
   }
-
-  
   if (is.null(names(modxVals))) {
-    legnd <- paste(modx," = ", modxVals, sep= "")
-  } else { legnd<- paste(modx," = ", names(modxVals), sep = "")}
-  legend("topleft", legend=legnd, lty=1:lmx, col=1:lmx, bg="white")
-  ### Plot work finished.
-
-  ### Now work on t-statistics for those slopes
+    legnd <- paste(modx, " = ", modxVals, sep = "")
+  }
+  else {
+    legnd <- paste(modx, " = ", names(modxVals), sep = "")
+  }
+  legend("topleft", legend = legnd, lty = 1:lmx, col = 1:lmx, 
+         bg = "white")
   if (!is.factor(modxVar)) {
-  ## If there IS an interaction term in model, we need to calculate
-### simple-slope = b_plotx + modxVals * b_modx:plotx
-### But If the IS NO interaction term, we just need
-### simple-slope = b_plotx.
     ivs <- attr(terms(model), "term.labels")
     bs <- coef(model)
     V <- vcov(model)
-    relevantInteractions <-  c(paste(plotx,":",modx,sep=""), paste(modx,":",plotx,sep=""))
-    
+    relevantInteractions <- c(paste(plotx, ":", modx, sep = ""), 
+                              paste(modx, ":", plotx, sep = ""))
     bmodx <- NULL
     bplotx <- bs[plotx]
     if (any(relevantInteractions %in% ivs)) {
-      interactionsIn <- relevantInteractions[which (relevantInteractions %in% ivs)]
+      interactionsIn <- relevantInteractions[which(relevantInteractions %in% 
+                                                   ivs)]
       bmodx <- bs[interactionsIn]
       bsimple <- bplotx + bmodx * modxVals
-      covbsimple <- cbind(1, modxVals^2, 2*modxVals) %*% c(V[plotx , plotx],  V[names(bmodx), names(bmodx)],  V[plotx, names(bmodx)])
-      tbsimple <- bsimple / sqrt(covbsimple)
-    } else {
+      covbsimple <- cbind(1, modxVals^2, 2 * modxVals) %*% 
+        c(V[plotx, plotx], V[names(bmodx), names(bmodx)], 
+          V[plotx, names(bmodx)])
+      tbsimple <- bsimple/sqrt(covbsimple)
+    }
+    else {
       bmodx <- 0
       bsimple <- rep(bplotx, length(modxVals))
       covbsimple <- vcov(model)[plotx, plotx]
-      tbsimple <- bsimple / sqrt(covbsimple)
+      tbsimple <- bsimple/sqrt(covbsimple)
     }
-    
-    data.frame(modx = modxVals, b = bsimple, se= sqrt(covbsimple), t= tbsimple, p= 2 * pt(abs(tbsimple), df=model$df.residual, lower.tail = FALSE))
+    data.frame(modx = modxVals, b = bsimple, se = sqrt(covbsimple), 
+               t = tbsimple, p = 2 * pt(abs(tbsimple), df = model$df.residual, 
+                               lower.tail = FALSE))
   }
-}  
+}
