@@ -3,7 +3,7 @@
 \title{Assists creation of predicted value lines for values of a moderator variable.}
 \usage{
   plotSlopes(model = NULL, plotx = NULL, modx = NULL,
-  modxVals = NULL, plotPoints = TRUE)
+    modxVals = NULL, plotPoints = TRUE, ...)
 }
 \arguments{
   \item{model}{Fitted regression object. Must have a
@@ -26,6 +26,8 @@
 
   \item{plotPoints}{Should the plot include the scatterplot
   points along with the lines.}
+
+  \item{...}{further arguments that are passed to plot}
 }
 \value{
   If modx is the name of a numeric variable, will return a
@@ -80,7 +82,7 @@ xcontinuous <- rnorm(100)
 xcategorical <- gl(2,50, labels=c("Gigantic","Humongous"))
 stde <- 8
 y <- 3 + 0.5*xcontinuous + 1.2 * (as.numeric(xcategorical)-1) +
--0.8* (as.numeric(xcategorical)-1) * xcontinuous +  stde * rnorm(100)
+  -0.8* (as.numeric(xcategorical)-1) * xcontinuous +  stde * rnorm(100)
 
 m1 <- lm (y ~ xcontinuous + xcategorical)
 summary(m1)

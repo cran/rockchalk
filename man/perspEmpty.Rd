@@ -1,10 +1,8 @@
 \name{perspEmpty}
 \alias{perspEmpty}
-\title{perspEmpty
-Creates a persp plot without drawing anything in the interior.
-Does equivalent \code{of plot( type="n")} for persp.}
+\title{perspEmpty}
 \usage{
-  perspEmpty(x1, x2, y, ... )
+  perspEmpty(x1, x2, y, x1lab, x2lab, ylab, ...)
 }
 \arguments{
   \item{x1}{data for the first horizontal axis, an R
@@ -15,9 +13,26 @@ Does equivalent \code{of plot( type="n")} for persp.}
 
   \item{y}{data for the vertical axis, an R vector}
 
-  \item{...}{further arguments that are passed to persp}
+  \item{x1lab}{label for the x1 axis, (the one called
+  "xlab" inside persp)}
+
+  \item{x2lab}{label for the x2 axis, (the one called
+  "ylab" inside persp)}
+
+  \item{ylab}{label for the y (vertical) axis (the one
+  called "zlab" inside persp)}
+
+  \item{...}{further arguments that are passed to persp.
+  Note that persp options xlab, ylab, and zlab are ignored,
+  because this function re-names them x1lab, x2lab, and
+  ylab.}
 }
 \description{
+  Creates a persp plot without drawing anything in the
+  interior. Does equivalent \code{of plot( type="n")} for
+  persp.
+}
+\details{
   Regression demonstrations require a blank slate in which
   points and planes can be drawn. This function creates
   that blank persp canvas for those projects. It is not

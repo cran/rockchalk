@@ -2,7 +2,8 @@
 \alias{mcGraph2}
 \title{mcGraph2 draws a 3-D representation of a scatterplot with shadows in the x1-x2 plane.}
 \usage{
-  mcGraph2(x1, x2, y, rescaley = 1, drawArrows = TRUE, ...)
+  mcGraph2(x1, x2, y, rescaley = 1, drawArrows = TRUE,
+    x1lab, x2lab, ylab, ...)
 }
 \arguments{
   \item{x1}{a predictor vector}
@@ -16,6 +17,15 @@
 
   \item{drawArrows}{TRUE or FALSE, do you want arrows from
   the bottom up to observed y?}
+
+  \item{x1lab}{label for the x1 axis, (the one called
+  "xlab" inside persp)}
+
+  \item{x2lab}{label for the x2 axis, (the one called
+  "ylab" inside persp)}
+
+  \item{ylab}{label for the y (vertical) axis (the one
+  called "zlab" inside persp) ##'}
 
   \item{...}{arguments passed to persp}
 }
@@ -57,7 +67,7 @@ mcGraph2(dat$x1, dat$x2, dat$y, rescaley = 1, theta = 80)
 
 ## once they reach the top, make them glitter a while
 for(i in 1:20){
-mcGraph2(dat$x1, dat$x2, dat$y, rescaley = runif(length(dat$x1), .9,1.1), theta = 0)
+  mcGraph2(dat$x1, dat$x2, dat$y, rescaley = runif(length(dat$x1), .9,1.1), theta = 0)
 }
 }
 \author{

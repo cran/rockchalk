@@ -1,7 +1,6 @@
 \docType{package}
 \name{rockchalk-package}
 \alias{rockchalk}
-\alias{"rockchalk-package"}
 \alias{rockchalk-package}
 \title{Miscellaneous regression functions}
 \description{
@@ -12,9 +11,9 @@
   important ~~ ~~ functions ~~
 }
 \author{
-  Paul Johnson <pauljohn@ku.edu>
+  Paul E. Johnson \email{pauljohn@ku.edu}
 
-  Maintainer: Paul Johnson <pauljohn@ku.edu>
+  Maintainer: Paul Johnson \email{<pauljohn@ku.edu>}
 }
 \references{
   http://pj.freefaculty.org/R

@@ -3,8 +3,8 @@
 \title{outreg}
 \usage{
   outreg(incoming, title = "My Regression", label = "",
-  modelLabels = NULL, varLabels = NULL, tight = TRUE,
-  showAIC = FALSE, lyx = TRUE)
+    modelLabels = NULL, varLabels = NULL, tight = TRUE,
+    showAIC = FALSE, lyx = TRUE)
 }
 \arguments{
   \item{incoming}{A single regression model or an R list of
@@ -88,7 +88,7 @@ outreg(list(gm1),modelLabels=c("GLM"), lyx=FALSE)
 outreg(list(m1,gm1),modelLabels=c("OLS","GLM"), lyx=FALSE)
 }
 \author{
-  Paul E. Johnson <pauljohn@ku.edu>
+  Paul E. Johnson \email{<pauljohn@ku.edu>}
 }
 \references{
   Citation:

@@ -6,9 +6,6 @@
 \source{
   Anonymous researcher who claims the data is real.
 }
-\usage{
-  data(religioncrime)
-}
 \description{
   The data national-level summary indicators of public
   opinion about the existence of heaven and hell as well as
@@ -35,5 +32,6 @@ summary(mod1[[1]])
 \author{
   Paul E. Johnson \email{pauljohn@ku.edu} and Anonymous
 }
+\keyword{dataset}
 \keyword{datasets}
 
