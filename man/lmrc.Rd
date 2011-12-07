@@ -8,14 +8,16 @@
   \item{model}{A fitted lm object}
 }
 \value{
-  a list containing rcReg=the residual centered regression
-  that is requested centeringRegressions= a list including
-  each of the intermediate regressions that was calculated
-  in order to create the residual centered interaction
-  terms. These latter objects may be necessary for
-  diagnostics and to calculate predicted values for
+  a list containing rcReg = the residual centered
+  regression that is requested centeringRegressions = a
+  list including each of the intermediate regressions that
+  was calculated in order to create the residual centered
+  interaction terms. These latter objects may be necessary
+  for diagnostics and to calculate predicted values for
   hypothetical values of the inputs. If there are no
-  interactive terms, then NULL is returned.
+  interactive terms, then NULL is returned.  newdat = the
+  original dataset augmented with columns representing the
+  residual centered interaction terms
 }
 \description{
   Given a fitted lm, this function scans for coefficients
@@ -36,12 +38,32 @@ x4 <- rnorm(100)
 y <- rnorm(100)
 dat <- data.frame(y, x1,x2,x3,x4)
 rm(x1,x2,x3,x4,y)
-m1 <- lm(y~ x1*x2*x3 + x4, data=dat)
-summary(m1)
+m1 <- lm(y~ x1*x2 + x4, data=dat)
 
 lmRCm1 <- lmrc(m1)
-lmRCm1s <- summary(lmRCm1[["rcReg"]])
-coef(lmRCm1[["rcReg"]])
+## Here is final fitted regression: grabs the first object
+(lmRCm1s <- summary(lmRCm1[["rcReg"]]))
+## The stage 1 centering regressions can be viewed as well
+## lapply(lmRCm1[[2]], summary)
+
+##Verify that result manually
+dat$x1rcx2 <- resid(lm(I(x1*x2) ~ x1 + x2, data=dat))
+m1m <- lm(y ~ x1 + x2 + x4 + x1rcx2, data=dat)
+summary(m1m)
+cbind(coef(lmRCm1[["rcReg"]]), coef(m1m))
+
+m2 <- lm(y~ x1*x2*x3 + x4, data=dat)
+lmRCm2 <- lmrc(m2)
+lmRCm2s <- summary(lmRCm2[["rcReg"]])
+
+##Verify that result manually
+dat$x2rcx3 <- resid(lm(I(x2*x3) ~ x2 + x3, data=dat))
+dat$x1rcx3 <- resid(lm(I(x1*x3) ~ x1 + x3, data=dat))
+dat$x1rcx2rcx3 <- resid(lm(I(x1*x2*x3) ~ x1 + x2 + x3 + x1rcx2 + x1rcx3 + x2rcx3 , data=dat))
+(m2m <- lm(y ~ x1 + x2 + x3+ x4 + x1rcx2 + x1rcx3 + x2rcx3 + x1rcx2rcx3, data=dat))
+
+cbind(coef(lmRCm2[["rcReg"]]), coef(m2m))
+
 
 ### lmrc as good as pequod's lmres
 ### not run because pequod generates R warnings
@@ -54,10 +76,20 @@ coef(lmRCm1[["rcReg"]])
 
 ### lmrc works with any number of interactions. See:
 
-m2 <- lm(y~ x1*x2*x3*x4, data=dat)
-lmRCm2 <- lmrc(m2)
-summary(lmRCm2[["rcReg"]])
+m3 <- lm(y~ x1*x2*x3*x4, data=dat)
+lmRCm3 <- lmrc(m3)
+summary(lmRCm3[["rcReg"]])
 
+## Verify that one manually (Gosh, this is horrible to write out)
+dat$x1rcx4 <- resid(lm(I(x1*x4) ~ x1 + x4, data=dat))
+dat$x2rcx4 <- resid(lm(I(x2*x4) ~ x2 + x4, data=dat))
+dat$x3rcx4 <- resid(lm(I(x3*x4) ~ x3 + x4, data=dat))
+dat$x1rcx2rcx4 <- resid(lm(I(x1*x2*x4) ~ x1 + x2 + x4 + x1rcx2 + x1rcx4 + x2rcx4, data=dat))
+dat$x1rcx3rcx4 <- resid(lm(I(x1*x3*x4) ~ x1 + x3 + x4 + x1rcx3 + x1rcx4 + x3rcx4, data=dat))
+dat$x2rcx3rcx4 <- resid(lm(I(x2*x3*x4) ~ x2 + x3 + x4 + x2rcx3 + x2rcx4 + x3rcx4, data=dat))
+dat$x1rcx2rcx3rcx4 <- resid(lm(I(x1*x2*x3*x4) ~ x1 + x2 + x3 + x4 + x1rcx2 + x1rcx3 + x2rcx3 + x1rcx4  + x2rcx4 + x3rcx4  + x1rcx2rcx3 + x1rcx2rcx4 + x1rcx3rcx4 + x2rcx3rcx4, data=dat))
+(m3m <- lm(y ~ x1 + x2 + x3 + x4 + x1rcx2 + x1rcx3 + x2rcx3 + x1rcx4 + x2rcx4 + x3rcx4 + x1rcx2rcx3 + x1rcx2rcx4 + x1rcx3rcx4 + x2rcx3rcx4 + x1rcx2rcx3rcx4, data=dat))
+cbind(coef(lmRCm3[["rcReg"]]),  coef(m3m))
 
 ### If you want to fit a sequence of models, as in pequod, can do.
 

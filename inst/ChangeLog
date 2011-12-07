@@ -1,3 +1,19 @@
+2011-12-06  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/lmrc.R (makeRCformula): This is necessary so that all
+	interactive components are included
+	iv <- paste("(", gsub(":"," + ",x),")^2") 
+	* Replace whole stucture to make sure x1.X.x2 coding gets used.
+
+	* ../R/plotSlopes.R (plotSlopes): trying to fix that pesky "one
+	extra variable" error in regression models
+
+2011-12-02  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/plotSlopes.R (plotSlopes): fix problem when only one
+	variable was left in calculating centralized predictor values. The
+	bare vector has to be told "as.data.frame"
+
 2011-12-01  pauljohn  <pauljohn@pjlap-124.ku.edu>
 
 	* ../R/lmrc.R (makeRCresiduals): revised bug in calculation lmrc

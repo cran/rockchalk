@@ -75,6 +75,11 @@ plotSlopes(m2, plotx="x1", modx="x2", modxVals=c( -2, -1, 0, 1, 2))
 
 plotSlopes(m2, plotx="x3", modx="x2")
 
+m3 <- lm(y2 ~ x1 * x2 + x3, data=dat)
+plotSlopes(m3, plotx="x3", modx="x2")
+plotSlopes(m3, plotx="x1", modx="x2")
+plotSlopes(m3, plotx="x2", modx="x3")
+
 
 ### Examples with categorical Moderator variable
 
