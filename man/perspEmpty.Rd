@@ -27,6 +27,9 @@
   because this function re-names them x1lab, x2lab, and
   ylab.}
 }
+\value{
+  The perspective matrix that is returned by persp
+}
 \description{
   Creates a persp plot without drawing anything in the
   interior. Does equivalent \code{of plot( type="n")} for
@@ -47,6 +50,8 @@ x1 <- 1:10
 x2 <- 40:50
 y <-  rnorm(10)
 perspEmpty(x1, x2, y)
-perspEmpty(x1, x2, y, ticktype="detailed", nticks=10)
+res <- perspEmpty(x1, x2, y, ticktype="detailed", nticks=10)
+mypoints1 <- trans3d ( x1, x2, y, pmat = res )
+points( mypoints1, pch = 16, col= "blue")
 }
 

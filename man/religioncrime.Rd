@@ -32,6 +32,5 @@ summary(mod1[[1]])
 \author{
   Paul E. Johnson \email{pauljohn@ku.edu} and Anonymous
 }
-\keyword{dataset}
 \keyword{datasets}
 

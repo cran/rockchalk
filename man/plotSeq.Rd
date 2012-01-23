@@ -1,7 +1,6 @@
 \name{plotSeq}
 \alias{plotSeq}
-\title{plotSeq
-Create an evenly spaced sequence over the range of a variable}
+\title{Create sequences for plotting}
 \usage{
   plotSeq(x, length.out = length(x))
 }
@@ -20,6 +19,13 @@ Create an evenly spaced sequence over the range of a variable}
   create an evenly-spaced set of values. If
   \code{length.out} is specified, the user determines the
   number of elements in plotSeq.
+}
+\details{
+  The primary intended usage is for the creation of
+  plotting sequences of numeric variables.  It takes a
+  variable's range and the fills in evenly spaced steps. If
+  x is a factor variable, the levels will be returned. Uses
+  of this functionality are planned in the future.
 }
 \examples{
 #Create a quadratic regression
