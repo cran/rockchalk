@@ -1,0 +1,36 @@
+\name{getDeltaRsquare}
+\alias{getDeltaRsquare}
+\title{Calculates the delta R-squares, also known as squared
+semi-partial correlation coefficients.}
+\usage{
+  getDeltaRsquare(model)
+}
+\arguments{
+  \item{model}{a fitted regression model}
+}
+\value{
+  a vector of estimates of the delta R-squares
+}
+\description{
+  The change in the R-square when a variable is removed
+  from a regression is called delta R-square. It is
+  sometimes suggested as a way to determine whether a
+  variable has a substantial effect on an outcome. This is
+  also known as the squared semi-partial correlation
+  coefficient.
+}
+\examples{
+dat1 <- genCorrelatedData(N=250, means=c(100,100),
+sds=c(30,20), rho=0.0,  stde = 7, beta=c(1.1, 2.4, 4.1, 0))
+m1 <- lm(y ~ x1 + x2, data=dat1)
+getDeltaRsquare(m1)
+## more problematic in presence of collinearity
+dat2 <- genCorrelatedData(N=250, means=c(100,100),
+sds=c(30,20), rho=0.6,  stde = 7, beta=c(1.1, 2.4, 4.1, 0))
+m2 <- lm(y ~ x1 + x2, data=dat2)
+getDeltaRsquare(m2)
+}
+\author{
+  Paul E. Johnson <pauljohn@ku.edu>
+}
+

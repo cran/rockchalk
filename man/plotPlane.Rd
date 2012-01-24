@@ -1,0 +1,195 @@
+\name{plotPlane}
+\alias{plotPlane}
+\alias{plotPlane.default}
+\title{Draw a 3-D regression plot for two predictors from any linear or nonlinear lm or glm object}
+\usage{
+  plotPlane(model = NULL, plotx1 = NULL, plotx2 = NULL,
+    drawArrows = FALSE, plotPoints = TRUE, npp = 20, x1lab,
+    x2lab, ylab, envir = environment(formula(model)), ...)
+
+  \method{plotPlane}{default} (model = NULL, plotx1 = NULL,
+    plotx2 = NULL, drawArrows = F, plotPoints = TRUE,
+    npp = 20, x1lab, x2lab, ylab,
+    envir = environment(formula(model)), ...)
+}
+\arguments{
+  \item{model}{an lm or glm fitted model object}
+
+  \item{plotx1}{name of one variable to be used on the x1
+  axis}
+
+  \item{plotx2}{name of one variable to be used on the x2
+  axis}
+
+  \item{drawArrows}{draw red arrows from prediction plane
+  toward observed values TRUE or FALSE}
+
+  \item{plotPoints}{Should the plot include scatter of
+  observed scores?}
+
+  \item{npp}{number of points at which to calculate
+  prediction}
+
+  \item{x1lab}{optional label}
+
+  \item{x2lab}{optional label}
+
+  \item{ylab}{optional label}
+
+  \item{envir}{environment from whence to grab data}
+
+  \item{...}{additional parameters that will go to persp}
+}
+\value{
+  The main point is the plot that is drawn, but for record
+  keeping the return object is a list including 1) res: the
+  transformation matrix that was created by persp (this
+  allows the user to add additional details to the plot, 2)
+  the call that was issued).
+}
+\description{
+  This allows user to fit a regression model with many
+  variables and then plot 2 of its predictors and the
+  output plane for those predictors with other variables
+  set at mean or mode (numeric or factor).  This is a
+  front-end (wrapper) for R's persp function. Persp does
+  all of the hard work, this function reorganizes the
+  information for the user in a more readily understood
+  way.  It intended as a convenience for students (or
+  others) who do not want to fight their way through the
+  details needed to use persp to plot a regression plane.
+  The fitted model can have any number of input variables,
+  this will display only two of them. And, at least for the
+  moment, I insist these predictors must be numeric
+  variables. They can be transformed in any of the usual
+  ways, such as poly, log, and so forth.
+}
+\details{
+  Besides a fitted model object, plotPlane requires two
+  additional arguments, plotx1 and plotx2. These are the
+  names of the plotting variables. Please note, that if the
+  term in the regression is something like poly(fish,2) or
+  log(fish), then the argument to plotx1 should be the
+  quoted name of the variable "fish". plotPlane will handle
+  the work of re-organizing the information so that R's
+  predict functions can generate the desired information.
+  This might be thought of as a 3D version of "termplot",
+  with a significant exception. The calculation of
+  predicted values depends on predictors besides plotx1 and
+  plotx2 in a different ways. The sample averages are used
+  for numeric variables, but for factors the modal value is
+  used.
+
+  For details, please consult the source code, which is
+  being cleaned up.
+}
+\examples{
+library(rockchalk)
+
+
+set.seed(12345)
+x1 <- rnorm(100)
+x2 <- rnorm(100)
+x3 <- rnorm(100)
+x4 <- rnorm(100)
+y <- rnorm(100)
+y2 <- 0.03 + 0.1*x1 + 0.1*x2 + 0.25*x1*x2 + 0.4*x3 -0.1*x4 + 1*rnorm(100)
+dat <- data.frame(x1,x2,x3,x4,y, y2)
+rm(x1, x2, x3, x4, y, y2)
+
+## linear ordinary regression
+m1 <- lm(y ~ x1 + x2 +x3 + x4, data = dat)
+
+plotPlane(m1, plotx1 = "x3", plotx2 = "x4")
+
+plotPlane(m1, plotx1 = "x3", plotx2 = "x4", drawArrows = TRUE)
+
+plotPlane(m1, plotx1 = "x1", plotx2 = "x4", drawArrows = TRUE)
+
+
+plotPlane(m1, plotx1 = "x1", plotx2 = "x2", drawArrows = TRUE, npp = 10)
+plotPlane(m1, plotx1 = "x3", plotx2 = "x2", drawArrows = TRUE, npp = 40)
+
+plotPlane(m1, plotx1 = "x3", plotx2 = "x2", drawArrows = FALSE, npp = 5, ticktype = "detailed")
+
+
+## regression with interaction
+m2 <- lm(y ~ x1  * x2 +x3 + x4, data = dat)
+
+plotPlane(m2, plotx1 = "x1", plotx2 = "x2", drawArrows = TRUE)
+
+
+plotPlane(m2, plotx1 = "x1", plotx2 = "x4", drawArrows = TRUE)
+plotPlane(m2, plotx1 = "x1", plotx2 = "x3", drawArrows = TRUE)
+
+plotPlane(m2, plotx1 = "x1", plotx2 = "x2", drawArrows = TRUE, phi = 10, theta = 30)
+
+
+
+## regression with quadratic;
+## Required some fancy footwork in plotPlane, so be happy
+dat$y3 <- 0 + 1 * dat$x1 + 2 * dat$x1^2 + 1 * dat$x2 + 0.4*dat$x3 + 8 * rnorm(100)
+m3 <- lm(y3 ~ poly(x1,2) + x2 +x3 + x4, data = dat)
+summary(m3)
+
+plotPlane(m3, plotx1 = "x1", plotx2 = "x2", drawArrows = TRUE, x1lab = "my great predictor", x2lab = "a so-so predictor", ylab = "Most awesomest DV ever")
+
+plotPlane(m3, plotx1 = "x1", plotx2 = "x2", drawArrows = TRUE, x1lab = "my great predictor", x2lab = "a so-so predictor", ylab = "Most awesomest DV ever", phi=-20)
+
+plotPlane(m3, plotx1 = "x1", plotx2 = "x2", drawArrows = TRUE, phi = 10, theta = 30)
+
+plotPlane(m3, plotx1 = "x1", plotx2 = "x4", drawArrows = TRUE, ticktype = "detailed")
+plotPlane(m3, plotx1 = "x1", plotx2 = "x3", drawArrows = TRUE)
+
+plotPlane(m3, plotx1 = "x1", plotx2 = "x2", drawArrows = TRUE, phi = 10, theta = 30)
+
+m4 <- lm(y ~ sin(x1) + x2*x3 +x3 + x4, data = dat)
+summary(m4)
+
+
+plotPlane(m4, plotx1 = "x1", plotx2 = "x2", drawArrows = TRUE)
+plotPlane(m4, plotx1 = "x1", plotx2 = "x3", drawArrows = TRUE)
+
+
+
+eta3 <- 1.1 + .9*dat$x1 - .6*dat$x2 + .5*dat$x3
+dat$y4 <- rbinom(100, size = 1, prob = exp( eta3)/(1+exp(eta3)))
+gm1 <- glm(y4 ~ x1 + x2 + x3, data = dat, family = binomial(logit))
+summary(gm1)
+plotPlane(gm1, plotx1 = "x1", plotx2 = "x2")
+plotPlane(gm1, plotx1 = "x1", plotx2 = "x2", phi = -10)
+
+plotPlane(gm1, plotx1 = "x1", plotx2 = "x2", ticktype = "detailed")
+plotPlane(gm1, plotx1 = "x1", plotx2 = "x2", ticktype = "detailed", npp = 30, theta = 30)
+plotPlane(gm1, plotx1 = "x1", plotx2 = "x3", ticktype = "detailed", npp = 70, theta = 60)
+
+plotPlane(gm1, plotx1 = "x1", plotx2 = "x2", ticktype = c("detailed"), npp = 50, theta = 40)
+
+dat$x2 <- 5 * dat$x2
+dat$x4 <- 10 * dat$x4
+eta4 <- 0.1 + .15*dat$x1 - 0.1*dat$x2 + .25*dat$x3 + 0.1*dat$x4
+dat$y4 <- rbinom(100, size = 1, prob = exp( eta4)/(1+exp(eta4)))
+gm2 <- glm(y4 ~ x1 + x2 + x3 + x4, data = dat, family = binomial(logit))
+summary(gm2)
+plotPlane(gm2, plotx1 = "x1", plotx2 = "x2")
+plotPlane(gm2, plotx1 = "x2", plotx2 = "x1")
+plotPlane(gm2, plotx1 = "x1", plotx2 = "x2", phi = -10)
+plotPlane(gm2, plotx1 = "x1", plotx2 = "x2", phi = 5, theta = 70, npp = 40)
+
+plotPlane(gm2, plotx1 = "x1", plotx2 = "x2", ticktype = "detailed")
+plotPlane(gm2, plotx1 = "x1", plotx2 = "x2", ticktype = "detailed", npp = 30, theta = -30)
+plotPlane(gm2, plotx1 = "x1", plotx2 = "x3", ticktype = "detailed", npp = 70, theta = 60)
+
+plotPlane(gm2, plotx1 = "x4", plotx2 = "x3", ticktype = "detailed", npp = 50, theta = 10)
+
+plotPlane(gm2, plotx1 = "x1", plotx2 = "x2", ticktype = c("detailed"))
+}
+\author{
+  Paul E. Johnson <pauljohn@ku.edu>
+}
+\seealso{
+  \code{\link[graphics]{persp}},
+  \code{\link[scatterplot3d]{scatterplot3d}},
+  \code{\link[HH]{regr2.plot}}
+}
+

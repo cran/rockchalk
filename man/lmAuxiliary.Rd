@@ -1,0 +1,21 @@
+\name{lmAuxiliary}
+\alias{lmAuxiliary}
+\title{Estimate leave-one-variable-out regressions}
+\usage{
+  lmAuxiliary(model)
+}
+\arguments{
+  \item{model}{a fitted regression model}
+}
+\value{
+  a list of fitted regressions, one for each omitted
+  variable.
+}
+\description{
+  This is a convenience for analysis of multicollinearity
+  in regression.
+}
+\author{
+  Paul E. Johnson <pauljohn@ku.edu>
+}
+

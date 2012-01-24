@@ -1,0 +1,20 @@
+\name{getVIF}
+\alias{getVIF}
+\title{Converts the R-square to the variance inflation factor}
+\usage{
+  getVIF(rsq)
+}
+\arguments{
+  \item{rsq}{a vector of real values, presumably fitted
+  R-squares}
+}
+\value{
+  a vector of vif estimates
+}
+\description{
+  calculates vif = 1/(1-R-square)
+}
+\author{
+  Paul E. Johnson <pauljohn@ku.edu>
+}
+
