@@ -1,3 +1,49 @@
+2012-03-09  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* examples/meanCenter-ex.R: remove references to centerContrasts
+
+	* ../R/meanCenter.R (std): predict.mcreg centers all variable in the
+	"centeredVars" list.
+	* ../R/meanCenter.R: Cut "centerContrasts" option in meanCenter and tons of
+	beautiful code because it is impossible to manage re-centering in
+	predict.mcreg if there are centered congrasts. 
+
+2012-03-03  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* examples/predict.rcreg-ex.R: new file to demo predict
+
+	* ../R/residualCenter.R (predict.rcreg): new method handles
+	by re-calcuating predictions for each auxiliary regression.
+
+2012-03-01  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/meanCenter.R (std): Found really bad bug where
+	plotPlane(meanCenter) returned error about predict being
+	used for wrong type of data. Problem traced back to fact
+	that "scale" returns a matrix with 1 column, rather than
+	a numeric vector, so dataClasses was mismatched.
+	attr(,"dataClasses")
+          y         xxx         x22
+	"numeric" "nmatrix.1" "nmatrix.1".  The "newdata" I'd
+	generate did not have "nmatrix.1" as the type, and so
+	predict's use of .MFCheckClass resulted in failure.
+	Like others, I say "How aggravating."
+
+2012-02-01  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/plotSlopes.R (plotSlopes): "std.dev." and "quantile" now
+	legal strings for modxVals, along with particular values.
+
+2012-01-30  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/plotPlane.R (plotPlane.default): correct typos referring to plotSlopes
+
+	* ../R/plotSlopes.R (plotSlopes): add na.rm=TRUE for range commands
+
+2012-01-25  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/plotSlopes.R (plotSlopes): change return value to include newdf
+
 2012-01-09  pauljohn  <pauljohn@pjlap-124.ku.edu>
 
 	* ../R/lmrc.R (makeRCformula): weird. data from residuals turns up
