@@ -1,4 +1,5 @@
 \name{residualCenter}
+\alias{predict.rcreg}
 \alias{residualCenter}
 \alias{residualCenter.default}
 \title{Calculates a "residual-centered" interaction regression.}
@@ -6,9 +7,23 @@
   residualCenter(model)
 
   \method{residualCenter}{default} (model)
+
+  \method{predict}{rcreg} (object, newdata, ...)
 }
 \arguments{
   \item{model}{A fitted lm object}
+
+  \item{object}{Fitted residual-centered regression from
+  residualCenter}
+
+  \item{newdata}{A dataframe of values of the predictors
+  for which predicted values are sought. Needs to include
+  values for all predictors individually; need not include
+  the interactions, since those are re-calculated inside
+  this function.}
+
+  \item{...}{Other parameters that will be passed to the
+  predict method of the model.}
 }
 \value{
   a regression model of the type as the input model, with
@@ -23,14 +38,18 @@
   interactive terms, then NULL is returned.
 }
 \description{
-  Given a fitted lm, this function scans for coefficients
-  estimated from "interaction terms" by checking for colon
-  symbols. The function then calculates the "residual
-  centered" estimate of the interaction term and replaces
-  the interaction term with that residual centered
-  estimate. It works for any order of interaction, unlike
-  other implementations of the same approach. See also
-  function lmres in package pequod.
+  Given a fitted \code{lm}, this function scans for
+  coefficients estimated from "interaction terms" by
+  checking for colon symbols. The function then calculates
+  the "residual centered" estimate of the interaction term
+  and replaces the interaction term with that residual
+  centered estimate. It works for any order of interaction,
+  unlike other implementations of the same approach. See
+  also function \code{lmres} in package pequod.
+
+  Calculates predicted values of residual centered
+  interaction regressions estimated in any type of
+  regression framework (lm, glm, etc).
 }
 \examples{
 set.seed(123)
@@ -123,6 +142,23 @@ summary(f2RC)
 f3 <- lm(as.formula(paste("y","~", paste(f3, collapse=" + "))), data=dat)
 f3RC <- residualCenter(f3)
 summary(f3RC)
+
+library(rockchalk)
+dat <- genCorrelatedData(1000, stde=5)
+
+m1 <- lm(y ~ x1 * x2, data=dat)
+
+m1mc <- meanCenter(m1)
+summary(m1mc)
+
+m1rc <- residualCenter(m1)
+summary(m1rc)
+
+
+newdf <- apply(dat, 2, summary)
+newdf <- as.data.frame(newdf)
+
+predict(m1rc, newdata=newdf)
 }
 \author{
   Paul E. Johnson <pauljohn@ku.edu>

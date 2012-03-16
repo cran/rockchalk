@@ -4,12 +4,11 @@
 \title{meanCenter}
 \usage{
   meanCenter(model, centerOnlyInteractors = TRUE,
-    centerDV = FALSE, standardize = FALSE,
-    centerContrasts = F)
+    centerDV = FALSE, standardize = FALSE)
 
   \method{meanCenter}{default} (model,
     centerOnlyInteractors = TRUE, centerDV = FALSE,
-    standardize = FALSE, centerContrasts = F)
+    standardize = FALSE)
 }
 \arguments{
   \item{model}{a fitted regression model (presumably from
@@ -26,11 +25,6 @@
   variables, should they also be "standardized" by first
   mean-centering and then dividing by the estimated
   standard deviation.}
-
-  \item{centerContrasts}{This function was originally
-  intended only to center numeric variables. However, this
-  option will ask centering of the numeric contrasts that
-  are created in the fitting process.}
 }
 \value{
   A regression model of the same type as the input model,
@@ -42,12 +36,25 @@
   in a regression model.
 }
 \details{
-  The defaults will cause a regression's numeric
-  interactive variables to be mean centered. If one wants
-  all predictors to be centered, the option
-  centerOnlyInteractors should be set to FALSE. The
-  dependent variable will not be centered, unless the user
-  explicitly requests it by setting centerDV = TRUE.
+  Mean-centering has often been recommended as a way to
+  ameliorate multi-collinearity in regression models that
+  include interaction terms (Aiken and West, 1991; Cohen,
+  et al 2002). While this claim may have been mistaken
+  (Echambadi and Hess, 2007), mean-centering is still
+  widely practiced.  This function facilitates comparison
+  of mean-centered models with others by automatically
+  re-calculating centered variables.  The defaults will
+  cause a regression's numeric interactive variables to be
+  mean centered. That is to say, if an interaction x1:x2 is
+  present in the model, then x1 and x2 are replaced by
+  (m1-mean(m1)) and (m2-mean(m2) in all of the terms in
+  which they appear in the model (the main effect and the
+  interaction).  If one wants all predictors to be
+  centered, the option \code{centerOnlyInteractors} should
+  be set to FALSE. The dependent variable will not be
+  centered, unless the user explicitly requests it by
+  setting centerDV = TRUE. The centered variables can be
+  standardized (optionally, of course).
 }
 \examples{
 
@@ -84,24 +91,37 @@ dat$x3 <- gl(4, 25, labels=c("none","some","much","total"))
 
 m3 <- lm(y ~ x1 * x2 + x3, data=dat)
 summary(m3)
+## visualize, for fun
+plotPlane(m3, "x1", "x2")
 
 m3c1 <- meanCenter(m3)
 summary(m3c1)
 
-m3c2 <- meanCenter(m3, centerContrasts=TRUE)
-summary(m3c2)
-
 ## Not exactly the same as a "standardized" regression because the
 ## interactive variables are centered in the model frame,
 ## and the term "x1:x2" is never centered again.
-m3c3 <- meanCenter(m3, centerDV=TRUE, centerContrasts=TRUE, centerOnlyInteractors=FALSE, standardize=TRUE)
-summary(m3c3)
+m3c2 <- meanCenter(m3, centerDV=TRUE, centerOnlyInteractors=FALSE, standardize=TRUE)
+summary(m3c2)
 
 m3st <- standardize(m3)
 summary(m3st)
 }
 \author{
   Paul E. Johnson <pauljohn@ku.edu>
+}
+\references{
+  Aiken, L. S. and West, S.G. (1991). Multiple Regression:
+  Testing and Interpreting Interactions. Newbury Park,
+  Calif: Sage Publications.
+
+  Cohen, J., Cohen, P., West, S. G., and Aiken, L. S.
+  (2002). Applied Multiple Regression/Correlation Analysis
+  for the Behavioral Sciences (Third.). Routledge Academic.
+
+  Echambadi, R., and Hess, J. D. (2007). Mean-Centering
+  Does Not Alleviate Collinearity Problems in Moderated
+  Multiple Regression Models. Marketing Science, 26(3),
+  438-445.
 }
 \seealso{
   \code{\link[pequod]{lmres}}

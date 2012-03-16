@@ -32,18 +32,17 @@ dat$x3 <- gl(4, 25, labels=c("none","some","much","total"))
 
 m3 <- lm(y ~ x1 * x2 + x3, data=dat)
 summary(m3)
+## visualize, for fun
+plotPlane(m3, "x1", "x2")
 
 m3c1 <- meanCenter(m3)
 summary(m3c1)
 
-m3c2 <- meanCenter(m3, centerContrasts=TRUE)
-summary(m3c2)
-
 ## Not exactly the same as a "standardized" regression because the
 ## interactive variables are centered in the model frame,
 ## and the term "x1:x2" is never centered again.
-m3c3 <- meanCenter(m3, centerDV=TRUE, centerContrasts=TRUE, centerOnlyInteractors=FALSE, standardize=TRUE)
-summary(m3c3)
+m3c2 <- meanCenter(m3, centerDV=TRUE, centerOnlyInteractors=FALSE, standardize=TRUE)
+summary(m3c2)
 
 m3st <- standardize(m3)
 summary(m3st)

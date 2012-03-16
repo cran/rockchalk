@@ -51,16 +51,16 @@ plotPlane <- function(model = NULL,  plotx1 = NULL, plotx2 = NULL, drawArrows = 
 
 
 
-##' @return  The main point is the plot that is drawn, but for record keeping the return object is a list including 1) res: the transformation matrix that was created by persp (this allows the user to add additional details to the plot, 2) the call that was issued). 
+##' @return  The main point is the plot that is drawn, but for record keeping the return object is a list including 1) res: the transformation matrix that was created by persp 2) the call that was issued, 3) x1seq, the "plot sequence" for the x1 dimension, 4) x2seq, the "plot sequence" for the x2 dimension, 5) zplane, the values of the plane corresponding to locations x1seq and x2seq. 
 ##' 
 ##' @rdname plotPlane
 ##' @method plotPlane default
 ##' @S3method plotPlane default
 plotPlane.default <- function (model = NULL, plotx1 = NULL, plotx2 = NULL, drawArrows = F, plotPoints = TRUE, npp = 20, x1lab, x2lab, ylab, envir = environment(formula(model)),  ...){
   if (is.null(model)) 
-    stop("plotSlopes requires a fitted regression model.")
+    stop("plotPlane requires a fitted regression model.")
   if (is.null(plotx1) | is.null(plotx2)) 
-    stop("plotSlopes requires the name of the variable to be drawn on the x axis")
+    stop("plotPlane requires the name of the variable to be drawn on the x axis")
   if (plotx1 == plotx2) stop("the two plotting variables should not be the same")
  
    carrier.name <- function(term) {
@@ -120,8 +120,8 @@ plotPlane.default <- function (model = NULL, plotx1 = NULL, plotx2 = NULL, drawA
     }
   }
   
-  x1seq <- plotSeq(x1range, length = npp)
-  x2seq <- plotSeq(x2range, length = npp)
+  x1seq <- plotSeq(x1range, length.out = npp)
+  x2seq <- plotSeq(x2range, length.out = npp)
   zplane <- outer(x1seq, x2seq, function(a, b) { myPredict(a,b) } )
   
   yrange <- magRange(c(zplane,y), 1.15)
@@ -157,5 +157,5 @@ plotPlane.default <- function (model = NULL, plotx1 = NULL, plotx2 = NULL, drawA
     if (drawArrows) 
         arrows(mypoints4$x, mypoints4$y, mypoints2s$x, mypoints2s$y, 
             col = "red", lty = 4, lwd = 0.3, length = 0.1)
-    invisible(list(res=res, call=cl))
+    invisible(list(res=res, call=cl, "x1seq"=x1seq, "x2seq"=x2seq, "zplane"=zplane))
 }

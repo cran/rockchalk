@@ -43,9 +43,11 @@
 \value{
   The main point is the plot that is drawn, but for record
   keeping the return object is a list including 1) res: the
-  transformation matrix that was created by persp (this
-  allows the user to add additional details to the plot, 2)
-  the call that was issued).
+  transformation matrix that was created by persp 2) the
+  call that was issued, 3) x1seq, the "plot sequence" for
+  the x1 dimension, 4) x2seq, the "plot sequence" for the
+  x2 dimension, 5) zplane, the values of the plane
+  corresponding to locations x1seq and x2seq.
 }
 \description{
   This allows user to fit a regression model with many

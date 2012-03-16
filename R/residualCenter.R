@@ -1,12 +1,12 @@
 ##' Calculates a "residual-centered" interaction regression.
 ##'
-##' Given a fitted lm, this function scans for coefficients
+##' Given a fitted \code{lm}, this function scans for coefficients
 ##' estimated from "interaction terms" by checking for colon
 ##' symbols. The function then calculates the "residual centered"
 ##' estimate of the interaction term and replaces the interaction
 ##' term with that residual centered estimate. It works for any
 ##' order of interaction, unlike other implementations of the same
-##' approach. See also function lmres in package pequod.
+##' approach. See also function \code{lmres} in package pequod.
 ##' @param model A fitted lm object
 ##' @export residualCenter
 ##' @rdname residualCenter
@@ -75,4 +75,35 @@ residualCenter.default <- function (model)
   res$rcRegressions <- rcRegressions
   res
 }
-  
+NULL
+
+##' predict method for rcreg objects
+##'
+##' Calculates predicted values of
+##' residual centered interaction regressions estimated in
+##' any type of regression framework (lm, glm, etc).
+##' @method predict rcreg
+##' @S3method predict rcreg
+##' @rdname residualCenter
+##' @example inst/examples/predict.rcreg-ex.R
+##' @param object Fitted residual-centered regression from residualCenter
+##' @param newdata A dataframe of values of the predictors for which predicted values are sought. Needs to include values for all predictors individually; need not include the interactions, since those are re-calculated inside this function.
+##' @param ... Other parameters that will be passed to the predict method of the model. 
+predict.rcreg <- function (object, newdata, ...){
+  if ( ! c("rcreg") %in% class(object) ) stop("predict.rcreg is intended for rcreg objects, which are created by residualCenter in the rockchalk package") 
+  objectTerms <- terms(object)
+  dvname <- names(attr(objectTerms, "dataClasses"))[1]
+  rcRegs <- object$rcRegressions
+  nams <- names(rcRegs)
+  ## remove user's residual centered variables, if any
+  ## for(i in nams)  newdata[[i]] <- NULL
+  for( i in seq_along(rcRegs) ){
+     aReg <- rcRegs[[i]]
+     prodVars <-  unlist(strsplit(nams[i], ".X."))
+     predvals <-  predict.lm( aReg, newdata = newdata )
+     actualProduct <- apply(newdata[ ,prodVars], 1, prod)
+     myresids <-  actualProduct - predvals
+     newdata[[nams[i]]] <- myresids
+   }
+  NextMethod(object, newdata=newdata, ...)
+}
