@@ -3,7 +3,7 @@
 \title{Assists creation of predicted value curves for regression models.}
 \usage{
   plotCurves(model = NULL, plotx = NULL, modx = NULL,
-    modxVals = NULL, plotPoints = TRUE,
+    modxVals = NULL, plotPoints = TRUE, col,
     envir = environment(formula(model)), ...)
 }
 \arguments{
@@ -25,6 +25,16 @@
 
   \item{plotPoints}{Should the plot include the scatterplot
   points along with the lines.}
+
+  \item{col}{An optional color vector.  By default, the R's
+  builtin colors will be used, which are "black", "red",
+  and so forth.  Instead, a vector of color names can be
+  supplied, as in c("pink","black", "gray70").  A
+  color-vector generating function like rainbow(10) or
+  gray.colors(5) can also be used. A vector of color names
+  can be supplied with this function. Color names will be
+  recycled if the plot requires more different colors than
+  the user provides.}
 
   \item{envir}{environment to search for variables.}
 

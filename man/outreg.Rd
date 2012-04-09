@@ -2,9 +2,9 @@
 \alias{outreg}
 \title{outreg}
 \usage{
-  outreg(incoming, title = "My Regression", label = "",
-    modelLabels = NULL, varLabels = NULL, tight = TRUE,
-    showAIC = FALSE, lyx = TRUE)
+  outreg(incoming, title, label, modelLabels = NULL,
+    varLabels = NULL, tight = TRUE, showAIC = FALSE,
+    lyx = TRUE)
 }
 \arguments{
   \item{incoming}{A single regression model or an R list of
