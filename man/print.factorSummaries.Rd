@@ -1,0 +1,34 @@
+\name{print.factorSummaries}
+\alias{print.factorSummaries}
+\title{Prints out the contents of an object created by summarizeFactors
+in the style of base::summary}
+\usage{
+  \method{print}{factorSummaries} (x, ...)
+}
+\arguments{
+  \item{x}{A factorSummaries object produced by
+  summarizeFactors}
+
+  \item{...}{optional arguments. Only value currently used
+  is digits.}
+}
+\value{
+  A table of formatted output
+}
+\description{
+  An object with class "factorSummaries" is the input. Such
+  an object should be created with the function
+  rockchalk::summarizeFactors. Each element in that list is
+  then organized for printing in a tabular summary.  This
+  should look almost like R's own summary function, except
+  for the additional information that these factor
+  summaries include.
+}
+\author{
+  Paul E. Johnson <pauljohn@ku.edu>
+}
+\seealso{
+  \code{\link[base]{summary}} and \code{\link{summarize}},
+  \code{\link{summarizeFactors}}
+}
+
