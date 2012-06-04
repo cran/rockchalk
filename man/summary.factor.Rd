@@ -2,13 +2,16 @@
 \alias{summary.factor}
 \title{Tabulates observed values and calculates entropy}
 \usage{
-  summary.factor(y, maxLevels)
+  summary.factor(y, maxLevels = 5, sumstat = TRUE)
 }
 \arguments{
   \item{y}{a factor (non-numeric variable)}
 
   \item{maxLevels}{The maximum number of levels that will
   be presented in the tabulation.}
+
+  \item{sumstat}{If TRUE (default), entropy (diversity)
+  estimate and the number of NAs will be returned.}
 }
 \value{
   a vector of named elements including the summary table as

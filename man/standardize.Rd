@@ -49,4 +49,8 @@ summary(m2c)
 \author{
   Paul Johnson <pauljohn@ku.edu>
 }
+\seealso{
+  \code{\link[rockchalk]{meanCenter}} which will center or
+  re-scale only numberic variables
+}
 

@@ -87,22 +87,24 @@ outreg <- function(incoming, title, label, modelLabels=NULL, varLabels=NULL, tig
     nmodels <- 1
     modelList <- list(modl1=incoming)
   } else {
-    nmodels <- length(incoming)
-    modelList <- incoming
+     modelList <- incoming
   }
-
+  nmodels <- length(modelList)
   ##TODO modelLabels MUST have same number of items as "incoming"
-
-
+  ## but following crashes
+  ## if(modelLabels != NULL){
+  ##     if (length(modelLabels) != nmodels ) stop("the number of elements in modelLabels must match the the number of models in the incoming model list")
+  ## }
   ## Get a regression summary object for each fitted model
   summaryList <- list()
   fixnames <- vector()
   myModelClass <- vector()
+  coefsum <- list()
 
   i <-  1
   for (model in modelList){
-    summaryList[[i]] <- summary(model)
-
+    summaryList[[i]] <- ssm <- summary(model)
+    coefsum[[i]] <- coef(ssm)
     fixnames <- unique( c( fixnames, names(coef(model))))
     myModelClass[i] <- class(model)[1]
     i <- i+1
@@ -137,27 +139,29 @@ if (lyx == FALSE || !missing(title) || !missing(label)){
 
   ### Print the headers "Estimate" and "(S.E.)", output depends on tight or other format
   if (tight == TRUE){
-    cat("             ")
-    for (i in 1:nmodels) { cat (" & Estimate ") }
-    cat(" \\\\\n")
+    cat("               ", rep (" &Estimate ", nmodels), "\\\\\n")
+    #for (i in 1:nmodels) { cat (" & Estimate ") }
+    #cat(" \\\\\n")
+    cat("               ", rep (" &(S.E.) ", nmodels), "\\\\\n")
 
-    cat("             ")
-    for (i in 1:nmodels) {  cat (" & (S.E.) ") }
-    cat(" \\\\\n")
+#    cat("             ")
+#    for (i in 1:nmodels) {  cat (" & (S.E.) ") }
+#    cat(" \\\\\n")
   }else{
-
-    cat("             ")
-    for (i in 1:nmodels) { cat (" & Estimate & S.E.") }
-    cat(" \\\\\n")
+      cat("               ", rep (" & Estimate & (S.E.) ", nmodels), "\\\\\n", fill= FALSE)
+  #  cat("             ")
+  #  for (i in 1:nmodels) { cat (" & Estimate & S.E.") }
+  #  cat(" \\\\\n")
   }
 
 
-  cat("\\hline \n \\hline\n ")
+  cat("\\hline \n\\hline\n ")
 
 
   ### Here come the regression coefficients
   for (regname in fixnames){
     if ( !is.null(varLabels[[regname]]) ) { cat(paste("",varLabels[[regname]]), sep="")}
+
     else {cat(paste("", regname), sep="")}
 
     for (model in modelList) {
@@ -284,7 +288,8 @@ if (lyx == FALSE || !missing(title) || !missing(label)){
    cat ("* $p \\le 0.05$")
    cat("\\end{tabular}\n")
    cat("\\end{center}\n")
-   if (lyx == FALSE){
+  if (lyx == FALSE || !missing(title) || !missing(label)){
       cat("\\end{table}\n")
-   }
- }
+  }
+
+}

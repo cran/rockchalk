@@ -9,12 +9,15 @@ Magnify the range of a variable.}
   \item{x}{an R vector variable}
 
   \item{mult}{a multiplier by which to magnify the range of
-  the variable. A value of 1 leaves the range unchanged.
+  the variable.  A value of 1 leaves the range unchanged.
   May be a scalar, in which case both ends of the range are
   magnified by the same amount.  May also be a two valued
-  vector, such as c(minMag,maxMag), in which case the
+  vector, such as c(minMag, maxMag), in which case the
   magnification applied to the minimum is minMag and the
-  magnification of the maximum is maxMag.}
+  magnification of the maximum is maxMag.  After version
+  1.5.5, mult may be smaller than 1, thus shrinking the
+  range. Setting mult to values closer to 0 causes the
+  range to shrink to the center point from both sides.}
 }
 \description{
   By default, R's range function returns the minimum and
@@ -23,6 +26,12 @@ Magnify the range of a variable.}
   rockchalk package
 }
 \examples{
+x1 <- c(0, 0.5, 1.0)
+range(x1)
+magRange(x1, 1.1)
+magRange(x1, c(1.1, 1.4))
+magRange(x1, 0.5)
+magRange(x1, c(0.1, 0.1))
 x1 <- rnorm(100)
 range(x1)
 magRange(x1)

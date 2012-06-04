@@ -7,26 +7,26 @@
     envir = environment(formula(model)), ...)
 }
 \arguments{
-  \item{model}{Fitted regression object. Must have a
-  predict method}
+  \item{model}{Required. Fitted regression object. Must
+  have a predict method}
 
-  \item{plotx}{String with name of IV to be plotted on x
-  axis}
+  \item{plotx}{Required. String with name of IV to be
+  plotted on x axis}
 
-  \item{modx}{String for moderator variable name. May be
-  either numeric or factor.}
+  \item{modx}{Required. String for moderator variable name.
+  May be either numeric or factor.}
 
-  \item{modxVals}{If modx is numeric, either a character
-  string, "quantile", "std.dev.", or "table", or a vector
-  of values for which plotted lines are sought. If modx is
-  a factor, the default approach will create one line for
-  each level, but the user can supply a vector of levels if
-  a subset is desired.}
+  \item{modxVals}{Optional. If modx is numeric, either a
+  character string, "quantile", "std.dev.", or "table", or
+  a vector of values for which plotted lines are sought. If
+  modx is a factor, the default approach will create one
+  line for each level, but the user can supply a vector of
+  levels if a subset is desired.}
 
-  \item{plotPoints}{Should the plot include the scatterplot
-  points along with the lines.}
+  \item{plotPoints}{Optional. Should the plot include the
+  scatterplot points along with the lines.}
 
-  \item{col}{An optional color vector.  By default, the R's
+  \item{col}{Optional. A color vector.  By default, the R's
   builtin colors will be used, which are "black", "red",
   and so forth.  Instead, a vector of color names can be
   supplied, as in c("pink","black", "gray70").  A

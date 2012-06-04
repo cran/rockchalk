@@ -1,3 +1,111 @@
+2012-06-03  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/plotPlane.R (## carrier.name): using model.data now, and
+	varNamesRHS, no need for carrier nonsense anymore.
+
+2012-06-02  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/plotCurves.R (carrier.name): revise to use model.data
+	function, including the attribute varNamesRHS. Cleans up use of
+	carrier data.
+
+2012-05-29  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/meanCenter.R (formulaReplace): rework code so centered
+	variables are re-named with "c" on end. Otherwise too confusing.
+
+	* standardize: re-work to change variable names by appending s.
+
+	* centerNumerics: new function, will add centered variables to a
+	data frame with new names with "c" or "cs" appended.
+
+2012-05-28  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/meanCenter.R (predict.mcreg): predict must use same mean
+	and scale as were used in original regression. Use meanCenter
+	centeredValues return more fully.
+	* meanCenter(std): eliminate use of R scale, now calculate
+	mean and scale factors, return them in list with centered
+	variables.
+
+2012-05-27  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/plotPlane.R (carrier.name): use model.data, fix centerValues
+
+	* ../R/residualCenter.R (createRCinteraction): Noticed that this
+	function did not work with categorical variables in
+	interactions. MASSIVELY reworked calculation approach. Because R
+	generates new variables when it finds factors, a new, completely
+	literal approach is taken. From fitted model, get the design
+	matrix, notice the colnames are the variables in a linear
+	formula. Scan through there and replace variables with colons with
+	the residual centered versions.
+
+2012-05-19  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/recodeFactors.R (adjacent): fix flaw in ordered factor
+	re-calculation (had *again* made the "levels" mistake on the RHS)
+
+2012-05-13  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/plotPlane.R: x1floor and x2floor. Bad names?  Number of
+	divider lines to draw in floor of plot. Default 5, which was the
+	value I had hard coded before.
+
+	* ../R/perspEmpty.R (perspEmpty): clean up interface! Use x1 and
+	x2 arguments  to position the bottom grids.  Will require
+	interface cleanups in other functions.
+	
+	* ../R/mcGraph (mcGraph1-3): Changes to make usage match
+	perspEmpty intercface change. Instead of assuming perspEmpty will
+	manufacture the plot sequences, now the caller must do so.
+
+2012-05-07  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/plotPlane.R (myPredict): move draw arrows before points, so
+	arrows sit under, not over points
+
+	* ../R/mcGraph.R (mcGraph3): name elements in returned list
+
+2012-05-06  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/plotSlopes.R (plotSlopes): llwd: lwd to pass through to
+	lines. lwd controls darkness of points only.
+
+	* ../R/outreg.R (outreg): fix conditional at end to insert
+	\end{table} to match previous changes to top of function
+
+2012-05-05  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/magRange.R (magRange): work to allow mult smaller than
+	1. Range can shrink to (center, center) point when mult reaches 0.
+
+2012-04-29  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/summarize.R (summarizeNumerics): insert N output for summarize
+
+2012-04-28  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/utils.R (cutByQuantile): work out n to divide interval
+	according to a special scheme
+	(cutBySD): choose between n=3 and 4
+
+	* ../R/summarize.R (summarizeFactors): if no factors found, return NULL
+	(summarizeNumerics): if no numerics, return NULL
+
+2012-04-20  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/summarize.R: sumstat: new paramter to restrict diagnostic output
+	(summarizeNumerics): fix crash when data frame does not includes
+	only factors or only numerics. Returns NULL in summarizeNumerics
+	or summarizeFactors.
+
+2012-04-15  pauljohn  <pauljohn@pjlap-124.ku.edu>
+
+	* ../R/meanCenter.R (standardize.lm): drop=FALSE for dm, keeps it
+	a matrix
+	(summary.mcreg): drop=FALSE for dm
+
 2012-04-04  pauljohn  <pauljohn@pjlap-124.ku.edu>
 
 	* ../R/testSlopes.R (testSlopes): fixing plots. red intervals on "either

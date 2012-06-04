@@ -25,7 +25,7 @@
   "ylab" inside persp)}
 
   \item{ylab}{label for the y (vertical) axis (the one
-  called "zlab" inside persp) ##'}
+  called "zlab" inside persp)}
 
   \item{...}{arguments passed to persp}
 }

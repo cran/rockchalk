@@ -3,8 +3,8 @@
 \title{Extracts non-numeric variables, calculates summary information,
 including entropy as a diversity indicator.}
 \usage{
-  summarizeFactors(dat = NULL, maxLevels = 10,
-    alphaSort = TRUE,
+  summarizeFactors(dat = NULL, maxLevels = 5,
+    alphaSort = TRUE, sumstat = TRUE,
     digits = max(3, getOption("digits") - 3))
 }
 \arguments{
@@ -16,6 +16,9 @@ including entropy as a diversity indicator.}
   \item{alphaSort}{If TRUE (default), the columns are
   re-organized in alphabetical order. If FALSE, they are
   presented in the original order.}
+
+  \item{sumstat}{If TRUE (default), report indicators of
+  dispersion and the number of missing cases (NAs).}
 
   \item{digits}{integer, used for number formatting
   output.}
