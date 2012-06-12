@@ -4,7 +4,7 @@
 \usage{
   plotSlopes(model = NULL, plotx = NULL, modx = NULL,
     modxVals = NULL, plotPoints = TRUE, plotLegend = TRUE,
-    col, ...)
+    col, llwd, ...)
 }
 \arguments{
   \item{model}{Required. Fitted regression object. Must
@@ -23,14 +23,15 @@
   line for each level, but the user can supply a vector of
   levels if a subset is desired..}
 
-  \item{plotPoints}{TRUE or FALSE: Should the plot include
-  the scatterplot points along with the lines.}
+  \item{plotPoints}{Optional. TRUE or FALSE: Should the
+  plot include the scatterplot points along with the
+  lines.}
 
-  \item{plotLegend}{TRUE or FALSE: Include a default
-  legend. Set to FALSE if use wants to run a different
-  legend command after the plot has been drawn.}
+  \item{plotLegend}{Optional. TRUE or FALSE: Include a
+  default legend. Set to FALSE if use wants to run a
+  different legend command after the plot has been drawn.}
 
-  \item{col}{An optional color vector.  By default, the R's
+  \item{col}{Optional. A color vector.  By default, the R's
   builtin colors will be used, which are "black", "red",
   and so forth.  Instead, a vector of color names can be
   supplied, as in c("pink","black", "gray70").  A
@@ -39,6 +40,13 @@
   can be supplied with this function. Color names will be
   recycled if the plot requires more different colors than
   the user provides.}
+
+  \item{llwd}{An optional vector of line widths used while
+  plotting the lines that represent the values of the
+  factor. This applies only to the lines in the plot. The
+  ... argument will also allow one to pass options that are
+  parsed by plot, such as lwd. That deterimine the
+  thickness of points in the plot.}
 
   \item{...}{further arguments that are passed to plot}
 }

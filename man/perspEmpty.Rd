@@ -2,7 +2,8 @@
 \alias{perspEmpty}
 \title{perspEmpty}
 \usage{
-  perspEmpty(x1, x2, y, x1lab, x2lab, ylab, ...)
+  perspEmpty(x1, x2, y, x1lab = "x1", x2lab = "x2",
+    ylab = "y", x1lim, x2lim, ...)
 }
 \arguments{
   \item{x1}{data for the first horizontal axis, an R
@@ -22,10 +23,17 @@
   \item{ylab}{label for the y (vertical) axis (the one
   called "zlab" inside persp)}
 
+  \item{x1lim}{Optional: limits for x1 axis (should be a
+  vector with 2 elements)}
+
+  \item{x2lim}{Optional: limits for x2 axis (should be a
+  vector with 2 elements)}
+
   \item{...}{further arguments that are passed to persp.
-  Note that persp options xlab, ylab, and zlab are ignored,
-  because this function re-names them x1lab, x2lab, and
-  ylab.}
+  Please note Please remember that y is the vertical axis,
+  but for persp, that is the one I call x2.  Thus
+  dot-dot-dot arguments including xlab, ylab, zlab, xlim,
+  ylim, and zlim are going to be ignored.}
 }
 \value{
   The perspective matrix that is returned by persp
@@ -47,7 +55,7 @@
 }
 \examples{
 x1 <- 1:10
-x2 <- 40:50
+x2 <- 41:50
 y <-  rnorm(10)
 perspEmpty(x1, x2, y)
 res <- perspEmpty(x1, x2, y, ticktype="detailed", nticks=10)

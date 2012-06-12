@@ -1,4 +1,4 @@
-### R code from vignette source '/home/pauljohn/tmp/lyxtmp/lyx_tmpdir.T19446/lyx_tmpbuf0/rockchalk.Rnw'
+### R code from vignette source '/home/pauljohn/tmp/lyxtmp/lyx_tmpdir.T30905/lyx_tmpbuf0/rockchalk.Rnw'
 ### Encoding: UTF-8
 
 ###################################################
@@ -283,19 +283,20 @@ summary(m4rc)
 
 
 ###################################################
-### code chunk number 41: rockchalk.Rnw:983-988
+### code chunk number 41: rockchalk.Rnw:983-989
 ###################################################
 dat2 <- genCorrelatedData(N=400, rho=.4, stde=300, beta=c(2,0.1,0.1,0.2))
-m4linear <- lm (y ~ x1 + x2, data=dat2)
-m4int <- lm (y ~ x1 * x2, data=dat2)
-m4mc <- meanCenter(m4int)
-m4rc <- residualCenter(m4int)
+
+m6linear <- lm (y ~ x1 + x2, data=dat2)
+m6int <- lm (y ~ x1 * x2, data=dat2)
+m6mc <- meanCenter(m6int)
+m6rc <- residualCenter(m6int)
 
 
 ###################################################
 ### code chunk number 42: mcenter10
 ###################################################
-outreg(list(m4linear, m4int, m4mc, m4rc), tight=F, modelLabels=c("Linear", "Interaction","Mean-centered","Residual-centered"))
+outreg(list(m6linear, m6int, m6mc, m6rc), tight=F, modelLabels=c("Linear", "Interaction","Mean-centered","Residual-centered"))
 
 
 ###################################################
@@ -304,26 +305,32 @@ outreg(list(m4linear, m4int, m4mc, m4rc), tight=F, modelLabels=c("Linear", "Inte
 op <- par(no.readonly = TRUE)
 par(mfcol=c(2,2))
 par(mar=c(2,2,2,1))
-plotPlane(m4linear, plotx1="x1", plotx2="x2", plotPoints=FALSE, main="Linear", ticktype="detailed")
-plotPlane(m4int, plotx1="x1", plotx2="x2", plotPoints=FALSE, main="Interaction: Not Centered", ticktype="detailed")
-plotPlane(m4mc, plotx1="x1", plotx2="x2", plotPoints=FALSE, main="Mean-centered", ticktype="detailed")
-plotPlane(m4rc, plotx1="x1", plotx2="x2", plotPoints=FALSE, main="Residual-centered", ticktype="detailed")
+plotPlane(m6linear, plotx1="x1", plotx2="x2", plotPoints=FALSE, main="Linear", ticktype="detailed")
+plotPlane(m6int, plotx1="x1", plotx2="x2", plotPoints=FALSE, main="Interaction: Not Centered", ticktype="detailed")
+plotPlane(m6mc, plotx1="x1c", plotx2="x2c", plotPoints=FALSE, main="Mean-centered", ticktype="detailed")
+plotPlane(m6rc, plotx1="x1", plotx2="x2", plotPoints=FALSE, main="Residual-centered", ticktype="detailed")
 par(op)
 
 
 ###################################################
 ### code chunk number 44: rcenter40
 ###################################################
-m4mcpred <- predict(m4int, newdata=dat2)
-m4rcpred <- predict(m4mc, newdata=dat2)
-m4intpred <- predict(m4int, newdata=dat2)
+dat3 <- centerNumerics(dat2)
+##m6mcpred <- fitted(m6mc) ##
+m6mcpred <- predict(m6mc, newdata=dat3)
+##m6rcpred <- fitted(m6rc) ##
+m6rcpred <- predict(m6rc, newdata=dat3)
+##m6intpred <- fitted(m6int) ##
+m6intpred <- predict(m6int, newdata=dat3)
 op <- par(no.readonly = TRUE)
 par(mfcol=c(1,2))
-plot(m4intpred, m4rcpred, main="", xlab="Predictions of Uncentered Interaction", ylab="Residual-centered Predictions")
-predcor <- round(cor(m4intpred, m4rcpred),3)
+##plot(fitted(m6rc), predict(m6rc, newdata=dat3))
+##plot(fitted(m6mc), predict(m6mc, newdata=dat3))
+plot(m6intpred, m6rcpred, main="", xlab="Predictions of Uncentered Interaction", ylab="Residual-centered Predictions")
+predcor <- round(cor(m6intpred, m6rcpred),3)
 legend("topleft", legend=c(paste("Correlation=", predcor)))
-plot(m4mcpred, m4rcpred, main="", xlab="Mean-centered Predictions", ylab = "Residual-centered Predictions")
-predcor <- round(cor(m4mcpred, m4rcpred),3)
+plot(m6mcpred, m6rcpred, main="", xlab="Mean-centered Predictions", ylab = "Residual-centered Predictions")
+predcor <- round(cor(m6mcpred, m6rcpred),3)
 legend("topleft", legend=c(paste("Correlation=", predcor)))
 par(op)
 

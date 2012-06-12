@@ -46,4 +46,7 @@ plot(x, y, main="Bad Plot Result")
 seqy <- predict(mod1)
 lines(x, seqy, col="green")
 }
+\seealso{
+  \code{pretty}
+}
 

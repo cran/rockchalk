@@ -5,11 +5,18 @@
 \usage{
   plotPlane(model = NULL, plotx1 = NULL, plotx2 = NULL,
     drawArrows = FALSE, plotPoints = TRUE, npp = 20, x1lab,
-    x2lab, ylab, envir = environment(formula(model)), ...)
+    x2lab, ylab, x1floor = 5, x2floor = 5, pch = 1,
+    pcol = "blue", plwd = 0.5, pcex = 1, llwd = 0.3,
+    lcol = 1, llty = 1, acol = "red", alty = 4, alwd = 0.3,
+    alength = 0.1, envir = environment(formula(model)),
+    ...)
 
   \method{plotPlane}{default} (model = NULL, plotx1 = NULL,
-    plotx2 = NULL, drawArrows = F, plotPoints = TRUE,
-    npp = 20, x1lab, x2lab, ylab,
+    plotx2 = NULL, drawArrows = FALSE, plotPoints = TRUE,
+    npp = 20, x1lab, x2lab, ylab, x1floor = 5, x2floor = 5,
+    pch = 1, pcol = "blue", plwd = 0.5, pcex = 1,
+    llwd = 0.3, lcol = 1, llty = 1, acol = "red", alty = 4,
+    alwd = 0.3, alength = 0.1,
     envir = environment(formula(model)), ...)
 }
 \arguments{
@@ -35,6 +42,44 @@
   \item{x2lab}{optional label}
 
   \item{ylab}{optional label}
+
+  \item{x1floor}{Default=5. Number of "floor" lines to be
+  drawn for variable x1}
+
+  \item{x2floor}{Default=5. Number of "floor" lines to be
+  drawn for variable x2}
+
+  \item{pch}{plot character, passed on to the "points"
+  function}
+
+  \item{pcol}{color for points, col passed to "points"
+  function}
+
+  \item{plwd}{line width, lwd passed to "points" function}
+
+  \item{pcex}{character expansion, cex passed to "points"
+  function}
+
+  \item{llwd}{line width, lwd passed to the "lines"
+  function}
+
+  \item{lcol}{line color, col passed to the "lines"
+  function}
+
+  \item{llty}{line type, lty passed to the "lines"
+  function}
+
+  \item{acol}{color for arrows, col passed to "arrows"
+  function}
+
+  \item{alty}{line type, lty passed to the "arrows"
+  function}
+
+  \item{alwd}{line width, lwd passed to the "arrows"
+  function}
+
+  \item{alength}{arrow head length, length passed to
+  "arrows" function}
 
   \item{envir}{environment from whence to grab data}
 
@@ -82,8 +127,14 @@
   for numeric variables, but for factors the modal value is
   used.
 
-  For details, please consult the source code, which is
-  being cleaned up.
+  This function creates an empty 3D drawing and then fills
+  in the pieces. It uses the R functions \code{lines},
+  \code{points}, and \code{arrows}. To allow customization,
+  several parameters are introduced for the users to choose
+  colors and such. These options are prefixed by "l" for
+  the lines that draw the plane, "p" for the points, and
+  "a" for the arrows. Of course, if plotPoints=FALSE or
+  drawArrows=FALSE, then these options are irrelevant.
 }
 \examples{
 library(rockchalk)

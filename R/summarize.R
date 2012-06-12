@@ -14,24 +14,29 @@
 ##' alphaSort = FALSE.
 ##' @param dat a data frame or a matrix
 ##' @param alphaSort If TRUE (default), the columns are re-organized in alphabetical order. If FALSE, they are presented in the original order.
+##' @param sumstat If TRUE (default), include mean, standard deviation, and count of NAs.
 ##' @param digits integer, used for number formatting output.
 ##' @export
 ##' @return a matrix with one column per variable and the rows representing the quantiles as well as the mean, standard deviation, and variance.
 ##' @seealso summarize and summarizeFactors
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
-summarizeNumerics <- function(dat, alphaSort = TRUE,
+summarizeNumerics <- function(dat, alphaSort = TRUE, sumstat = TRUE,
     digits = max(3, getOption("digits") - 3)) {
     if (!is.data.frame(dat))
         dat <- as.data.frame(dat)
     nums <- sapply(dat, is.numeric)
+    if (sum(nums) == 0) return(NULL)
     datn <- dat[, nums, drop = FALSE]
     if (alphaSort)
         datn <- datn[, sort(colnames(datn)), drop = FALSE]
     sumdat <- apply(datn, 2, stats::quantile, na.rm = TRUE)
-    sumdat <- rbind(sumdat, mean = apply(datn, 2, mean, na.rm = TRUE))
-    sumdat <- rbind(sumdat, sd = apply(datn, 2, sd, na.rm = TRUE))
-    sumdat <- rbind(sumdat, var = apply(datn, 2, var, na.rm = TRUE))
-    sumdat <- rbind(sumdat, `NA's` = apply(datn, 2, function(x) sum(is.na(x))))
+    if (sumstat) {
+        sumdat <- rbind(sumdat, mean = apply(datn, 2, mean, na.rm = TRUE))
+        sumdat <- rbind(sumdat, sd = apply(datn, 2, sd, na.rm = TRUE))
+        sumdat <- rbind(sumdat, var = apply(datn, 2, var, na.rm = TRUE))
+        sumdat <- rbind(sumdat, `NA's` = apply(datn, 2, function(x) sum(is.na(x))))
+        sumdat <- rbind(sumdat, N = apply(datn, 2, function(x) length(x)))
+    }
     signif(sumdat, digits)
 }
 NULL
@@ -44,10 +49,11 @@ NULL
 ##' @param y a factor (non-numeric variable)
 ##' @param maxLevels The maximum number of levels that will
 ##' be presented in the tabulation.
+##' @param sumstat If TRUE (default), entropy (diversity) estimate and the number of NAs will be returned.
 ##' @return a vector of named elements including the summary
 ##' table as well as entropy and normed entropy.
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
-summary.factor <- function(y, maxLevels) {
+summary.factor <- function(y, maxLevels = 5, sumstat = TRUE) {
     ## 5 nested functions to be used later
 
     divr <- function(p = 0) {
@@ -72,8 +78,9 @@ summary.factor <- function(y, maxLevels) {
     } else {
         tt <- c(tt[o], `NA's` = sum(nas))
     }
+    if (!sumstat) return(tt)
     props <- prop.table(tbl)
-    tt <- c(tt, entropy = entropy(props), normedEntropy = normedEntropy(props))
+    tt <- c(tt, entropy = entropy(props), normedEntropy = normedEntropy(props), N= length(y))
 }
 NULL
 
@@ -120,6 +127,7 @@ NULL
 ##' @param dat A data frame
 ##' @param maxLevels The maximum number of levels that will be reported.
 ##' @param alphaSort If TRUE (default), the columns are re-organized in alphabetical order. If FALSE, they are presented in the original order.
+##' @param sumstat If TRUE (default), report indicators of dispersion and the number of missing cases (NAs).
 ##' @param digits  integer, used for number formatting output.
 ##' @export
 ##' @return A list of factor summaries
@@ -142,18 +150,16 @@ NULL
 ##' summarizeFactors(dat)
 ##' ##see help for summarize for more examples
 summarizeFactors <-
-    function (dat = NULL, maxLevels = 10, alphaSort = TRUE, digits = max(3,
+    function (dat = NULL, maxLevels = 5, alphaSort = TRUE, sumstat= TRUE, digits = max(3,
               getOption("digits") - 3))
 {
-    if (!is.data.frame(dat))
-        dat <- as.data.frame(dat)
-    factors <- sapply(dat, function(x) {
-        !is.numeric(x)
-    })
+    if (!is.data.frame(dat)) dat <- as.data.frame(dat)
+    factors <- sapply(dat, function(x) {!is.numeric(x)})
+    if (sum(factors) == 0) return(NULL)
     datf <- dat[, factors, drop = FALSE]
     if (alphaSort)
         datf <- datf[, sort(colnames(datf)), drop = FALSE]
-    z <- lapply(datf, rockchalk:::summary.factor, maxLevels = maxLevels)
+    z <- lapply(datf, rockchalk:::summary.factor, maxLevels = maxLevels, sumstat = sumstat)
     attr(z, "class") <- c("factorSummaries")
     z
 }
@@ -234,7 +240,7 @@ NULL
 ##' of summary information, while factors is a list of factor summaries.
 ##' @export
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
-##' @example inst/examples/summarize.R
+##' @example inst/examples/summarize-ex.R
 summarize <- function(dat, ...) {
     dots <- list(...)
     dotnames <- names(dots)

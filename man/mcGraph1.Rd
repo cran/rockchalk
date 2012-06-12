@@ -22,6 +22,10 @@
 
   \item{...}{additional parameters passed to persp}
 }
+\value{
+  The perspective matrix from persp (that can be used with
+  trans3d to add more details in the plot)
+}
 \description{
   This is a set of functions that faciliates the
   examination of multicollinearity. Suppose the "true"

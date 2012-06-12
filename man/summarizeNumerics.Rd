@@ -3,7 +3,7 @@
 \title{Extracts numeric variables and presents an alphabetized summary in
 a workable format.}
 \usage{
-  summarizeNumerics(dat, alphaSort = TRUE,
+  summarizeNumerics(dat, alphaSort = TRUE, sumstat = TRUE,
     digits = max(3, getOption("digits") - 3))
 }
 \arguments{
@@ -12,6 +12,9 @@ a workable format.}
   \item{alphaSort}{If TRUE (default), the columns are
   re-organized in alphabetical order. If FALSE, they are
   presented in the original order.}
+
+  \item{sumstat}{If TRUE (default), include mean, standard
+  deviation, and count of NAs.}
 
   \item{digits}{integer, used for number formatting
   output.}
