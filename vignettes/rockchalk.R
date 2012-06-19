@@ -1,4 +1,4 @@
-### R code from vignette source '/home/pauljohn/tmp/lyxtmp/lyx_tmpdir.T30905/lyx_tmpbuf0/rockchalk.Rnw'
+### R code from vignette source '/home/pauljohn/tmp/lyxtmp/lyx_tmpdir.T10955/lyx_tmpbuf0/rockchalk.Rnw'
 ### Encoding: UTF-8
 
 ###################################################
