@@ -1,4 +1,4 @@
-%% LyX 2.0.3 created this file.  For more info, see http://www.lyx.org/.
+%% LyX 2.0.5.1 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
 \documentclass[english,noae]{article}
 \usepackage{lmodern}
@@ -121,7 +121,7 @@
 
 \begin{document}
 
-\title{Rchaeology}
+\title{Rchaeology: Idioms of R Programming}
 
 
 \author{Paul E. Johnson <pauljohn @ ku.edu>}
@@ -151,15 +151,18 @@ than ``what works.''
 \item It is written with Sweave (using Harrell's Sweavel style) so that
 code examples work.
 \end{enumerate}
+Where did the ``R Style'' section go? It was removed to a separate
+vignette, RStyle, in the rockchalk package.
+
 \tableofcontents{}
 
 <<echo=F>>=
-dir.create("graphics", showWarnings=T)
+dir.create("plots", showWarnings=T)
 @
 
 % In document Latex options:
 \fvset{listparameters={\setlength{\topsep}{0em}}}
-\SweaveOpts{prefix.string=graphics/plot,ae=F,height=4,width=6}
+\SweaveOpts{prefix.string=plots/plot,ae=F,height=4,width=6}
 
 <<Roptions, echo=F>>=
 options(width=100, continue="  ")
@@ -173,637 +176,83 @@ pdf.options(onefile=F,family="Times",pointsize=12)
 @
 
 
-\section{Style Guides (or the Lack Thereof)}
-
-The R Core Team has not been eager to write out an exhaustive formal
-list of criteria that define ``good R style.'' I believe there are
-many different opinions about how to name functions and variables.
-The \emph{R Internals} section ``R coding standards,'' is quite
-brief. Nature abhors a vacuum, as they say. Many others have seen
-fit to try to fill in the gaps (Google R style guide%
-\footnote{\url{http://google-styleguide.googlecode.com/svn/trunk/google-r-style.html}%
-}; Hadley Wickham's Style Guide%
-\footnote{\url{https://github.com/hadley/devtools/wiki/Style}%
-}). In my R group at the University of Kansas, we have sought to do
-the same. Aaron Boulton surveyed these efforts and we developed some
-guidelines for our group. 
-
-It is important to remember the following. Any advice that does not
-come directly from the R Core Team has no ``authority.'' I have
-advice, Hadley has advice, but none of it can be used as a trope with
-which to bludgeon someone who does things differently. 
-
-Another important point is that although the official requirements
-for R code are not stated in all-encompassing detail, there are generally
-accepted guidelines on what code ought to ``look like.'' Code writers
-can make ugly code that ``runs,'' but they can't compel anyone else
-to read it. With few exceptions, coding style is not about making
-things ``work,'' it is about making them work in a way that is understood
-by the widest possible audience.
-
-Generally speaking, according to the R team, what should your code
-look like? Here are the two best answers I have. 
-\begin{enumerate}
-\item Open the source code for R itself, and navigate to the directory src/library/stats/R.
-Open the file ``lm.R''. There's your answer.
-\item Open an R session, run the following commands
-
-
-\begin{lstlisting}
-> lm
-> summary.lm
-> stats:::print.summary.lm
-\end{lstlisting}
-
-
-
-There's your answer again.
-
-\end{enumerate}
-If I'm looking over your shoulder as you write code, I may say ``ach,
-don't do that'' or ``nobody is going to want to look at that.''
-You may say, as many students have, ``but this works!'' And all
-I can say in response is, ``lucky for you, you don't need help fixing
-it. Because nobody will want to help that.'' Sometimes ugly code
-runs, but it is hard to understand, hard to debug. 
-
-From my expertise as an Rchaeologist, I have accumulated a list of
-bits of style advice. These proceed in order, from things that every
-knowledgeable expert will accept, to matters of personal taste that
-are more widely accepted, to things that I like, but nobody else does.
-In the remainder, I'm going to try to help the reader sort between
-my advice and the advice of ``good'' R programmers by assigning
-subjective probabilities of agreement for each of these points. If
-we could draw a random R programmer from the set of programmers that
-I admire, what is the probability that the programmer would agree
-with this advice? Let's call that the ``Subjective and completely
-unscientific personal Estimate of Agreement,'' or SEA.
-\begin{enumerate}
-\item \textbf{(SEA 1.0) Indentation of sections is required.} This is one
-of the few guidelines that is explicitly spelled out in the R documentation
-from the core team. They discourage the use of the tab key for indentation,
-instead suggesting 4 blank spaces. Personally, I prefer 2 spaces,
-and until 2011 that is what I used. The documentation provides a brief
-example of startup code for Emacs so that indentions are set correctly
-at 4 spaces. Otherwise, Emacs will provide 2 spaces while editing
-R files. 
-\item \textbf{(SEA .98) Blank spaces around symbols are required.} Put blank
-spaces on both sides of assignment symbols, equal signs and mathematical
-symbols like ``<'',``{*}'',''+'', and so forth. Put one space
-after commas. This is purely a matter of convention and judgment,
-it does not affect the ``rightness'' of code. But every finished
-program by a well-qualified programmer will do this. While developing
-code, it sometimes helps me to leave spaces inside parentheses and
-squiggly braces. It helps me keep the logic straight. The experts
-never leave those spaces in their final version, however, and I try
-to remember to fix them.
-
-
-I believe 99.8\% of the R programmers that I admire follow those first
-two standards. I believe that 95\% of my favorites adhere to these
-principles for the placement of squiggly braces.
-
-\item \textbf{(SEA .90) Place squiggly braces (``\{'' and ``\}'' carefully.}
-This is partly a matter of appearance, but there are some conditions
-under which code will break if the braces are not placed properly.
-
-
-In R, the opening squiggly braces, ``\{'' should be at the end of
-the line of code, rather than at the beginning of the next line. This
-is recommended with for and if statements. And it is vital in if/else
-statements.
-
-
-In the C language, this is known as the ``K\&R style'' (named after
-\citealp{kernighan_c_1988}). Here is an example of some code that
-follows the guideline, and it works.
-
-
-\begin{lstlisting}
-> x <- 1
-> if (x < 10) {
-  print("hello")
-  } else {
-  print("goodbye")
-  }
-[1] "hello"
-\end{lstlisting}
-
-
-
-Programmers who don't follow this guideline should expect trouble.
-The trouble arrives in two flavors.
-\begin{enumerate}
-\item \textbf{The unexpected else problem}. Sometimes the ``else'' part
-of an if/else statement will be ``broken'' if R does not realize
-that a command is continuing. Try this at the command line. 
-
-
-\begin{lstlisting}
-> if (x < 10) print("hello") 
-[1] "hello" 
-> else print("goodbye") 
-Error: unexpected 'else' in "else"
-\end{lstlisting}
-The else is not understood because it is not tied to the if statement.
-If we keep the braces on a line with the else, the danger is eliminated.
-
-
-This is the problem that the help page ?if is referring to when it
-says, ``In particular, you should not have a newline between \textquoteleft{}\}\textquoteright{}
-and \textquoteleft{}else\textquoteright{} to avoid a syntax error
-in entering a \textquoteleft{}if ... else\textquoteright{} construct
-at the keyboard or via \textquoteleft{}source\textquoteright{}. For
-that reason, one (somewhat extreme) attitude of defensive programming
-is to always use braces, e.g., for \textquoteleft{}if\textquoteright{}
-clauses.'' 
-
-
-This is a confusing area because sometimes code will work if the else
-is ``out in the open'' without any squiggly braces nearby. For example,
-when an if/else is wrapped inside a larger structure--say a function--then
-R will correctly interpret else on a line by itself. This works
-
-
-<<>>=
-myfn <- function(x){
-    if (x < 7)
-    {
-        print("x is less than 7")
-    }
-    else
-    {
-        print("x is excessive")
-    }
-}
-myfn(3)
-myfn(88)
-@
-
-
-The danger, however, is that code in that format cannot be run line-by-line,
-so developing it by running the individual lines will always result
-in failure. The else is disconnected from the if, when each individual
-line is executed in R. 
-
-
-As a result, I believe one is well advised to take the defensive approach
-that is mentioned in the help page and write like so:
-
-
-\begin{lstlisting}
-if (x < 7){
-    print("so far, so good")
-} else {
-    print("this is the "defensive" style mentioned in the R documents")
-}
-\end{lstlisting}
-
-
-\item \textbf{The accidental breakage of else statements}. 
-
-
-It is not necessary to use squiggly braces at all. We can write an
-if/else statement all on one line if we want to.
-
-
-\begin{lstlisting}
-if (x < 7) print("so far, so good") else print("this is else")
-\end{lstlisting}
-
-
-
-This would be legal. In fact, it is the method in which if and else
-are documented in ?if. 
-
-
-We can also ``dangle'' the else at the end of the if statement,
-without any squiggly braces. R knows that there is more coming on
-the next line.
-
-
-\begin{lstlisting}
-if (x < 7) print("so far, so good") else
-print("this is else")
-\end{lstlisting}
-
-
-
-There is some danger in that way of writing. Suppose we want to add
-another command to be performed within the scope of the else command.
-Add something on (carelessly):
-
-
-\begin{lstlisting}
-if (x < 7) print("so far, so good") else
-print("this is else")
-print("and this other thing if else is true")
-\end{lstlisting}
-
-
-
-That's broken. But every programmer I know has done it, at least once.
-The first print will run only when else is true, but the second one
-runs all the time. This will work properly:
-
-
-\begin{lstlisting}
-if (x < 7) print("so far, so good") else{
-    print("this is else")
-    print("and this other thing if else is true")
-}
-\end{lstlisting}
-
-
-
-If we forget the squiggly braces, the logic of the situation will
-not hold up. Thus, especially while developing and testing code, I
-insert squiggly braces even when they are not required. The squiggly
-braces reduce the chance that I will make a mistake while revising
-this code. Perhaps, when a program is done, I'll go back and ``tighten
-it up'' so that I use fewer lines (and won't look so much like a
-novice).
-
-\end{enumerate}
-\end{enumerate}
-
-\subsubsection*{Summary of points 1-3}
-
-The advice so far mostly concerns ``white space'' in code. A programmer's
-text editor, such as Emacs, will generally have built-in functionality
-to correctly indent sections. It may automatically insert spaces.
-It generally will not re-position the squiggly braces for us, however.
-
-There is a recently introduced R function that can do all three of
-these chores. This function, which is called ``tidy.source'', is
-available in the ``formatR'' package \citep{xie_formatr:_2012}.
-The style that is followed in formatR is not ``officially sanctioned,''
-but in my experience, it does very well. I've put it to the test with
-some very ugly tangles of code that students have submitted and it
-works well. One of its very useful features is that it scans the input
-and refuses to re-format when there are coding errors. This helps
-in proof-reading student projects.
-
-The tidy.source function can handle code files, but there is a quick
-``clipboard copy'' feature. Below I've pasted in part of an Emacs
-session. I wrote a badly formatted function myfn, and copied it to
-the clipboard, and then tidy.source() reads the clipboard. It seems
-like magic!. 
-
-\begin{lstlisting}
-> myfn <- function(x){ if (x < 7) {i = 77; print(paste("x is less than 7 but i is", i))} else {print("x is excessive") }} 
-> library(formatR)
-> tidy.source()
-function(x) {
-    if (x < 7) {
-        i = 77
-        print(paste("x is less than 7 but i is", i))
-    } else {
-        print("x is excessive")
-    }
-} 
-\end{lstlisting}
-
-
-By adding the source parameter, a file name can be provided. 
-
-That output is not quite right, in my opinion, because it allows the
-equal sign for assignment of the variable i. However, tidy.source
-has an option to correct that.
-
-\begin{lstlisting}
-> tidy.source(source = "clipboard", replace.assign = TRUE)
-function(x) {
-    if (x < 7) {
-        i <- 77
-        print(paste("x is less than 7 but i is", i))
-    } else {
-        print("x is excessive")
-    }
-} 
-\end{lstlisting}
-
-
-I believe that the style advice to this point will be almost universally
-supported, or at least understood and accepted. There are some variations
-in the code from various projects, but the differences don't generally
-result from a philosophical disagreement with these white-space rules,
-but rather from differences in text editors.
-
-Now we begin to consider some issues that are more subjective.
-\begin{enumerate}[resume]
-\item How to name functions. This is a difficult area because many styles
-are legal, but some are more easily understood. The programmer's experience
-may affect whether code looks ``right'' or not. It is also difficult
-because R syntax has changed over the years, and some things that
-were illegal are now allowed. 
-
-\begin{enumerate}
-\item (.98 SEA) Avoid using names that are already in use, especially common
-ones. Don't write functions named ``rep'' ``seq'' ``lm'', and
-so forth. Don't do this, even though R (since 2.14) has a graceful
-mechanism to tolerate duplicated names. All functions exist within
-packages, so one could run base::rep to get the built-in version of
-rep, while using rep for a package-specific function. Doing that will
-likely to make code very difficult for the experts to read because
-(almost always) they assume ``seq'' is ``seq'' from base. Why
-confuse the R programmers by making a new function ``seq'' that
-does something different? Pick a new name.
-\item (.65 SEA)Use periods to indicate classes, otherwise don't use periods
-in function names. Instead, use camel case to name functions. myFunction
-or getCalculatedValues are better function names than my.thing or
-get.calculated.values. A camel cased function may be ugly in the eyes
-of some, but it will never send the reader searching for a class called
-``calculated.values'' or ``thing''.
-
-
-This is my opinion, but it is not unanimously shared. I bet one-half
-or two-thirds of the R programmers that I admire would agree. As a
-spot check, consider two of my favorite packages, MASS and car. There
-are not many camel case function names in the MASS package \citep{venables_modern_2002},
-which is distributed with R. The preferred style in MASS is to give
-functions brief, all lower case letters, such as ``boxcox.'' Contrast
-that with the car package \citep{fox_r_2011}, which is very widely
-used, which has a similar function called ``boxCox''. Some time
-ago, Professor Fox systematically revised car to change the period-style
-function names to camel case. If those two packages are counterbalancing
-each other in my mind (for and against camel case functions), the
-leading packages for mixed effects models, nlme \citep{pinheiro_nlme:_2012}
-and lme4 \citep{bates_lme4:_????}, weigh in on ``my side''. 
-
-
-Why would a period in a function name be distracting to some readers?
-Some readers are trained in Java or C++. In those languages, the period
-is a ``connective'' symbol that can join an object name with its
-variables or member functions. In Java, one would write myThing.x
-to extract a variable x from an object myThing. When I read R code,
-I am still (after 10 years) distracted by periods in function names
-for this reason.
-
-
-In R, the period is not used to extract variables, instead we write
-(in S3) myThing\$x or (in S4) myThing@x. However, in R we do use the
-period as connective tissue between a generic function name and the
-type of object to which it must be applied. The ``full name'' of
-a function will often include a suffix, even though the R interface
-tries to conceal those suffixes from the readers. Observe the output
-from the methods function, which lists the class-specific methods,
-but indicates that they are not exported for easy use. 
-
-
-\begin{lstlisting}
-> methods("confint")
-[1] confint.default confint.glm*    confint.lm*     confint.nls*   
-
-   Non-visible functions are asterisked
-> methods("summary")
- [1] summary.aov             summary.aovlist         summary.aspell*        
- [4] summary.connection      summary.data.frame      summary.Date           
- [7] summary.default         summary.ecdf*           summary.factor         
-[10] summary.glm             summary.infl            summary.lm             
-[13] summary.loess*          summary.manova          summary.matrix         
-[16] summary.mlm             summary.nls*            summary.packageStatus* 
-[19] summary.PDF_Dictionary* summary.PDF_Stream*     summary.POSIXct        
-[22] summary.POSIXlt         summary.ppr*            summary.prcomp*        
-[25] summary.princomp*       summary.srcfile         summary.srcref         
-[28] summary.stepfun         summary.stl*            summary.table          
-[31] summary.tukeysmooth*   
-   Non-visible functions are asterisked
-> methods("predict")
- [1] predict.ar*                predict.Arima*            
- [3] predict.arima0*            predict.glm               
- [5] predict.HoltWinters*       predict.lm                
- [7] predict.loess*             predict.mlm               
- [9] predict.nls*               predict.poly              
-[11] predict.ppr*               predict.prcomp*           
-[13] predict.princomp*          predict.smooth.spline*    
-[15] predict.smooth.spline.fit* predict.StructTS*         
-   Non-visible functions are asterisked
-\end{lstlisting}
-
-
-
-Observe that when the user runs ``confint(myThing)'' or ``summary(myThing)'',
-the R system has to select one particular method with which to get
-the work done. R checks for the class of myThing. If the class is
-``glm'', and there is a function confint.glm, summary.glm, or so
-forth, then those specific methods are used to answer the user's request.
-If there is no class-specific method available, then the work is sent
-to confint.default or summary.default. 
-
-
-Many R commands create new objects of particular types that require
-specialized processing. The command
-
-
-\begin{lstlisting}
-m1summ <- summary(m1)
-\end{lstlisting}
-
-
-
-creates a new object from the class ``summary.lm''. And in order
-to show that result to the user, the R system uses a function called
-``print.summary.lm,'' but the user would ordinarily not notice that
-a specialized print function exists. The same result is produced by
-these three commands:
-
-
-\begin{lstlisting}
-m1summ
-print(m1summ)
-stats:::print.summary.lm(m1summ)
-\end{lstlisting}
-
-
-
-The first two are equivalent because typing an object's name is always
-understood as a request for a print function. The R design discourages
-us from using the last approach. We are supposed to let the R system
-select methods to match the classes of the objects being processed.
-That's why the print.summary.lm function is not exported from the
-stats package, and thus it is necessary to use the three colons when
-I want to access it directly. 
-
-
-The whole point is that, inside the R system, the periods are not
-just punctuation. They may indicate the class type of the object that
-is being received. Thus, I avoid gratuitous periods in function names. 
-
-
-Admittedly, many programmers, especially the ones who are trained
-in C++, find camel cased functions to be very ugly. On the other hand,
-Java and Objective-C programmers are used to them, and may even find
-them attractive. But the key point is that periods are distracting. 
-
-
-It seems to me that new functions introduced in R tend to have either
-camel case or underscores for punctuation. Run ?get\_all\_vars. That's
-an eye-opener. Some parts of R, especially the old parts, were developed
-before ``object oriented'' programming had come to the forefront
-and, as a result, they do not comply with this advice. However, newer
-functions generally do. Observe ?browseVignettes. If I knew how to
-use SVN very well, I'd download the R-devel code and then list all
-functions by the date on which they were introduced. I will bet a
-cup of coffee with anybody that the probability of camel cases is
-higher in the more recent commits. I also would bet that the chance
-of finding a period in a function name for purely punctuation reasons
-is almost zero in the most recent commits. Instead of periods, we
-find either short lower case names, camel case, or punctuation with
-underscores. I hasten to admit that the underscores look really strange
-to me!
-
-\end{enumerate}
-\item \textbf{How to name variables} (and objects and other things you need
-to keep track of).
-
-\begin{enumerate}
-\item (1.0 SEA) Officially, R variable names must begin with an alphabetical
-character and must include only letters, numbers and the symbols ``\_'',
-``-'', and ``.''. They must not include ``{*}'',''?'',''!'',''\&''
-or other special symbols. 
-\item (1.0 SEA) Never name a variable T or F. 
-
-
-This is one thing that almost everybody (99.9\%) will agree with.
-NEVER name variables ``T'' or ``F''. These are too easily mistaken
-for TRUE and FALSE values. Since R uses TRUE and FALSE as vital elements
-of almost all commands and functions, and since users are allowed
-to abbreviate those as T or F, a horrible confusion can develop if
-variables are named T or F.
-
-\item (.75 SEA) Avoid declaring variables that have the same names as widely
-used functions. In 2001, I created a variable ``rep'' (for Republican
-party members) and nothing worked in my program. In exasperation,
-I wrote to the r-help list, and learned that I had obliterated R's
-own function rep with my variable. That kind of mistake was common.
-In 2002 or so, the R system was revised so that user-declared variables
-cannot ``step on'' R system functions. Nevertheless, it is disconcerting
-to me (probably others) when users create variables with names like
-``lm'', ``rep'', ``seq'', and so forth. Its distracting; its
-confusing.
-\item (0.40) I avoid underscores in variable names. To understand why, please
-understand the history of S and R. At one time, the underscore ``\_''
-was used as the assignment symbol. That's right, instead of ``<-'',
-we used to write
-
-
-\begin{lstlisting}
-y _ x + x^2
-\end{lstlisting}
-
-
-
-The underscore for assignment was allowed, but discouraged, when I
-started using R. In those days, R functions that imported data would
-translate underscores into other symbols. Underscore for assignment
-has since been forbidden altogether. A while after that, the underscore
-was allowed in variable and function names. Because of that history,
-R veterans may still consider it jarring if your variables include
-underscores.
-
-\item (0.40 SEA) Use long names for infrequently used variables. If a variable
-is going to be used twice, we might as well be verbose about it. ``xlog''
-is better than ``xl'', if we are only writing it a few times. If
-we are going to use a name 50 times in a 5 line program, we should
-choose a short one. For abbreviations, include a comment to remind
-the reader what the thing stands for.
-\item (0.10 SEA) This is my personal naming scheme, nobody else knows about
-it, unless they have heard about it from me. But they might like it
-if they think it over. I suggest we use an alphabetical scheme for
-naming related things so that they always stay together in the workspace.
-As seen by ls(), the related bits should always be together. From
-now on, when I work with a variable named ``x'', then all transformations
-will begin with ``x''. I will use ``xlog'' rather than ``logx''
-and so forth.
-\end{enumerate}
-
-Example 1. Create a numeric variable, recode it as a factor, then
-create the ``dummy'' variables that correspond.
-
-
-<<>>=
-x <- runif(1000, min = 0, max = 100)
-xf <- cut(x, breaks = c(-1, 20, 50, 80, 101), labels = c("cold", "luke", "warm", "hot"))
-xfdummies <- contrasts(xf, contrasts = FALSE )[xf,]
-colnames(xfdummies) <-  paste("xf", c("cold", "luke", "warm", "hot"), sep="")
-rownames(xfdummies) <- names(x)
-dat <- data.frame(x, xf, xfdummies)
-head(dat)
-@
-
-
-Example 2. Estimate a regression, calculate the summary, extract summary
-statistics.
-
-
-<<echo=T>>=
-set.seed(12345)
-x1 <- rnorm(200, m = 300, s = 140)
-x2 <- rnorm(200, m = 80, s = 30)
-y <- 3 + 0.2 * x1 + 0.4 * x2 + rnorm(200, s=400)
-dat <- data.frame(x1, x2, y); rm(x1,x2,y)
-m1 <- lm (y ~ x1 + x2, data = dat)
-m1summary <- summary(m1)
-(m1se <- m1summary$sigma)
-(m1rsq <- m1summary$r.squared)
-(m1coef <- m1summary$coef)
-(m1aic <- AIC(m1))
-@
-
-
-Example 3. Run a regression, collect mean-centered and residual centered
-variants of it, summarize each, and compare them.
-
-
-<<ps10, fig=T, include=F, height=5, width=9>>=
-library(rockchalk)
-dat$y2 = with(dat, 3 + 0.02 * x1 + 0.05 * x2 + 2.65 * x1 *x2 + rnorm(200, s=4000))
-par(mfcol=c(1,2))
-m1 <- lm(y2 ~ x1 + x2, data = dat)
-m1i <- lm(y2 ~ x1 * x2, data = dat)
-m1ps <- plotSlopes(m1, plotx = "x1", modx = "x2")
-m1ips <- plotSlopes(m1i, plotx = "x1", modx = "x2")	
-@
-
-\end{enumerate}
-\includegraphics[width=6.5in]{graphics/plot-ps10}
-
-<<results=tex>>=
-m1imc <- meanCenter(m1i)
-m1irc <- residualCenter(m1i)
-outreg(list(m1, m1i, m1imc, m1irc), tight = TRUE, modelLabels = c("Linear", "Interaction", "Mean Centered", "Residual Centered"))
-@
-
-
-\section{R Idioms. What's In R Guts?}
+\section{Introduction: R Idioms.}
+
+This vignette is about the R idioms I have learned while working on
+the rockchalk package. At the current time, I don't understand all
+of the R idioms that are common in the advanced R programmers' conversation,
+but I have a grasp on many of the staples that I have noticed before,
+and not understood. 
+
+There is a language gap between an R user and an R programmer. Users
+write ``scripts'' that use functions from R packages. Users don't
+write (many) functions. Users don't make packages. And many users
+are happy to keep it that way. For users who want to become programmers,
+there is usually a harsh awakening. R for development is a different
+language. Well, that's wrong. It is a different dialect. 
+
+A transitional R user will have to learn a lot of terminology and
+undergo a change of paradigm. There are resources available! Everybody
+should subscribe to the email lists for the R project (\url{http://www.r-project.org/mail.html}),
+especially r-help (for user questions) and r-devel. Rchaeologically
+speaking, that is the native habitat of the R programmers. There is
+also a burgeoning collection of blogs and Web forums, perhaps most
+notably the R section on StackExchange (\url{http://stackoverflow.com/questions/tagged/r}).
+Excellent books have been published. As an Rcheologist, I am drawn
+to the books that are written by the R insiders. \emph{S Programming},
+by William Venables and Brian Ripley (2000), is a classic. Books by
+pioneering developers Robert Gentleman, \emph{R Programming for Bioinformatics}
+(2009), and John Chambers, \emph{Software for Data Analysis} (2009),
+are, well, awesome. In 2012, I started teaching R programming using
+Norman Matloff's, \emph{The Art of R Programming} (2012), which I
+think is great and recommend strongly (even though Professor Matloff
+is not one of the R Core Team members, so far as I know). 
+
+There are now three types of object-oriented programming in R (S3,
+S4, and reference classes) and the programmer is apparently free to
+select among them without prejudice. The best brief explanation of
+S3 that I've found is in Friedrich Leisch's brief note about R packaging,
+``Creating R Packages: A Tutorial'' (2009). One should be mindful
+of the fact that R is provided with several manuals, one of which
+is the \emph{R Language Definition}. I find that one difficult to
+understand, and I usually can't understand it until I search through
+the R source code and packages for usage examples.
+
+
+\section{do.call(), eval(), substitute(), formula().}
+
+If the transitional programmer understands these four functions, R
+programming will become much more understandable.
 
 
 \subsection{Rewriting Formulas. My Introductory Puzzle.}
 
 On May 29, 2012, I was working on a regression problem in the rockchalk
-package. The functions like meanCenter and residualCenter receive
-a fitted regression model and transform some variables. The non-centered
-variable ``x1'' is renamed to ``x1c'', and then the regression
-is executed with the new data. Thus it is necessary to take something
-that is fitted with a formula like y \textasciitilde{} x1{*}x2, and
-then re-fit with a formula like y \textasciitilde{} x1c{*}x2c. In
-the end, the answer is a single, if complicated line of code that
-speaks volumes about the way the advanced R user interacts with the
-system.
+package. I have a number of functions that receive elementary regressions
+and then change them. 
 
-My first effort used R's update function. It is fairly easy to replace
-x1 with x1c in the formula, but not when x1 is logged or otherwise
-transformed. In exasperation, I wrote to r-help and described the
-problem with this working example. 
+The functions meanCenter() and residualCenter() receive a fitted regression
+model, transform some variables, and then fit a new regression. They
+have to change the data used by the regressions, and they have to
+revise the regression formulae. The non-centered variable ``x1''
+is has to be centered to create ``x1c''. The original formula y
+\textasciitilde{} x1{*}x2 must be replaced with y \textasciitilde{}
+x1c{*}x2c. I found this to be a very complicated problem with a very
+satisfying answer. 
+
+My first effort used R's update function. That is the most obvious
+approach, it is the one that was recommended on r-help. I learned
+that update() is not sufficient. It is fairly easy to replace x1 with
+x1c in the formula, but not when x1 is logged or otherwise transformed.
+Here is the runable example code that demonstrates the problem. 
 
 <<include=T, results=hide>>=
-dat <- data.frame(x1=rnorm(100,m=50), x2=rnorm(100,m=50),
-x3=rnorm(100,m=50), x4 = rnorm(100, m=50), y=rnorm(100))
-m2 <- lm(y ~ log(x1) + x2*x3, data=dat)
+dat <- data.frame(x1 = rnorm(100, m=50), x2 = rnorm(100, m=50),
+  x3 = rnorm(100, m = 50), x4 = rnorm(100, m=50), y = rnorm(100))
+m2 <- lm(y ~ log(x1) + x2*x3, data = dat)
 suffixX <- function(fmla, x, s){
-upform <- as.formula(paste(". ~ .", "-", x, "+", paste(x, s, sep=""), sep=""))
-update.formula(fmla, upform)
+    upform <- as.formula(paste(". ~ .", "-", x, "+", paste(x, s, sep=""), sep=""))
+    update.formula(fmla, upform)
 }
 newFmla <- formula(m2)
 newFmla
@@ -823,23 +272,9 @@ y ~ log(x1) + x3 + x2c + x2:x3
 > suffixX(newFmla, "x1", "c")
 y ~ log(x1) + x2 + x3 + x1c + x2:x3
 \end{lstlisting}
-It gets the target if the target is all by itself, but not otherwise.
 
-While struggling with this, I noticed this really interesting thing.
-The object ``newFmla'' is not just a text string. It is actually
-a list. Its parts can be probed recursively, to eventually reveal
-all of the individual pieces:
 
-<<newFla10>>=
-newFmla
-newFmla[[1]]
-newFmla[[2]]
-newFmla[[3]]
-newFmla[[3]][[2]]
-newFmla[[3]][[2]][[2]]
-@
-
-How could I put that information to use? I asked the members of r-help.
+I asked the members of r-help.
 
 Lately I've had very good luck with r-help. Gabor Grothendieck wrote
 an answer to r-help on May 29, 2012, ``Try substitute:''
@@ -850,27 +285,46 @@ y ~ log(x1c) + x2 * x3
 \end{lstlisting}
 
 
-Bingo. 
+Problem solved, in a single line. 
 
 That's quintessential R. It packs together a half-dozen very deep
-thoughts that I will try to explain in the rest of this section. It
-has most of the essential secrets of R's guts, laid out in a single
-line. It has do.call, substitute, it interprets a formula as a list,
-and it shows that every command in R is, when it comes down to brass
-tacks, a list. 
+thoughts. It has most of the essential secrets of R's guts, laid out
+in a single line. It has do.call(), substitute(), it interprets a
+formula as a list, and it shows that every command in R is, when it
+comes down to brass tacks, a list. 
 
 I would like to take up these separate pieces in order.
 
 
-\subsection{do.call and eval}
+\subsection{A Formula Object is a List.}
+
+While struggling with this, I noticed this really interesting thing.
+The solution depends on it. The object ``newFmla'' is not just a
+text string. It prints out as if it were text, but it is actually
+an R list object. Its parts can be probed recursively, to eventually
+reveal all of the individual pieces:
+
+<<newFla10>>=
+newFmla
+newFmla[[1]]
+newFmla[[2]]
+newFmla[[3]]
+newFmla[[3]][[2]]
+newFmla[[3]][[2]][[2]]
+@
+
+How could I put that information to use? Read on.
+
+
+\subsection{do.call() and eval()}
 
 In my early work as an Rchaeologist, I had noticed eval and do.call,
 but did not understand their significance in the mind of the R programmers.
 Whenever difficult problems arose in r-help, the answer almost invariably
-involved do.call or eval. Maybe both. 
+involved do.call or eval. 
 
 
-\subsubsection{do.call}
+\subsubsection{do.call()}
 
 Let's concentrate on do.call first. The syntax is like this
 
@@ -904,9 +358,9 @@ all.equal(m1, m2)
 The object regargs is a list of arguments that R can understand when
 they are supplied to the lm function. 
 
-do.call is a powerful, mysterious symbol. It holds flexibility; we
-can calculate commands and then run them. I first needed it when we
-had a simulation project that ran very slowly when confronted with
+do.call() is a powerful, mysterious symbol. It holds flexibility;
+we can calculate commands and then run them. I first needed it when
+we had a simulation project that ran very slowly when confronted with
 medium or large sized problems. There's a writeup in the working examples
 distributed with rockchalk called stackListItems-01.R. I was using
 rbind over and over to join the results of simulation runs. Basically,
@@ -920,8 +374,8 @@ for (i in 1:10000){
 \end{lstlisting}
 
 
-That will call rbind 10000 times. I had not realized that rbind is
-a comparatively time-consuming task because it accesses a new chunk
+That will call rbind() 10000 times. I had not realized that rbind()
+is a comparatively time-consuming task because it accesses a new chunk
 of memory each time it is run. On the other hand, we could collect
 those results in a list, then we can call rbind one time to smash
 together all of the results.
@@ -967,13 +421,13 @@ eureka! A call object is a quoted command plus a list of arguments
 for that command. 
 
 
-\subsubsection{eval}
+\subsubsection{eval()}
 
 Where does eval fit into the picture? As far as I can tell, do.call(\textquotedbl{}rbind\textquotedbl{},
-mylist) is basically the same as eval(call(``rbind'', mylist). The
-call function manufactures the call object, the eval function tells
-it to do its work. I think of do.call as a contraction of ``eval''
-and ``call''. eval can handle evaluates any valid R expression,
+mylist) is basically the same as eval(call(``rbind'', mylist)).
+The call() function manufactures the call object, the eval() function
+tells it to do its work. I think of do.call() as a contraction of
+``eval'' and ``call''. eval() evaluates any valid R expression,
 and a call is a valid expression. I'm leaving the question of ``what
 is an expression'' to a later time.
 
@@ -1049,15 +503,15 @@ The point here is that the pieces of an ordinary use command can be
 separated and put back together again before the work of doing calculations
 begins. 
 
-Now we turn back to the main theme. How is eval used in functions?
+Now we turn back to the main theme. How is eval() used in functions?
 Some functions take a lot of arguments. They need to pick some arguments,
 and send those to some functions. 
 
-Let's consider the lm code in some detail. Suppose a user submits
-a command like ``lm(y \textasciitilde{} x, data=dat, x = TRUE, y
-= TRUE).'' Inside lm, it is necessary to pick through those arguments
+Let's consider the lm() code in some detail. Suppose a user submits
+a command like ``lm(y \textasciitilde{} x, data = dat, x = TRUE,
+y = TRUE).'' Inside lm(), it is necessary to pick through those arguments
 and then pass them off to other functions in order to build the data
-matrix and so forth. Here are the first lines of the lm function
+matrix and so forth. Here are the first lines of the lm() function
 
 \begin{lstlisting}[breaklines=true,numbers=left,numberstyle={\footnotesize},tabsize=4]
 lm <- function (formula, data, subset, weights, na.action, method = "qr",
@@ -1134,12 +588,12 @@ users to input whatever they want for a formula and data, and then
 lm takes what it needs to build a model frame.
 
 
-\subsection{substitute}
+\subsection{substitute()}
 
 Most R users I know have not used substitute, except as it arises
 in the plotmath. In the context of plotmath, the problem is as follows.
 Plotmath causes the R plot functions to convert expressions into mathematical
-symbols in a way this is reminiscent of \LaTeX{}. For example, a command
+symbols in a way that is reminiscent of \LaTeX{}. For example, a command
 like this:
 
 \begin{lstlisting}
@@ -1187,7 +641,7 @@ not so off putting. But ``parse tree''? Really?
 This is one of those points at which being an Rchaeologist has real
 benefits. The manual page gives us some insights into the R programmer,
 and it is his or her view of his or her own actions, but it doesn't
-necessarily speak to how we should understand substitute. For me,
+necessarily speak to how we should understand substitute(). For me,
 the only workable approach is to build up a sequence of increasingly
 complicated examples. 
 
@@ -1206,15 +660,16 @@ that already exist. Consider:
 substitute(expression(x1 + x2 + log(x1) + x3), sublist)
 @
 
-The special things to note are that the substitution 1) leaves other
-variables alone (since they are not named in sublist) and 2) it finds
-all valid use of the symbols x1 and x2 and replaces them.
+Note that the substitution 1) leaves other variables alone (since
+they are not named in sublist) and 2) it finds all valid use of the
+symbols x1 and x2 and replaces them.
 
 This isn't quite what I wanted, however, because the strings have
-been inserted into the middle of my expression. I just want symbols.
-It turns out that the functions as.name and as.symbol are exactly
-the same, and usually I use as.symbol, but in Gabor's answer to my
-question, as.name is used, so I will illustrate that here.
+been inserted into the middle of my expression. I don't want text.
+I just want symbols. It turns out that the functions as.name() and
+as.symbol() are exactly the same, and usually I use as.symbol() because
+that name has more intuition for me, but in Gabor's answer to my question,
+as.name() is used. Using as.name(), so I will illustrate that.
 
 <<>>=
 sublist <- list(x1 = as.name("alphabet"), x2 = as.name("zoology"))
@@ -1246,7 +701,7 @@ colnames(dat)
 @
 
 While used interactively, this is convenient, but it is a bit tedious
-because we have to create dat first, and then set the names. The setNames
+because we have to create dat first, and then set the names. The setNames()
 function allows us to do this in one shot. I'll paste the data frame
 creating commands and the name vector in for a first try:
 
@@ -1258,7 +713,7 @@ head(dat2, 2)
 In order to make this more generally useful, the first step is to
 take the data-frame-creating code and set it into an expression that
 is not immediately evaluated (that's datcommand). When I want the
-data frame to be created, I use eval, and then the newnames vector
+data frame to be created, I use eval(), and then the newnames vector
 is put to use. 
 
 <<>>=
@@ -1282,9 +737,9 @@ setNames(list(as.name("x1c")), "x1")))
 Consider this from the inside out. 
 \begin{enumerate}
 \item as.name(``x1c'') is an R symbol object,
-\item list(as.name(``x1c'')) is an list with just one object, which is
+\item list(as.name(``x1c'')) is a list with just one object, which is
 that symbol object. 
-\item Use setNames. The object has no name! We would like to name it ``x1''. 
+\item Use setNames(). The object has no name! We would like to name it ``x1''. 
 \end{enumerate}
 It is as if we had run the command list(x1 = x1c). The big difference,
 of course, is that this way is much more flexible because we can calculate
@@ -1293,7 +748,7 @@ replacements.
 
 \subsection{The Big Finish}
 
-In the meanCenter function in rockchalk, some predictors are mean-centered
+In the meanCenter() function in rockchalk, some predictors are mean-centered
 and their names are revised. A variable named ``age'' becomes ``agec''
 or ``x1'' becomes ``x1c''. So the user's regression formula that
 uses variables agec or x1 must be revised. This is a function that
@@ -1301,12 +756,12 @@ takes a formula ``fmla'' and replaces a symbol xname with newname.
 
 \begin{lstlisting}
 formulaReplace <- function(fmla, xname, newname){ 
-do.call("substitute", list(fmla, setNames(list(as.name(newname)), xname))) 
+    do.call("substitute", list(fmla, setNames(list(as.name(newname)), xname))) 
 }
 \end{lstlisting}
 
 
-This is put to use in meanCenter. Suppose a vector of variable names
+This is put to use in meanCenter(). Suppose a vector of variable names
 called nc (stands for ``needs centering'') has already been calculated.
 The function std creates a centered variable.
 
@@ -1323,6 +778,173 @@ for (i in seq_along(nc)){
 
 If one has a copy of rockchalk 1.6 or newer, the evidence of the success
 of this approach should be evident in the output of the command example(meanCenter). 
+
+
+\section{Function Arguments (Stub). }
+
+While surveying R packages, we see many different styles for handling
+arguments. This section will discuss some pros and cons of various
+styles.
+
+How much argument checking is required? 
+
+Is it better to default arguments to NULL?
+
+myfn <- function(x = NULL, y = NULL)
+
+
+\subsection{Make Re-Usable Tools (Rather than Cutting and Pasting)}
+
+We seek concise solutions that are generalizable. It is almost never
+right to cut and paste and then make minor edits in each copy to achieve
+particular purposes. This advice goes against the grain of the graduate
+students that I work with. They will almost always use cut and paste
+solutions. 
+
+Here is an example of the problem. A person needed ``dummy variables''.
+The code had several pages like this:
+
+\begin{lstlisting}
+  if(setcorr == 1){
+        corr.10 <-1
+        corr.20 <-0
+        corr.30 <-0
+        corr.40 <-0
+        corr.50 <-0
+        corr.60 <-0
+        corr.70 <-0
+        corr.80 <-0
+    }
+    if(setcorr == 2){
+        corr.10 <-1
+        corr.20 <-1
+        corr.30 <-0
+        corr.40 <-0
+        corr.50 <-0
+        corr.60 <-0
+        corr.70 <-0
+        corr.80 <-0
+    }
+    if(setcorr == 3){
+        corr.10 <-1
+        corr.20 <-1
+        corr.30 <-1
+        corr.40 <-0
+        corr.50 <-0
+        corr.60 <-0
+        corr.70 <-0
+        corr.80 <-0
+    }
+\end{lstlisting}
+
+
+Well, that's understandable, but a little bit embarrassing. I asked
+``why do you declare these separate variables, why not make a vector?''
+and ``can't you see a more succinct way to declare those things?''
+The answer is ``we do it that way in SAS'' or ``this runs''. 
+
+If the mission is to create a vector with a certain number of 1's
+at the beginning, surely either of these functions would be better:
+
+<<>>=
+biVec1 <- function(n = 3, n1s = 1) {
+    c(rep(1, n1s), rep(0, n - n1s))
+}
+
+biVec2 <- function(n = 3, n1s = 1){
+    x <- numeric(length = n)
+    x[1:n1s] <- 1
+    x
+}
+
+(corr <- biVec1(n = 8, n1s = 3))
+(corr <- biVec2(n = 8, n1s = 3))
+@
+
+The cut and paste way is not wrong, exactly. Its tedious. 
+
+I think any reasonable user should want a vector, rather than the
+separate variables. But suppose the user is determined, and really
+wants the individual variables named corr.10, corr.20, and so forth.
+We can re-design this so that those variables will be sitting out
+in the workspace after the function is run. Read help(``assign'')
+and try
+
+<<>>=
+biVec3 <- function(n = 3, n1s = 1) {
+    X <- c(rep(1, n1s), rep(0, n - n1s))
+    xnam <- paste("corr.", 1:8, "0", sep = "")
+    for(i in 1:n) assign(xnam[i], X[i], envir = .GlobalEnv) 
+}
+ls()
+biVec3(n = 8, n1s = 3)
+ls()
+@
+
+I don't think most people will actually want that kind of result,
+but if they do, there is a way to get it.
+
+If we want to turn biVec1() or biVec2() into general purpose functions,
+we need to start thinking about the problem of unexpected user input.
+Notice what happens if we ask for more 1's than the result vector
+is supposed to contain:
+
+\begin{lstlisting}
+> biVec1(n = 3, n1s = 7)
+Error in rep(0, n - n1s) (from #2) : invalid 'times' argument
+> biVec2(n = 3, n1s = 7)
+[1] 1 1 1 1 1 1 1
+\end{lstlisting}
+
+
+Perhaps I prefer biVec1() because it throws an error when there is
+unreasonable input, while biVec2() returns a longer vector than expected
+with no error. 
+
+If the user mistakenly enters non-integers, neither function generates
+an error, and they give us unexpected output.
+
+<<>>=
+biVec1(3.3, 1.8)
+biVec2(3.3, 1.8)
+@
+
+To my surprise, it is not an easy thing to ask a number if it is a
+whole number (see help(``is.integer'')). For that, we introduce
+a new function, is.wholenumber(), and put it to use in our new and
+improved function
+
+<<>>=
+is.wholenumber <- function(x, tol = .Machine$double.eps^0.5){
+ abs(x - round(x)) < tol
+}
+
+biVec1 <- function(n = 3, n1s = 1) {
+    if(!(is.wholenumber(n) & is.wholenumber(n1s)))
+        stop("Both n and n1s must be whole numbers (integers)")
+    if(n1s > n)
+        stop("n must be greater than or equal to n1s")
+    c(rep(1, n1s), rep(0, n - n1s))
+}
+@
+
+In all of the test cases I've tried, that works, although the real
+numbers 7.0 and 4.0 are able to masquerade as integers.
+
+\begin{lstlisting}
+> biVec1(3, 7)
+Error in biVec1(3, 7) (from #4) : n must be greater than or equal to n1s
+> biVec1(7, 3)
+[1] 1 1 1 0 0 0 0
+> biVec1(3.3, 4.4)
+Error in biVec1(3.3, 4.4) (from #2) : 
+  Both n and n1s must be whole numbers (integers)
+> biVec1(7.0, 4.0)
+[1] 1 1 1 1 0 0 0
+> biVec1(7.0, 4.0)
+[1] 1 1 1 1 0 0 0
+\end{lstlisting}
+
 
 
 \section{Do This, Not That (Stub)}
@@ -1353,7 +975,38 @@ performance
 
 Balance time spent optimizing code versus time spent running program.
 
-\bibliographystyle{apsr}
+
+\section{Suggested Chores}
+
+I suggest the would be programmer should take on some basic challenges. 
+\begin{enumerate}
+\item Try to create a generic function and several methods to handle classes
+of various types. If the term ``generic function'' and ``method''
+cause disorientation, that means the reader is a user, not a programmer
+yet. 
+\item Consider developing a routine (or package) for statistical estimation
+or presentation. Find several R packages and compare the R code in
+them. Let me know if you agree with me about these points.\end{enumerate}
+\begin{itemize}
+\item Good code is compartmentalized. Separate pieces of work are handled
+by separated functions and results are returned in a well organized
+way.
+\item Functions should not be HUGE. 
+
+
+The components of a project should be small enough so that we can
+comprehend them. Generally speaking, if we are reading code and we
+come to a line that uses a variable that we cannot find on the screen,
+that's a problem. I used to correspond with a programmer at the University
+of Michigan who said he began to feel uncomfortable when a function
+filled up the entire terminal screen. 
+
+\item People who copy and paste sections over and over in order to handle
+slightly different cases are causing trouble for themselves and others.
+They should think harder on ways to separate that work into re-usable
+functions. 
+\end{itemize}
+\bibliographystyle{chicago}
 \bibliography{rockchalk}
 
 \end{document}

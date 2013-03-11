@@ -57,6 +57,9 @@
 ##' @param alty line type, lty passed to the "arrows" function
 ##' @param alwd line width, lwd passed to the "arrows" function
 ##' @param alength arrow head length, length passed to "arrows" function
+##' @param linesFrom object with information about "highlight" lines to be added to the 3d plane (output from plotCurves or plotSlopes)
+##' @param lfcol colors for the linesFrom highlight lines
+##' @param lflwd line widths for linesFrom highlight lines
 ##' @param envir environment from whence to grab data
 ##' @param ... additional parameters that will go to persp
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
@@ -65,17 +68,36 @@
 ##' @seealso \code{\link[graphics]{persp}}, \code{\link[scatterplot3d]{scatterplot3d}}, \code{\link[HH]{regr2.plot}}
 ##' @example inst/examples/plotPlane-ex.R
 
-plotPlane <- function(model = NULL,  plotx1 = NULL, plotx2 = NULL, drawArrows = FALSE, plotPoints = TRUE, npp = 20, x1lab, x2lab, ylab, x1floor = 5, x2floor = 5,  pch = 1, pcol = "blue", plwd = 0.5, pcex = 1, llwd = 0.3, lcol = 1, llty = 1, acol = "red", alty = 4, alwd = 0.3, alength = 0.1, envir = environment(formula(model)),  ...){
-  UseMethod("plotPlane")
+plotPlane <-
+function(model = NULL,  plotx1 = NULL, plotx2 = NULL, drawArrows = FALSE,
+         plotPoints = TRUE, npp = 20, x1lab, x2lab, ylab, x1floor = 5,
+         x2floor = 5,  pch = 1, pcol = "blue", plwd = 0.5, pcex = 1,
+         llwd = 0.3, lcol = 1, llty = 1, acol = "red", alty = 4,
+         alwd = 0.3, alength = 0.1, linesFrom, lfcol = "red",
+         lflwd = 3, envir = environment(formula(model)),  ...){
+    UseMethod("plotPlane")
 }
 
 
-##' @return  The main point is the plot that is drawn, but for record keeping the return object is a list including 1) res: the transformation matrix that was created by persp 2) the call that was issued, 3) x1seq, the "plot sequence" for the x1 dimension, 4) x2seq, the "plot sequence" for the x2 dimension, 5) zplane, the values of the plane corresponding to locations x1seq and x2seq.
+##' @return The main point is the plot that is drawn, but for record
+##' keeping the return object is a list including 1) res: the
+##' transformation matrix that was created by persp 2) the call that
+##' was issued, 3) x1seq, the "plot sequence" for the x1 dimension, 4)
+##' x2seq, the "plot sequence" for the x2 dimension, 5) zplane, the
+##' values of the plane corresponding to locations x1seq and x2seq.
 ##'
 ##' @rdname plotPlane
 ##' @method plotPlane default
 ##' @S3method plotPlane default
-plotPlane.default <- function(model = NULL,  plotx1 = NULL, plotx2 = NULL, drawArrows = FALSE, plotPoints = TRUE, npp = 20, x1lab, x2lab, ylab, x1floor = 5, x2floor = 5,  pch = 1, pcol = "blue", plwd = 0.5, pcex = 1, llwd = 0.3, lcol = 1, llty = 1, acol = "red", alty = 4, alwd = 0.3, alength = 0.1, envir = environment(formula(model)),  ...){
+
+plotPlane.default <-
+function(model = NULL, plotx1 = NULL, plotx2 = NULL, drawArrows = FALSE,
+         plotPoints = TRUE, npp = 20, x1lab, x2lab, ylab, x1floor = 5,
+         x2floor = 5, pch = 1, pcol = "blue", plwd = 0.5, pcex = 1,
+         llwd = 0.3, lcol = 1, llty = 1, acol = "red", alty = 4, alwd = 0.3,
+         alength = 0.1, linesFrom, lfcol ="red", lflwd = 3,
+         envir = environment(formula(model)), ...){
+
     if (is.null(model))
         stop("plotPlane requires a fitted regression model.")
     if (is.null(plotx1) | is.null(plotx2))
@@ -93,10 +115,10 @@ plotPlane.default <- function(model = NULL,  plotx1 = NULL, plotx2 = NULL, drawA
     if (plotx1 %in% varnames)
         x1 <- emf[, plotx1]
     if (!is.numeric(x1))
-        stop(paste("plotSlopes: The variable", plotx1, "should be a numeric variable"))
+        stop(paste("plotPlane: The variable", plotx1, "should be a numeric variable"))
     x2 <- emf[, plotx2]
     if (!is.numeric(x2))
-        stop(paste("plotSlopes: The variable", plotx2, "should be a numeric variable"))
+        stop(paste("plotPlane: The variable", plotx2, "should be a numeric variable"))
 
     if (missing(ylab)) ylab <- colnames(model$model)[1]
     if (missing(x1lab)) x1lab <- plotx1
@@ -133,9 +155,9 @@ plotPlane.default <- function(model = NULL,  plotx1 = NULL, plotx2 = NULL, drawA
 
     yrange <- magRange(c(zplane,y), 1.15)
 
-    res <- perspEmpty(x1 = plotSeq(x1range, x1floor), x2 =
-                      plotSeq(x2range, x2floor), y = yrange, x1lab =
-                      x1lab, x2lab = x2lab, ylab = ylab, ...)
+    res <- perspEmpty(x1 = plotSeq(x1range, x1floor),
+                      x2 = plotSeq(x2range, x2floor), y = yrange,
+                      x1lab = x1lab, x2lab = x2lab, ylab = ylab, ...)
 
     ##for arrows. NEEDS reworking to be more general
     if ("glm" %in% class(model)) {
@@ -143,6 +165,7 @@ plotPlane.default <- function(model = NULL,  plotx1 = NULL, plotx2 = NULL, drawA
     }else{
         fits <-  fitted(model)
     }
+
     mypoints4 <- trans3d(x1, x2, fits, pmat = res)
     newy <- ifelse(fits < y, fits + 0.8 * (y - fits),
                    fits + 0.8 * (y - fits))
@@ -183,5 +206,49 @@ plotPlane.default <- function(model = NULL,  plotx1 = NULL, plotx2 = NULL, drawA
               lwd = llwd, col = lcol, lty = llty)
     }
 
-    invisible(list(res=res, call=cl, "x1seq"=x1seq, "x2seq"=x2seq, "zplane"=zplane))
+    if (!missing(linesFrom)){
+        dataSplits <- split(linesFrom$newdata, f = linesFrom$newdata[[linesFrom$call[["modx"]]]])
+        lapply(dataSplits, function(nd){
+            lines(trans3d( nd[[plotx1]], nd[[plotx2]], nd$pred, pmat=res), col = lfcol, lwd = lflwd)})
+    }
+
+    retval <- list(res=res, call=cl, "x1seq"=x1seq, "x2seq"=x2seq, "zplane"=zplane)
+    class(retval) <- "rockchalk3d"
+    invisible(retval)
 }
+
+NULL
+
+
+## New for version 1.7.x
+
+##' Superimpose regression lines on a plotted plane
+##'
+##' The examples will demonstrate the intended usage.
+##'
+##' From an educational stand point, the objective is to assist with the
+##' student's conceptualization of the two and three dimensional regression
+##' relationships.
+##' @param to a 3d plot object produced by plotPlane
+##' @param from output from a plotSlopes or plotCurves function (class="rockchalk")
+##' @param col color of plotted lines (default: "red")
+##' @param lwd line width of added lines (default: 2)
+##' @param lty line type of added lines (default: 1)
+##' @return NULL, nothing, nicht, nada.
+##' @author Paul E. Johnson <pauljohn@@ku.edu>
+##' @export
+##' @example inst/examples/addLines-ex.R
+
+addLines <- function(to = NULL, from = NULL, col = "red", lwd = 2, lty = 1){
+    if (!class(from) %in% "rockchalk") stop("addLines: from must be an output object from plotSlopes or plotCurves, of class rockchalk")
+    if (!class(to) %in% "rockchalk3d") stop("addLines: to must be a 3d plot object created by plotPlane or such")
+    if ( !(from$call[["modx"]] %in% to$call[["plotx1"]] | from$call[["modx"]] %in% to$call[["plotx2"]]) ) stop("Mismatched plotPlanes and plotSlopes objects")
+
+    dataSplits <- split(from$newdata, f = from$newdata[[from$call[["modx"]]]])
+    lapply(dataSplits, function(nd){
+        lines(trans3d( nd[[to$call[["plotx1"]]]], nd[[to$call[["plotx2"]]]], nd$pred, pmat = to$res), col = col, lwd = lwd, lty = lty)})
+    NULL
+}
+
+
+

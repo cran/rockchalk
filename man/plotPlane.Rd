@@ -8,16 +8,16 @@
     x2lab, ylab, x1floor = 5, x2floor = 5, pch = 1,
     pcol = "blue", plwd = 0.5, pcex = 1, llwd = 0.3,
     lcol = 1, llty = 1, acol = "red", alty = 4, alwd = 0.3,
-    alength = 0.1, envir = environment(formula(model)),
-    ...)
+    alength = 0.1, linesFrom, lfcol = "red", lflwd = 3,
+    envir = environment(formula(model)), ...)
 
   \method{plotPlane}{default} (model = NULL, plotx1 = NULL,
     plotx2 = NULL, drawArrows = FALSE, plotPoints = TRUE,
     npp = 20, x1lab, x2lab, ylab, x1floor = 5, x2floor = 5,
     pch = 1, pcol = "blue", plwd = 0.5, pcex = 1,
     llwd = 0.3, lcol = 1, llty = 1, acol = "red", alty = 4,
-    alwd = 0.3, alength = 0.1,
-    envir = environment(formula(model)), ...)
+    alwd = 0.3, alength = 0.1, linesFrom, lfcol = "red",
+    lflwd = 3, envir = environment(formula(model)), ...)
 }
 \arguments{
   \item{model}{an lm or glm fitted model object}
@@ -80,6 +80,14 @@
 
   \item{alength}{arrow head length, length passed to
   "arrows" function}
+
+  \item{linesFrom}{object with information about
+  "highlight" lines to be added to the 3d plane (output
+  from plotCurves or plotSlopes)}
+
+  \item{lfcol}{colors for the linesFrom highlight lines}
+
+  \item{lflwd}{line widths for linesFrom highlight lines}
 
   \item{envir}{environment from whence to grab data}
 
