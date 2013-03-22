@@ -2,11 +2,14 @@
 \alias{testSlopes}
 \title{Hypothesis tests for Simple Slopes Objects}
 \usage{
-  testSlopes(plotSlopesObject)
+  testSlopes(pso, plot = TRUE)
 }
 \arguments{
-  \item{plotSlopesObject}{Output from the plotSlopes
-  function}
+  \item{pso}{(short for plotSlopesObject) Output from the
+  plotSlopes function}
+
+  \item{plot}{TRUE or FALSE, FALSE prevents creation of
+  plots}
 }
 \value{
   A list including the hypothesis test table. For numeric
@@ -14,18 +17,25 @@
   boundaries.
 }
 \description{
-  The user must first run plotSlopes, and then supply that
-  output object to this function.
+  Conducts t-test of the hypothesis that the "simple slope"
+  line for one predictor is statistically significantly
+  different from zero for each value of a moderator
+  variable. The user must first run \code{plotSlopes()},
+  which generates an object that can be investigated. This
+  function scans that object to conduct the hypothesis
+  tests.
 }
 \details{
-  Consider a regression, for example
+  Consider a regression with interactions
 
   y <- b0 + b1*x1 + b2*x2 + b3*(x1*x2) + b4*x3 + ... +
   error
 
-  If \code{plotSlopes} has been run with the variable
-  plotx="x1" and the variable modx="x2", then there will be
-  several plotted lines, one for various values of x2.  We
+  If \code{plotSlopes} has been run with the argument
+  plotx="x1" and the argument modx="x2", then there will be
+  several plotted lines, one for each of the chosen values
+  of x2.  The slope of each of these lines depends on x1's
+  effect, b1, as well as the interactive part, b3*x2.  We
   wonder if the combined effect of x1 is statistically
   significantly different from 0 for each of those values
   of x2.
@@ -43,17 +53,17 @@
   to render it graphically.  Where the t-test considers the
   question, is the slope of the line (b1 + b3*x2) different
   from 0, the J-N approach asks "for which values of x2
-  will that plotted line be statistically significant.
+  will that plotted line be statistically significant?"
 }
 \examples{
 library(car)
 m3 <- lm(statusquo ~ income * sex, data = Chile)
-m3ps <-plotSlopes(m3, modx = "sex", plotx = "income")
+m3ps <- plotSlopes(m3, modx = "sex", plotx = "income")
 testSlopes(m3ps)
 
 m4 <- lm(statusquo ~ region * income, data= Chile)
 m4ps <- plotSlopes(m4, modx = "region", plotx = "income", plotPoints = FALSE)
-testSlopes(m4ps)
+##' testSlopes(m4ps)
 
 
 m5 <- lm(statusquo ~ region * income + sex + age, data= Chile)

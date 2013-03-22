@@ -16,6 +16,8 @@
 \description{
   The "n" most frequently occurring values are returned,
   sorted by frequency of occurrence (in descending order).
+  The names attribute includes information about the
+  percentage of cases that have the indicated values.
 }
 \details{
   This is used by plotSlopes, plotCurves, and other
