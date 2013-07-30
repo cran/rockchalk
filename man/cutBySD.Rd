@@ -7,10 +7,10 @@
 \arguments{
   \item{x}{A numeric variable}
 
-  \item{n}{Should be either 3 or 5. If 3, values that
-  divide the data at c(m-sd, m, m+sd) are returned. If 5,
-  the returned values are c(m-2sd, m-sd, m, m+sd, m+2sd).
-  Other values of n will be rounded to 3 or 5.}
+  \item{n}{Should be an odd number 1, 3, 5, or 7. If 2 < n
+  < 5, values that divide the data at c(m-sd, m, m+sd) are
+  returned. If n > 4, the returned values are c(m-2sd,
+  m-sd, m, m+sd, m+2sd).}
 }
 \value{
   A named vector
@@ -18,6 +18,11 @@
 \description{
   If the numeric variable has fewer than 6 unique observed
   values, this will send the data to cutByTable.
+}
+\examples{
+x <- rnorm(100, m = 100, s = 20)
+cutBySD (x, n = 3)
+cutBySD (x, n = 5)
 }
 \author{
   Paul E. Johnson <pauljohn@ku.edu>

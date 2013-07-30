@@ -1,0 +1,44 @@
+\name{getFocal.default}
+\alias{getFocal.default}
+\title{Select focal values from a numeric variable}
+\usage{
+  \method{getFocal}{default} (x, xvals = NULL, n = 3, ...)
+}
+\arguments{
+  \item{x}{Required. A variable}
+
+  \item{xvals}{If \code{xvals} is not provided, a default
+  divider algorithm will be selected ("quantile"). The
+  divider algorithms provided with rockchalk are
+  c("quantile", "std.dev.", "table", "seq").  \code{xvals}
+  can also be the name of a user-supplied function, such as
+  R's \code{pretty()}. If the user supplies a vector of
+  possible values, that selection will be checked to make
+  sure all elements are within a slightly expanded range of
+  \code{x}. If a value out of range is requested, a warning
+  is issued. Maybe that should be an outright error?}
+
+  \item{n}{Number of values to be selected.}
+
+  \item{...}{Other arguments that will be passed to the
+  user-specified xvals function.}
+}
+\value{
+  A named vector of values.
+}
+\description{
+  getFocal.default
+}
+\examples{
+x <- rnorm(100)
+getFocal(x)
+getFocal(x, xvals = "quantile")
+getFocal(x, xvals = "quantile", n = 5)
+getFocal(x, xvals = "std.dev")
+getFocal(x, xvals = "std.dev", n = 5)
+getFocal(x, xvals = c(-1000, 0.2, 0,5))
+}
+\author{
+  Paul E. Johnson <pauljohn@ku.edu>
+}
+

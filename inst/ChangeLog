@@ -1,3 +1,411 @@
+2013-07-12  pauljohn  <pauljohn@pjlap-d7.pjlap-d7.pols.ku.edu>
+
+	* ../R/plotPlane.R (myPredict): re-work so user can supply
+	arguments x1lim, x2lim, and the subsidiary work narrows attention
+	to those observation ranges. Careful to re-work dot argument
+	processing and block users from supplying xlim, ylim, directly.
+
+	* ../R/perspEmpty.R (perspEmpty): correct spacing around equal signs
+
+2013-07-01  pauljohn  <pauljohn@pjlap-d7.pjlap-d7.pols.ku.edu>
+
+	* ../R/residualCenter.R (predict.rcreg): change predict.rcreg
+	because of problem with newdata going into dots when it is not
+	wanted there.
+
+2013-06-24  pauljohn  <pauljohn@pjlap-d7.pjlap-d7.pols.ku.edu>
+
+	* ../R/utils.R (cutBySD): add n = 2 definition for cutBySD and
+	cutByQuantile methods.
+
+	* ../R/meanCenter.R: runtime error from predict.mcreg because the
+	argument newdata was double-entering through ...
+
+2013-06-06  pauljohn  <pauljohn@pjlap-d7.pjlap-d7.pols.ku.edu>
+
+	* ../R/plotSlopes.R (plotSlopes.lm): col needs to be in arguments
+	to plotFancy. Same for plotCurves
+	(plotFancy): color name problem when user supplies col argument. Fixed.
+
+	* ../R/genCorrelatedData.R (genCorrelatedData2): recycle sds
+	argument to length P
+	* examples/plotSlopes-ex.R, plotCurves-ex.R. Incorporate
+	genCorrelatedData2.
+
+2013-06-02  pauljohn  <pauljohn@pjlap-d7.pjlap-d7.pols.ku.edu>
+
+	* ../DESCRIPTION (Date): New data set: Nyblade-Read
+	cheating/looting data for Japanese politics.
+
+2013-05-31  pauljohn  <pauljohn@pjlap-d7.pjlap-d7.pols.ku.edu>
+
+	* ../R/predictOMatic.R (predictCI): futzing about to deal with
+	problem in predictCI. If interval="none", we should just take
+	the model's predict output and format it, assuming it is a vector
+	or matrix. The other messing about with intervals is only needed
+	if the user asks for that, and so more regression types will work
+	with predictOMatic this way.
+
+2013-05-24  pauljohn  <pauljohn@pjlap-d7.pjlap-d7.pols.ku.edu>
+
+	* ../R/testSlopes.R (plot.testSlopes): Continued long battle with
+	too confusing system for shading and labeling intervals. This is a
+	big example of how expedient solution lead to bad code, hard
+	to bug-fix, frustrating as hell.  Now see variable markAt, which
+	tries to simplify one part.  Still, rest not great.
+
+2013-05-22  pauljohn  <pauljohn@pjlap-d7.pjlap-d7.pols.ku.edu>
+
+	* ../R/plotPlane.R (myPredict): embarrassing: noticed that I had
+	written an argument "linesFrom" in plotPlane and had forgotten
+	that and re-wrote same functionality in addLines(). So now came
+	back to re-work linesFrom so it causes same output as addLines.
+
+2013-05-21  pauljohn  <pauljohn@pjlap-d7.pjlap-d7.pols.ku.edu>
+
+	* ../R/plotSlopes.R (plotFancy): llwd colors were not being
+	passed to plotFancy and they were not being used by lines().
+
+2013-05-19  pauljohn  <pauljohn@pjlap-d7.pjlap-d7.pols.ku.edu>
+
+	* ../R/plotCurves.R (plotCurves): found bug in dotargs sorting for
+	predict, Was causing crash in logit models
+
+	* ../R/testSlopes.R: format spaces
+
+	* ../R/residualCenter.R (predict.rcreg): format spaces
+
+	* ../R/mcGraph.R: format spaces and T -> TRUE
+
+	* ../R/centralValues.R (centralValues): Style cleanup, T -> TRUE
+
+	* examples/predictOMatic-ex.R: range(x) -> range(x, na.rm = TRUE)
+	to allow missings
+
+	* ../R/predictOMatic.R (predictOMatic): se.fit: try not to
+	return it unless predict argument se.fit = TRUE is passed.
+
+2013-05-16  Paul Johnson  <pauljohn@pols110.pols.ku.edu>
+
+	* ../R/genCorrelatedData.R (mvrnorm): insert repaired code for
+	mvrnorm and use that in genCorrelatedData functions.
+	(genCorrelatedData2): Using lower triangular metaphor for beta2.
+	(genCorrelatedData2): inserted some verbose printing for the equation
+
+2013-05-15  pauljohn  <pauljohn@pjlap-d7.pjlap-d7.pols.ku.edu>
+
+	* ../R/outreg.R (outreg2HTML): fixing error with multicolumn
+	titles when tight = F
+
+	* examples/testSlopes-ex.R: spacing and indentation
+
+2013-05-15  Paul Johnson  <pauljohn@pols110.pols.ku.edu>
+
+	* ../R/plotSlopes.R (plotFancy): plotFancy is the new backend
+	drawer for plotSlopes and plotCurves
+
+	* examples/plotCurves-ex.R: clean up formatting, spaces around
+	equals, after commas
+
+2013-05-14  pauljohn  <pauljohn@pjlap-d7.pjlap-d7.pols.ku.edu>
+
+	* ../R/predictOMatic.R (lenVar): Change from length to NROW
+	because that gives true answer for vectors or matrices, and some
+	models are going to have matrix DV data (grouped binomial)
+
+	* examples/model.data-ex.R: put no-data.frame examples at top.
+	Fix typos in examples.
+
+	* ../R/predictOMatic.R (lenVar): Threw away model.data approach.
+	Realized I can manufacture formula from variable names and then
+	model.frame can generate the data frame I want from that.
+
+2013-05-13  pauljohn  <pauljohn@pjlap-d7.pjlap-d7.pols.ku.edu>
+
+	* ../R/utils.R (cutByQuantile): change cutByQuantile to 0, 25, 50,
+	75, 100.
+
+	* ../R/plotSlopes.R (plotSlopes.lm): depVar: trying to
+	eliminate assumption this is only numeric.
+
+2013-05-12  pauljohn  <pauljohn@pjlap-d7.pjlap-d7.pols.ku.edu>
+
+	* ../R/plotSlopes.R (plotSlopes.lm): try to grab the
+	predict-intended arguments out of the dotargs.
+	* Use predictCI to calculate predictions.
+
+	* ../R/predictOMatic.R (predictOMatic): predictCI new function
+	tries to give c(fit, lwr, upr) for lm and glm. Maybe others.
+	* tie that into predictOMatic, so interval can be returned.
+	* tie that into plotSlopes, so glm interval can be plotted.
+
+2013-05-09  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/plotSlopes.R (plotSlopes.lm): predict and dotargs.
+
+2013-05-07  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/plotSlopes.R (plotSlopes.lm): opacity new argument. 
+
+2013-05-06  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/meanCenter.R (std): noticed that meanCenter did not work
+	with glm, and don't see why it shouldn't, as long as centerDV is
+	handled properly.
+
+	* ../R/predictOMatic.R (predictOMatic): had duplicate usage of
+	predict that caused it to fail.
+
+2013-05-05  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/plotSlopes.R (plotSlopes.lm): yet still more futzing about
+	with color matching of factor levels, points, lines, and regions.
+
+2013-05-04  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/plotSlopes.R (plotSlopes.lm): color fix for user=specified
+	color matrices
+
+2013-05-03  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* examples/plotSlopes-ex.R: add prestige interaction at end.
+	Used dev.new(). hope that's not a violation.
+
+	* ../R/plotSlopes.R (plotSlopes.lm): Yet more battle to match
+	factor and numeric modx colors and line types.
+	TODO: llwd still problematic
+		fix plotCurves.R similarly
+
+2013-05-02  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/plotSlopes.R (plotSlopes.lm): frustrating problem with
+	colors assigned to points, lines, intervals, and legend items
+	when user selects just a few values for plotting.
+
+	* ../R/meanCenter.R (predict.mcreg):  The drop gotcha again.
+	tmeans <- sapply(newdata[ , nc], mean, na.rm=T) must be:
+	tmeans <- sapply(newdata[ , nc, drop = FALSE], mean, na.rm=T)
+
+2013-04-30  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/outreg.R (sigtest): nobs -> stats::nobs because gdata had
+	its own nobs
+
+2013-04-29  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/outreg.R (outreg2HTML) had to be exported.
+
+	* (outreg) new outreg, that creates a character vector
+	and cats it to screen, and returns it as well.
+	* (outreg2HTML): new function that can write an html
+	file.
+
+2013-04-27  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/outreg.R (checkReg): check if model has methods summary,
+	coef, vcov, and nobs
+	* outreg: be more careful receiving modelList, checking if it
+	is a regression model.
+
+2013-04-24  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/testSlopes.R (plot.testSlopes): fix typo in which numeral 2
+	was replated by Tcrit in bsse calculation
+
+	* ../R/predictOMatic.R (newdata): fixing predVals declaration
+	* outreg: multiple alpha values
+
+2013-04-23  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/outreg.R: found bug where df.residual was not
+	correct for each separate model. fixed!
+
+2013-04-22  Paul Johnson  <pauljohn@pols110.pols.ku.edu>
+
+	* ../R/utils.R (getFocal: create separate documentation for
+	the methods, try to clarify usage
+	(cutBySD): allow m+/-3sd
+
+2013-04-21  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/predictOMatic.R (focalVals): allow divider to be a
+	function, such as R's built-in pretty() function.
+	- create new argument "predVals" to replace fl
+
+	* Version 1.7.4.1
+	* ../R/genCorrelatedData.R: Added whole family of new
+	funcions
+	- genCorrelatedData2
+	- vech2Corr
+	- vech2Mat
+	- lazyCor
+	- lazyCov
+	- makeVec
+	- makeSymmetric
+	- checkPosDef
+
+	* ../R/mcDiagnose.R (getDeltaRsquare): drop = FALSE should return
+	a matrix with one column
+	- more revision on getPartialCor
+
+2013-04-19  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/mcDiagnose.R (mcDiagnose): getPartialCor function added.
+
+2013-04-18  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/predictOMatic.R (predictOMatic): fiddling interface for fl
+	so it can now be offered as a vector or a list. Trying to get cute
+	with way users can specify divider algorithms.
+
+	* ../R/utils.R: must now export the cutBy functions
+
+2013-04-17  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/mcDiagnose.R (getDeltaRsquare): clean up output. Because
+	I was using na.omit to get rid of the missing first element (some
+	noise from matrix subtraction), the output object was including a
+	lot of extraneous attributes that made printing the result more
+	tedious. Now I don' use na.omit any more.
+
+2013-04-16  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/outreg.R (harvest): Again reworking arguments, rename
+	extraSums to "request" and extraFuns to "runFuns". More examples.
+	- new arguments, alpha.
+
+	* ../R/predictOMatic.R (focalVals): new function, a wrapper
+	around divider functions.
+	* outreg: renaming arguments
+
+2013-04-15  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/predictOMatic.R (predictOMatic): introduce "AUTO"
+	keyword for focus list variables.
+
+	* ../R/outreg.R (gofPrint): rewrite to add extraFuns and
+	extraSums. Mostly working.
+	(outreg): fixing logical flaw when a model has NO summaries we
+	want. Fighting with nonNull attr
+
+2013-04-14  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/outreg.R (outreg): Reformat consistent with Rstyle
+	- change lyx = TRUE argument to float = FALSE.
+	(outreg): reworked to grab B and SE matrices, create PT
+	at top.
+
+2013-04-10  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/testSlopes.R (plot.testSlopes): because of mis-match
+	between roots and edges of MMlwr and MMupr, re-designed this
+	to calculate interval types and ranges exactly, iterate
+	over intervals to shade appropriately. Still Ugly code,
+	only slightly less embarrassing.
+
+2013-04-09  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/testSlopes.R (plot.testSlopes): Fixing MMupr and MMlwr
+	selection and thinning.
+
+2013-04-08  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/testSlopes.R (plot.testSlopes): add shade argument to
+	stop the pink shading. TODO. allow user color choice.
+	* Found Bug on MMlwr and MMupr: don't exclude middle
+	in two-ended significant interval. Must think harder.
+
+	* ../R/utils.R (cutByQuantile): now allow n=2 imply quantiles 25
+	and 75.
+
+	* examples/testSlopes-ex.R: new example for testSlopes, cut
+	example code from testSlopes.R
+
+	* ../R/testSlopes.R (testSlopes): requires plotSlopes object
+
+	* ../R/plotSlopes.R (plotSlopes.lm): class now "plotSlopes" and
+	"rockChalk". plotPlane works with all 2d rockchalk objects, but
+	testSlopes only works with plotSlopes so far
+
+2013-04-02  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* examples/meanCenter-ex.R: use new "terms" argument to specify
+	variable to be centered.
+
+	* ../R/meanCenter.R (print.summary.stdreg): meanCenter=add
+	terms argument to allow user to circumvent the automatic
+	variable selection and force the centering to be done.
+
+2013-03-31  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* Examples: plotCurves-ex, plotSlopes-ex: show new features
+
+	* ../R/testSlopes.R (testSlopes): pass inroot into jn, so the plot
+	function can check it.
+
+	* ../R/plotCurves.R (plotCurves): now accepts modx as option,
+	will plot without it.
+	* legend and color re-fitted.  Nearly going insane maintaining
+	almost identical plotSlopes and plotCurves. Must regain sanity.
+
+	* ../R/plotSlopes.R (plotSlopes.lm): clean up color
+	access, fix legend
+
+2013-03-29  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/plotPlane.R (addLines): saved the col value in the
+	return of plotSlopes. Use that in addLines unless user said
+	otherwise in col argument.
+
+	* ../R/plotSlopes.R: working through assinine decisions I
+	carelessly made on changing handling of interval in plotSlopes.
+	Now behavior slightly more predictable. But frustating.
+
+2013-03-28  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/plotSlopes.R (plotSlopes): revise to allow missing or null
+	modx.
+	* note bug in color assignment for points with factors. Fixed.
+
+2013-03-27  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/testSlopes.R (testSlopes): separate calculation of
+	testSlopes data from plotting and printing methods.
+	(plot.testSlopes): plot.testSlopes is sorta-working now,
+	not cleaned up.
+
+	* massively clean up logic, eliminate nested loops by
+	returning when phase of calculation is finished.
+	* fix VERY STUPID variable names that have the dash
+	in them. "hypo-test" was just dumb.
+
+
+2013-03-26  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/utils.R (cutBySD): Changed "cutNumeric" and "cutFactor" to
+	a generic function "getFocal" with methods getFocal.default and
+	getFocal.factor.
+	(getFocal.factor): convert to if/return stanzas.
+
+	* predictOMatic.R (model.data):  silencing warning
+	about re-used row names. Warning was triggered by
+	this "data <- data.frame(ldata[varNames])" "Warning in
+	data.row.names(row.names, rowsi, i) :  some row.names duplicated:
+	3,5, --> row.names NOT used" This was a harmless warning, but
+	bothersome to users.
+	* Rename rnOrigData -> origDataRN
+
+2013-03-24  pauljohn  <pauljohn@debian.sunflower.com>
+
+	* ../R/utils.R (cutNumeric): New function to integrate work that
+	was duplicated in many separate functions, plotSlopes, plotCurves
+	* ../R/plotSlopes.R (plotSlopes): interval argument
+	* Use new cutNumeric function to find interesting values in a
+	numeric plotx
+	* plot sub-routine for shaded pred or conf intervals
+	* incorporate newdata() function, replace ad-hoc code
+	* n argument to feed to newdata()
+
 2013-02-19  pauljohn  <pauljohn@debian.sunflower.com>
 
 	* ../R/testSlopes.R (testSlopes): Sunthud Pornprasertmanit

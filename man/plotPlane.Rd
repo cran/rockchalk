@@ -5,19 +5,20 @@
 \usage{
   plotPlane(model = NULL, plotx1 = NULL, plotx2 = NULL,
     drawArrows = FALSE, plotPoints = TRUE, npp = 20, x1lab,
-    x2lab, ylab, x1floor = 5, x2floor = 5, pch = 1,
-    pcol = "blue", plwd = 0.5, pcex = 1, llwd = 0.3,
-    lcol = 1, llty = 1, acol = "red", alty = 4, alwd = 0.3,
-    alength = 0.1, linesFrom, lfcol = "red", lflwd = 3,
+    x2lab, ylab, x1lim, x2lim, x1floor = 5, x2floor = 5,
+    pch = 1, pcol = "blue", plwd = 0.5, pcex = 1,
+    llwd = 0.3, lcol = 1, llty = 1, acol = "red", alty = 4,
+    alwd = 0.3, alength = 0.1, linesFrom, lflwd = 3,
     envir = environment(formula(model)), ...)
 
   \method{plotPlane}{default} (model = NULL, plotx1 = NULL,
     plotx2 = NULL, drawArrows = FALSE, plotPoints = TRUE,
-    npp = 20, x1lab, x2lab, ylab, x1floor = 5, x2floor = 5,
-    pch = 1, pcol = "blue", plwd = 0.5, pcex = 1,
-    llwd = 0.3, lcol = 1, llty = 1, acol = "red", alty = 4,
-    alwd = 0.3, alength = 0.1, linesFrom, lfcol = "red",
-    lflwd = 3, envir = environment(formula(model)), ...)
+    npp = 20, x1lab, x2lab, ylab, x1lim, x2lim,
+    x1floor = 5, x2floor = 5, pch = 1, pcol = "blue",
+    plwd = 0.5, pcex = 1, llwd = 0.3, lcol = 1, llty = 1,
+    acol = "red", alty = 4, alwd = 0.3, alength = 0.1,
+    linesFrom, lflwd = 3,
+    envir = environment(formula(model)), ...)
 }
 \arguments{
   \item{model}{an lm or glm fitted model object}
@@ -42,6 +43,12 @@
   \item{x2lab}{optional label}
 
   \item{ylab}{optional label}
+
+  \item{x1lim}{optional lower and upper bounds for x1, as
+  vector like c(0,1)}
+
+  \item{x2lim}{optional lower and upper bounds for x2, as
+  vector like c(0,1)}
 
   \item{x1floor}{Default=5. Number of "floor" lines to be
   drawn for variable x1}
@@ -72,10 +79,10 @@
   \item{acol}{color for arrows, col passed to "arrows"
   function}
 
-  \item{alty}{line type, lty passed to the "arrows"
+  \item{alty}{arrow line type, lty passed to the "arrows"
   function}
 
-  \item{alwd}{line width, lwd passed to the "arrows"
+  \item{alwd}{arrow line width, lwd passed to the "arrows"
   function}
 
   \item{alength}{arrow head length, length passed to
@@ -84,8 +91,6 @@
   \item{linesFrom}{object with information about
   "highlight" lines to be added to the 3d plane (output
   from plotCurves or plotSlopes)}
-
-  \item{lfcol}{colors for the linesFrom highlight lines}
 
   \item{lflwd}{line widths for linesFrom highlight lines}
 
@@ -171,7 +176,8 @@ plotPlane(m1, plotx1 = "x1", plotx2 = "x4", drawArrows = TRUE)
 plotPlane(m1, plotx1 = "x1", plotx2 = "x2", drawArrows = TRUE, npp = 10)
 plotPlane(m1, plotx1 = "x3", plotx2 = "x2", drawArrows = TRUE, npp = 40)
 
-plotPlane(m1, plotx1 = "x3", plotx2 = "x2", drawArrows = FALSE, npp = 5, ticktype = "detailed")
+plotPlane(m1, plotx1 = "x3", plotx2 = "x2", drawArrows = FALSE,
+          npp = 5, ticktype = "detailed")
 
 
 ## regression with interaction
@@ -183,26 +189,35 @@ plotPlane(m2, plotx1 = "x1", plotx2 = "x2", drawArrows = TRUE)
 plotPlane(m2, plotx1 = "x1", plotx2 = "x4", drawArrows = TRUE)
 plotPlane(m2, plotx1 = "x1", plotx2 = "x3", drawArrows = TRUE)
 
-plotPlane(m2, plotx1 = "x1", plotx2 = "x2", drawArrows = TRUE, phi = 10, theta = 30)
+plotPlane(m2, plotx1 = "x1", plotx2 = "x2", drawArrows = TRUE,
+          phi = 10, theta = 30)
 
 
 
 ## regression with quadratic;
 ## Required some fancy footwork in plotPlane, so be happy
-dat$y3 <- 0 + 1 * dat$x1 + 2 * dat$x1^2 + 1 * dat$x2 + 0.4*dat$x3 + 8 * rnorm(100)
+dat$y3 <- 0 + 1 * dat$x1 + 2 * dat$x1^2 + 1 * dat$x2 +
+    0.4*dat$x3 + 8 * rnorm(100)
 m3 <- lm(y3 ~ poly(x1,2) + x2 +x3 + x4, data = dat)
 summary(m3)
 
-plotPlane(m3, plotx1 = "x1", plotx2 = "x2", drawArrows = TRUE, x1lab = "my great predictor", x2lab = "a so-so predictor", ylab = "Most awesomest DV ever")
+plotPlane(m3, plotx1 = "x1", plotx2 = "x2", drawArrows = TRUE,
+          x1lab = "my great predictor", x2lab = "a so-so predictor",
+          ylab = "Most awesomest DV ever")
 
-plotPlane(m3, plotx1 = "x1", plotx2 = "x2", drawArrows = TRUE, x1lab = "my great predictor", x2lab = "a so-so predictor", ylab = "Most awesomest DV ever", phi=-20)
+plotPlane(m3, plotx1 = "x1", plotx2 = "x2", drawArrows = TRUE,
+          x1lab = "my great predictor", x2lab = "a so-so predictor",
+          ylab = "Most awesomest DV ever", phi = -20)
 
-plotPlane(m3, plotx1 = "x1", plotx2 = "x2", drawArrows = TRUE, phi = 10, theta = 30)
+plotPlane(m3, plotx1 = "x1", plotx2 = "x2", drawArrows = TRUE,
+          phi = 10, theta = 30)
 
-plotPlane(m3, plotx1 = "x1", plotx2 = "x4", drawArrows = TRUE, ticktype = "detailed")
+plotPlane(m3, plotx1 = "x1", plotx2 = "x4", drawArrows = TRUE,
+          ticktype = "detailed")
 plotPlane(m3, plotx1 = "x1", plotx2 = "x3", drawArrows = TRUE)
 
-plotPlane(m3, plotx1 = "x1", plotx2 = "x2", drawArrows = TRUE, phi = 10, theta = 30)
+plotPlane(m3, plotx1 = "x1", plotx2 = "x2", drawArrows = TRUE,
+          phi = 10, theta = 30)
 
 m4 <- lm(y ~ sin(x1) + x2*x3 +x3 + x4, data = dat)
 summary(m4)
@@ -221,10 +236,13 @@ plotPlane(gm1, plotx1 = "x1", plotx2 = "x2")
 plotPlane(gm1, plotx1 = "x1", plotx2 = "x2", phi = -10)
 
 plotPlane(gm1, plotx1 = "x1", plotx2 = "x2", ticktype = "detailed")
-plotPlane(gm1, plotx1 = "x1", plotx2 = "x2", ticktype = "detailed", npp = 30, theta = 30)
-plotPlane(gm1, plotx1 = "x1", plotx2 = "x3", ticktype = "detailed", npp = 70, theta = 60)
+plotPlane(gm1, plotx1 = "x1", plotx2 = "x2", ticktype = "detailed",
+          npp = 30, theta = 30)
+plotPlane(gm1, plotx1 = "x1", plotx2 = "x3", ticktype = "detailed",
+          npp = 70, theta = 60)
 
-plotPlane(gm1, plotx1 = "x1", plotx2 = "x2", ticktype = c("detailed"), npp = 50, theta = 40)
+plotPlane(gm1, plotx1 = "x1", plotx2 = "x2", ticktype = c("detailed"),
+          npp = 50, theta = 40)
 
 dat$x2 <- 5 * dat$x2
 dat$x4 <- 10 * dat$x4
@@ -238,10 +256,13 @@ plotPlane(gm2, plotx1 = "x1", plotx2 = "x2", phi = -10)
 plotPlane(gm2, plotx1 = "x1", plotx2 = "x2", phi = 5, theta = 70, npp = 40)
 
 plotPlane(gm2, plotx1 = "x1", plotx2 = "x2", ticktype = "detailed")
-plotPlane(gm2, plotx1 = "x1", plotx2 = "x2", ticktype = "detailed", npp = 30, theta = -30)
-plotPlane(gm2, plotx1 = "x1", plotx2 = "x3", ticktype = "detailed", npp = 70, theta = 60)
+plotPlane(gm2, plotx1 = "x1", plotx2 = "x2", ticktype = "detailed",
+          npp = 30, theta = -30)
+plotPlane(gm2, plotx1 = "x1", plotx2 = "x3", ticktype = "detailed",
+          npp = 70, theta = 60)
 
-plotPlane(gm2, plotx1 = "x4", plotx2 = "x3", ticktype = "detailed", npp = 50, theta = 10)
+plotPlane(gm2, plotx1 = "x4", plotx2 = "x3", ticktype = "detailed",
+          npp = 50, theta = 10)
 
 plotPlane(gm2, plotx1 = "x1", plotx2 = "x2", ticktype = c("detailed"))
 }

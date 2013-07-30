@@ -2,7 +2,7 @@
 \alias{combineLevels}
 \title{recode a factor by "combining" levels}
 \usage{
-  combineLevels(fac, levs, newLabel)
+  combineLevels(fac, levs, newLabel = "combinedLevels")
 }
 \arguments{
   \item{fac}{An R factor variable, either ordered or not.}
@@ -24,17 +24,19 @@
   A new factor variable, with unused levels removed.
 }
 \description{
-  If a factor variable is currently coded with levels
-  c("Male","Female","Man", "M"), and the user needs to
-  combine the redundant levels for males, this is the
-  function to use!
+  This makes it easy to put levels together and create a
+  new factor variable. If a factor variable is currently
+  coded with levels c("Male","Female","Man", "M"), and the
+  user needs to combine the redundant levels for males,
+  this is the function to use!  This is a surprisingly
+  difficult problem in R.
 }
 \details{
   If the factor is an ordinal factor, then levels may be
-  combined only if they are adjacent. That is to say, a
-  factor with levels c("Lo","Med","Hi","Extreme") allows us
-  to combine responses "Lo" and "Med", while it will NOT
-  allow us to combine "Lo" with "Hi".
+  combined only if they are adjacent. A factor with levels
+  c("Lo","Med","Hi","Extreme") allows us to combine
+  responses "Lo" and "Med", while it will NOT allow us to
+  combine "Lo" with "Hi".
 
   A non-ordered factor can be reorganized to combine any
   values, no matter what positions they occupy in the
@@ -59,8 +61,6 @@ z2a <-  combineLevels(z, levs = c(1,2), "Good")
 addmargins(table(z2a, z, exclude = NULL))
 z2b <- combineLevels(z, levs = c("A","B"), "AorB")
 addmargins(table(z2b, z, exclude = NULL))
-## Should fail:
-## z2 <- combineLevels(z, levs=c("A","C"), "Whoops!")
 }
 \author{
   Paul E. Johnson <pauljohn@ku.edu>

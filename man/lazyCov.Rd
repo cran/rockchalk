@@ -1,0 +1,46 @@
+\name{lazyCov}
+\alias{lazyCov}
+\title{Create covariance matrix from correlation and standard deviation
+information}
+\usage{
+  lazyCov(Rho, Sd, d)
+}
+\arguments{
+  \item{Rho}{Required. May be a single value (correlation
+  common among all variables), a vector of the lower
+  triangular values (vech) of a correlation matrix, or a
+  symmetric matrix of correlation coefficients.}
+
+  \item{Sd}{Required. May be a single value (standard
+  deviation common among all variables) or a vector of
+  standard deviations, one for each variable.}
+
+  \item{d}{Optional. Number of rows or columns. lazyCov may
+  be able to deduce the required dimension of the final
+  matrix from the input. However, when the user supplies
+  only a single value for both Rho and Sd, d is necessary.}
+}
+\value{
+  covariance matrix.
+}
+\description{
+  This is a flexible function that allows lazy R
+  programmers to create covariance matrix. The user may be
+  lazy because the correlation and standard deviation
+  infomation may be supplied in a variety of formats.
+}
+\examples{
+##correlation 0.8 for all pairs, standard deviation 1.0 of each
+lazyCov(Rho = 0.8, Sd = 1.0, d = 3)
+## supply a vech (lower triangular values in a column)
+lazyCov(Rho = c(0.1, 0.2, 0.3), Sd = 1.0)
+## supply vech with different standard deviations
+lazyCov(Rho = c(0.1, 0.2, 0.3), Sd = c(1.0, 2.2, 3.3))
+newRho <- lazyCor(c(0.5, 0.6, 0.7, -0.1, 0.1, 0.2))
+lazyCov(Rho = newRho, Sd = 1.0)
+lazyCov(Rho = newRho, Sd = c(3, 4, 5, 6))
+}
+\author{
+  <pauljohn@ku.edu>
+}
+

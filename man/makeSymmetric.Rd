@@ -1,0 +1,50 @@
+\name{makeSymmetric}
+\alias{makeSymmetric}
+\title{Create Symmetric Matrices, possibly covariance or correlation matrices, or check a matrix for symmetry and serviceability.}
+\usage{
+  makeSymmetric(X, d = NULL, diag = NULL, corr = FALSE,
+    cov = FALSE)
+}
+\arguments{
+  \item{X}{A single value, a vector (a vech), or a matrix}
+
+  \item{d}{Optional. An integer, the desired number of rows
+  (or columns). Don't specify this argument if X is already
+  a matrix.  Only required if X is an integer and diag is
+  not supplied. Otherwise, the function tries to deduce
+  desired size of output from X (as a vech) and diag.}
+
+  \item{diag}{Values for the diagonal. This is important
+  because it alters the way X is interpreted.  If diag is
+  not provided, then X is understood to include diagonal
+  elements.}
+
+  \item{corr}{TRUE or FALSE: Should we construct a
+  correlation matrix}
+
+  \item{cov}{TRUE or FALSE: Should this be a covariance
+  matrix?}
+}
+\value{
+  A d x d matrix
+}
+\description{
+  Check X and do the right thing. If X is a matrix, check
+  that it is a valid for the intended purpose (symmetric or
+  correlation or covariance).  If X a single value, use
+  that to fill up a matrix. If it is a vector, try to use
+  it as a vech to fill the lower triangle. If d is supplied
+  as an integer, use that as desired size.
+}
+\examples{
+makeSymmetric(X = 3, d = 4)
+makeSymmetric(X = 3, d = 4, diag = c(99, 98, 97, 96))
+makeSymmetric(c(1,2,3))
+makeSymmetric(c(1,2,3), d = 5)
+makeSymmetric(c(0.8,0.4, 0.2), cov = TRUE)
+makeSymmetric(c(0.8,0.4, 0.2), cov = TRUE, diag = c(44, 55, 66))
+}
+\author{
+  Paul E. Johnson <pauljohn@ku.edu>
+}
+

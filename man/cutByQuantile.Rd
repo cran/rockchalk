@@ -1,6 +1,6 @@
 \name{cutByQuantile}
 \alias{cutByQuantile}
-\title{Calculates the "center" quantiles, always including the median.}
+\title{Calculates the "center" quantiles, always including the median, when n is odd.}
 \usage{
   cutByQuantile(x, n = 3)
 }
@@ -14,14 +14,14 @@
 }
 \description{
   If the numeric variable has fewer than 6 unique observed
-  values, this will send the data to cutByTable. The
-  default return will find dividing points at three
+  values, this will send the data to \code{cutByTable}.
+  The default return will find dividing points at three
   quantiles: c(0.25, 0.50, 0.75) If n=4, the dividing
-  points will be c(0.20, 0.40, 0.60, 0.80) If n=5, c(0.10,
-  0.30, 0.50, 0.70, 0.90) Larger n that are odd will
-  include 0.5 and evenly spaced points out to 0 and 1.
-  Larger n that is even will return evenly spaced points
-  calculated by R's \code{pretty} function.
+  points will be c(0.20, 0.40, 0.60, 0.80) If n=5, c(0.0,
+  0.25, 0.50, 0.75, 1.0) Larger n that are odd will include
+  0.5 and evenly spaced points out to proportions 0 and
+  1.0. Larger n that is even will return evenly spaced
+  points calculated by R's \code{pretty} function.
 }
 \author{
   Paul E. Johnson <pauljohn@ku.edu>

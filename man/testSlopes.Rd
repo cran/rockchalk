@@ -1,32 +1,56 @@
 \name{testSlopes}
+\alias{plot.testSlopes}
 \alias{testSlopes}
 \title{Hypothesis tests for Simple Slopes Objects}
 \usage{
-  testSlopes(pso, plot = TRUE)
+  testSlopes(object)
+
+  \method{plot}{testSlopes} (x, ..., shade = TRUE,
+    col = rgb(1, 0, 0, 0.1))
 }
 \arguments{
-  \item{pso}{(short for plotSlopesObject) Output from the
-  plotSlopes function}
+  \item{object}{Output from the plotSlopes function}
 
-  \item{plot}{TRUE or FALSE, FALSE prevents creation of
-  plots}
+  \item{x}{A testSlopes object.}
+
+  \item{...}{Additional arguments that are ignored
+  currently.}
+
+  \item{shade}{Optional. Create colored polygon for
+  significant regions.}
+
+  \item{col}{Optional. Color of the shaded area. Default
+  transparent pink.}
 }
 \value{
-  A list including the hypothesis test table. For numeric
-  modx variables, also the Johnson-Neyman (J-N) interval
+  A list including 1) the hypothesis test table, 2) a copy
+  of the plotSlopes object, and, for numeric modx
+  variables, 3) the Johnson-Neyman (J-N) interval
   boundaries.
+
+  \code{NULL}
 }
 \description{
   Conducts t-test of the hypothesis that the "simple slope"
   line for one predictor is statistically significantly
   different from zero for each value of a moderator
   variable. The user must first run \code{plotSlopes()},
-  which generates an object that can be investigated. This
-  function scans that object to conduct the hypothesis
-  tests.
+  and then give the output object to \code{plotSlopes()}. A
+  plot method has been implemented for testSlopes objects.
+  It will create an interesting display, but only when the
+  moderator is a numeric variable.
+
+  plot.testSlopes is a method for the generic function
+  plot. It has been revised so that it creates a plot
+  illustrating the marginal effect, using the
+  Johnson-Neyman interval calculations to highlight the
+  "statistically significantly different from zero" slopes.
 }
 \details{
-  Consider a regression with interactions
+  This function scans the input object to detect the focal
+  values of the moderator variable (the variable declared
+  as \code{modx} in \code{plotSlopes}). Consider a
+  regression with interactions
 
   y <- b0 + b1*x1 + b2*x2 + b3*(x1*x2) + b4*x3 + ... +
   error
@@ -35,10 +59,7 @@
   plotx="x1" and the argument modx="x2", then there will be
   several plotted lines, one for each of the chosen values
   of x2.  The slope of each of these lines depends on x1's
-  effect, b1, as well as the interactive part, b3*x2.  We
-  wonder if the combined effect of x1 is statistically
-  significantly different from 0 for each of those values
-  of x2.
+  effect, b1, as well as the interactive part, b3*x2.
 
   This function performs a test of the null hypothesis of
   the slope of each fitted line in a \code{plotSlopes}
@@ -47,40 +68,65 @@
   conduct of multiple hypothesis tests (no Bonferroni
   correction).
 
-  In addition, the so-called Johnson-Neyman
-  (Johnson-Neyman, 1936; Preacher, Curran, and Bauer, 2006)
-  interval is calculated and a couple of efforts are made
-  to render it graphically.  Where the t-test considers the
-  question, is the slope of the line (b1 + b3*x2) different
-  from 0, the J-N approach asks "for which values of x2
-  will that plotted line be statistically significant?"
+  When \code{modx} is a numeric variable, it is possible to
+  conduct further analysis. We ask "for which values of
+  \code{modx} would the effect of \code{plotx} be
+  statistically significant?"  This is called a
+  Johnson-Neyman (Johnson-Neyman, 1936) approach in
+  Preacher, Curran, and Bauer (2006). The interval is
+  calculated here.  A plot method is provided to illustrate
+  the result.
 }
 \examples{
-library(car)
-m3 <- lm(statusquo ~ income * sex, data = Chile)
-m3ps <- plotSlopes(m3, modx = "sex", plotx = "income")
-testSlopes(m3ps)
-
-m4 <- lm(statusquo ~ region * income, data= Chile)
-m4ps <- plotSlopes(m4, modx = "region", plotx = "income", plotPoints = FALSE)
-##' testSlopes(m4ps)
+library(rockchalk)
+m1 <- lm(statusquo ~ income * age + education + sex + age, data = Chile)
+m1ps <- plotSlopes(m1, modx = "income", plotx = "age")
+m1psts <- testSlopes(m1ps)
+plot(m1psts)
 
 
-m5 <- lm(statusquo ~ region * income + sex + age, data= Chile)
-m5ps <- plotSlopes(m5, modx = "region", plotx = "income")
-testSlopes(m5ps)
+dat2 <- genCorrelatedData(N = 400, rho = .1, means = c(50, -20),
+                          stde = 300, beta = c(2, 0, 0.1, -0.4))
+m2 <- lm(y ~ x1*x2, data = dat2)
+m2ps <- plotSlopes(m2, plotx = "x1", modx = "x2")
+m2psts <- testSlopes(m2ps)
+plot(m2psts)
+m2ps <- plotSlopes(m2, plotx = "x1", modx = "x2", modxVals = "std.dev", n = 5)
+m2psts <- testSlopes(m2ps)
+plot(m2psts)
 
-m6 <- lm(statusquo ~ income * age + education + sex + age, data=Chile)
-m6ps <- plotSlopes(m6, modx = "income", plotx = "age")
-testSlopes(m6ps)
+## Try again with longer variable names
+
+colnames(dat2) <- c("oxygen","hydrogen","species")
+m2a <- lm(species ~ oxygen*hydrogen, data = dat2)
+m2aps1 <- plotSlopes(m2a, plotx = "oxygen", modx = "hydrogen")
+m2aps1ts <- testSlopes(m2aps1)
+plot(m2aps1ts)
+m2aps2 <- plotSlopes(m2a, plotx = "oxygen", modx = "hydrogen",
+                     modxVals = "std.dev", n = 5)
+m2bps2ts <- testSlopes(m2aps2)
+plot(m2bps2ts)
+
+
+
+dat3 <- genCorrelatedData(N = 400, rho = .1, stde = 300,
+                          beta = c(2, 0, 0.3, 0.15),
+                          means = c(50,0), sds = c(10, 40))
+m3 <- lm(y ~ x1*x2, data = dat3)
+m3ps <- plotSlopes(m3, plotx = "x1", modx = "x2")
+m3sts <- testSlopes(m3ps)
+plot(testSlopes(m3ps))
+plot(testSlopes(m3ps), shade = FALSE)
 
 ## Finally, if model has no relevant interactions, testSlopes does nothing.
-m9 <- lm(statusquo ~ age + income * education + sex + age, data=Chile)
+m9 <- lm(statusquo ~ age + income * education + sex + age, data = Chile)
 m9ps <- plotSlopes(m9, modx = "education", plotx = "age", plotPoints = FALSE)
-testSlopes(m9ps)
+m9psts <- testSlopes(m9ps)
 }
 \author{
   Paul E. Johnson <pauljohn@ku.edu>
+
+  <pauljohn@ku.edu>
 }
 \references{
   Preacher, Kristopher J, Curran, Patrick J.,and Bauer,

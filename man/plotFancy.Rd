@@ -1,0 +1,53 @@
+\name{plotFancy}
+\alias{plotFancy}
+\title{Regression plots with predicted value lines, confidence intervals, color coded interactions}
+\usage{
+  plotFancy(newdf, olddf, plotx, modx, modxVals, interval,
+    plotPoints, plotLegend, col = NULL, llwd = 2, opacity,
+    ...)
+}
+\arguments{
+  \item{newdf}{The new data frame with predictors and fit,
+  lwr, upr variables}
+
+  \item{olddf}{A data frame with variables(modxVar,
+  plotxVar, depVar)}
+
+  \item{plotx}{Character string for name of variable on
+  horizontal axis}
+
+  \item{modx}{Character string for name of moderator
+  variable.}
+
+  \item{modxVals}{Values of moderator for which lines are
+  desired}
+
+  \item{interval}{TRUE or FALSE: want confidence
+  intervals?}
+
+  \item{plotPoints}{TRUE or FALSE: want to see observed
+  values in plot?}
+
+  \item{plotLegend}{TRUE or FALSE: draw defaut legend}
+
+  \item{col}{requested color scheme for lines and points.
+  One per value of modxVals.}
+
+  \item{llwd}{requested line width, will re-cycle.}
+
+  \item{opacity}{Value in 0, 255 for darkness of interval
+  shading}
+
+  \item{...}{Other arguments passed to plot function.}
+}
+\value{
+  col, lty, and lwd information
+}
+\description{
+  This is the back-end for the functions plotSlopes and
+  plotCurves. Don't use it directly.
+}
+\author{
+  Paul E. Johnson <pauljohn@ku.edu>
+}
+
