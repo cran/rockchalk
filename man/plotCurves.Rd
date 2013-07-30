@@ -2,43 +2,71 @@
 \alias{plotCurves}
 \title{Assists creation of predicted value curves for regression models.}
 \usage{
-  plotCurves(model = NULL, plotx = NULL, modx = NULL,
-    modxVals = NULL, plotPoints = TRUE, col,
+  plotCurves(model, plotx, modx, n, modxVals = NULL,
+    interval = c("none", "confidence", "prediction"),
+    plotPoints = TRUE, plotLegend = TRUE, col = NULL,
+    llwd = 2, opacity = 100,
     envir = environment(formula(model)), ...)
 }
 \arguments{
   \item{model}{Required. Fitted regression object. Must
   have a predict method}
 
-  \item{plotx}{Required. String with name of IV to be
-  plotted on x axis}
+  \item{plotx}{Required. String with name of predictor for
+  the x axis}
 
-  \item{modx}{Required. String for moderator variable name.
+  \item{modx}{Optional. String for moderator variable name.
   May be either numeric or factor.}
 
-  \item{modxVals}{Optional. If modx is numeric, either a
-  character string, "quantile", "std.dev.", or "table", or
-  a vector of values for which plotted lines are sought. If
-  modx is a factor, the default approach will create one
-  line for each level, but the user can supply a vector of
-  levels if a subset is desired.}
+  \item{n}{Optional.  Number of focal values of
+  \code{modx}, used by algorithms specified by modxVals;
+  will be ignored if modxVals supplies a vector of focal
+  values.}
 
-  \item{plotPoints}{Optional. Should the plot include the
-  scatterplot points along with the lines.}
+  \item{modxVals}{Optional. A vector of focal values for
+  which predicted values are to be plotted. May also be a
+  character string to select an algorithm
+  ("quantile","std.dev." or "table"), or a user-supplied
+  function to select focal values (a new method similar to
+  \code{getFocal}). If modx is a factor, currently, the
+  only available algorithm is "table" (see
+  \code{getFocal.factor}.}
 
-  \item{col}{Optional. A color vector.  By default, the R's
-  builtin colors will be used, which are "black", "red",
-  and so forth.  Instead, a vector of color names can be
-  supplied, as in c("pink","black", "gray70").  A
-  color-vector generating function like rainbow(10) or
-  gray.colors(5) can also be used. A vector of color names
-  can be supplied with this function. Color names will be
-  recycled if the plot requires more different colors than
-  the user provides.}
+  \item{interval}{Optional. Intervals provided by the
+  \code{predict.lm} may be supplied, either "conf" (95%
+  confidence interval for the estimated conditional mean)
+  or "pred" (95% interval for observed values of y given
+  the rest of the model).}
+
+  \item{plotPoints}{Optional. TRUE or FALSE: Should the
+  plot include the scatterplot points along with the
+  lines.}
+
+  \item{plotLegend}{Optional. TRUE or FALSE: Should the
+  default legend be included?}
+
+  \item{col}{Optional.  A color vector to differentiate the
+  moderator values in the plot. If not specified, the R's
+  builtin palette() will be used. User may supply a vector
+  of valid color names, either explicitly c("pink","black",
+  "gray70") or implicitly, rainbow(10) or gray.colors(5).
+  Color names will be recycled if there are more focal
+  values of \code{modx} than colors provided.}
 
   \item{envir}{environment to search for variables.}
 
-  \item{...}{further arguments that are passed to plot.}
+  \item{llwd}{Optional. Line widths for predicted values.
+  Can be single value or a vector, which will be recycled
+  as necessary. ##'}
+
+  \item{opacity}{Optional, default = 100. A number between
+  1 and 255. 1 means "transparent" or invisible, 255 means
+  very dark. the darkness of confidence interval regions}
+
+  \item{...}{further arguments that are passed to plot or
+  predict. The arguments that are monitored to be sent to
+  predict are c("type", "se.fit", "dispersion", "terms",
+  "na.action").}
 }
 \value{
   A plot is created as a side effect, a list is returned
@@ -47,46 +75,92 @@
   modxVals, the values for which curves were drawn.
 }
 \description{
-  This is similar to \code{plotSlopes}, but it accepts
-  regressions in which there are transformed variables,
-  such as "log(x1)". Think of this a new version of R's
-  \code{termplot}, but it allows for interactions.  It
-  creates a plot of the predicted dependent variable
-  against one of the numeric predictors, \code{plotx}. It
-  draws a predicted value line for several values of
-  \code{modx}, a moderator variable. The moderator may be a
-  numeric or categorical moderator variable.
+  Creates a predicted value plot that includes a separate
+  predicted value line for each value of a focal variable.
+  The x axis variable is specified by the \code{plotx}
+  argument. As of rockchalk 1.7.x, the moderator argument,
+  modx, is optional. Think of this a new version of R's
+  \code{termplot}, but it allows for interactions. And it
+  handles some nonlinear transformations more gracefully
+  than termplot.
 }
 \details{
+  This is similar to \code{plotSlopes}, but it accepts
+  regressions in which there are transformed variables,
+  such as "log(x1)". It creates a plot of the predicted
+  dependent variable against one of the numeric predictors,
+  \code{plotx}. It draws a predicted value line for each
+  value of \code{modx}, a moderator variable. The moderator
+  may be a numeric or categorical moderator variable.
+
   The user may designate which particular values of the
   moderator are used for calculating the predicted value
   lines.  That is, \code{modxVals = c( 12,22,37)} would
   draw lines for values 12, 22, and 37 of the moderator.
-
-  If the user does not specify the parameter
-  \code{modxVals}, built-in algorithms will select the "cut
-  points". Three algorithms have been prepared so far,
-  \code{quantile}, \code{std.dev.}, and \code{table}. If
-  the number of unique observed values is smaller than 6,
-  the \code{table} method is used.  The 5 most frequently
-  observed values of modx are selected. Otherwise, the
-  quantile method is used. Predictive lines are plotted for
-  the following percentiles {0.25,0.50,0.75}. The algorithm
-  \code{std.dev.} plots three lines, one for the mean of
-  modx, and one for the mean minus one standard deviation,
-  and the other for the mean plus one standard deviation.
+  User may instead supply a character string to choose one
+  of the built in algorithms. The default algorithm is
+  "quantile", which will select \code{n} values that are
+  evenly spaced along the \code{modx} axis. The algorithm
+  "std.dev" will select the mean of \code{modx} (m) and
+  then it will select values that step away from the mean
+  in standard deviation sd units. For example, if \code{n =
+  3}, the focal values will \code{m, m - sd, am + sd}.
 }
 \examples{
+
+library(rockchalk)
+
+## Replicate some R classics.  The budworm.lg data from predict.glm
+## will work properly after re-formatting the information as a data.frame:
+
+## example from Venables and Ripley (2002, pp. 190-2.)
+df <- data.frame(ldose = rep(0:5, 2),
+                 sex = factor(rep(c("M", "F"), c(6, 6))),
+                 SF.numdead = c(1, 4, 9, 13, 18, 20, 0, 2, 6, 10, 12, 16))
+df$SF.numalive = 20 - df$SF.numdead
+
+budworm.lg <- glm(cbind(SF.numdead, SF.numalive) ~ sex*ldose, data = df,
+                  family = binomial)
+
+
+plotCurves(budworm.lg, plotx = "ldose", modx = "sex", interval = "confidence",
+           ylim = c(0, 1))
+
+## See infert
+model2 <- glm(case ~ age + parity + education + spontaneous + induced,
+              data = infert, family = binomial())
+
+## Curvature so slight we can barely see it
+model2pc1 <- plotCurves(model2, plotx = "age", modx = "education",
+                        interval = "confidence", ylim = c(0, 1))
+
+
+model2pc2 <- plotCurves(model2, plotx = "age", modx = "education",
+                        modxVals = levels(infert$education)[1],
+                        interval = "confidence", ylim = c(0, 1))
+
+
+model2pc2 <- plotCurves(model2, plotx = "age", modx = "education",
+                        modxVals = levels(infert$education)[c(2,3)],
+                        interval = "confidence", ylim = c(0, 1))
+
+model2pc2 <- plotCurves(model2, plotx = "age", modx = "education",
+                        modxVals = levels(infert$education)[c(2,3)],
+                        ylim = c(0, 1), type = "response")
+
+
+
+
+
+## Manufacture some data
 set.seed(12345)
 N <- 500
-x1 <- rnorm(N, m=5, s=1)
-x2 <- rnorm(N)
-x3 <- rnorm(N)
-x4 <- rnorm(N)
-xcat1 <- gl(2,50, labels=c("Monster","Human"))
-xcat2 <- cut(rnorm(N), breaks=c(-Inf, 0, 0.4, 0.9, 1, Inf), labels=c("R", "M", "D", "P", "G"))
-dat <- data.frame(x1, x2, x3, x4, xcat1, xcat2)
-rm(x1, x2, x3, x4, xcat1, xcat2)
+dat <- genCorrelatedData2(N = 500, means = c(5, 0, 0, 0), sds = rep(1, 4),
+                          rho = 0.2, beta = rep(1, 5), stde = 20)
+
+dat$xcat1 <- gl(2, N/2, labels = c("Monster", "Human"))
+dat$xcat2 <- cut(rnorm(N), breaks = c(-Inf, 0, 0.4, 0.9, 1, Inf),
+             labels = c("R", "M", "D", "P", "G"))
 
 ###The design matrix for categorical variables, xcat numeric
 dat$xcat1n <- with(dat, contrasts(xcat1)[xcat1, ])
@@ -94,112 +168,127 @@ dat$xcat2n <- with(dat, contrasts(xcat2)[xcat2, ])
 
 
 stde <- 2
-dat$y <- with(dat, 0.03 + 11.5*log(x1)*xcat1n + 0.1*x2 + 0.04*x2^2 + stde*rnorm(N))
+dat$y <- with(dat, 0.03 + 11.5 * log(x1) * contrasts(dat$xcat1)[dat$xcat1] +
+              0.1 * x2 + 0.04 * x2^2 + stde*rnorm(N))
 
-stde <- 1              
-dat$y2 <- with(dat, 0.03 + 0.1*x1 + 0.1*x2 + 0.25*x1*x2 + 0.4*x3 -0.1*x4 + stde*rnorm(N))
+stde <- 1
+dat$y2 <- with(dat, 0.03 + 0.1 * x1 + 0.1 * x2 + 0.25 * x1 * x2 + 0.4 * x3 -
+               0.1 * x4 + stde * rnorm(N))
 stde <- 8
-dat$y3 <- with(dat, 3 + 0.5*x1 + 1.2 * (as.numeric(xcat1)-1) +
--0.8* (as.numeric(xcat1)-1) * x1 +  stde * rnorm(N))
+dat$y3 <- with(dat, 3 + 0.5 * x1 + 1.2 * (as.numeric(xcat1)-1) +
+-0.8 * (as.numeric(xcat1)-1) * x1 +  stde * rnorm(N))
 
 stde <- 8
-
-dat$y4 <- with(dat, 3 + 0.5*x1 + xcat2n \%*\% c(0.1, -0.2, 0.3, 0.05)  + stde * rnorm(N))
+dat$y4 <- with(dat, 3 + 0.5 * x1 +
+               contrasts(dat$xcat2)[dat$xcat2, ] \%*\% c(0.1, -0.2, 0.3, 0.05)  +
+               stde * rnorm(N))
 
 
 ## Curvature with interaction
 m1 <- lm(y ~ log(x1)*xcat1 + x2 + I(x2^2), data=dat)
 summary(m1)
+
+## First, with no moderator
+plotCurves(m1, plotx="x1")
+
 plotCurves(m1, plotx="x1", modx="xcat1")
 
-## Verify that plot by comparing against a manually contructed alternative
-par(mfrow=c(1,2))
-plotCurves(m1, plotx="x1", modx="xcat1")
-newdat <- with(dat, expand.grid(x1 = plotSeq(x1, 30), xcat1=levels(xcat1)))
-newdat$x2 <-  with(dat, mean(x2, na.rm=TRUE))
-newdat$m1p <- predict(m1, newdata=newdat)
-plot( y ~ x1, data=dat, type="n")
-points( y ~ x1, data=dat, col=dat$xcat1)
-by(newdat, newdat$xcat1, function(dd) {lines(dd$x1, dd$m1p)})
-legend("topleft", legend=levels(dat$xcat1), col=as.numeric(dat$xcat1), lty=1)
-par(mfrow=c(1,1))
-##Close enough!
+## ## Verify that plot by comparing against a manually contructed alternative
+## par(mfrow=c(1,2))
+## plotCurves(m1, plotx = "x1", modx = "xcat1")
+## newdat <- with(dat, expand.grid(x1 = plotSeq(x1, 30), xcat1 = levels(xcat1)))
+## newdat$x2 <-  with(dat, mean(x2, na.rm = TRUE))
+## newdat$m1p <- predict(m1, newdata = newdat)
+## plot( y ~ x1, data = dat, type = "n", ylim = magRange(dat$y, c(1, 1.2)))
+## points( y ~ x1, data = dat, col = dat$xcat1, cex = 0.4, lwd = 0.5)
+## by(newdat, newdat$xcat1, function(dd) {lines(dd$x1, dd$m1p)})
+## legend("topleft", legend=levels(dat$xcat1), col = as.numeric(dat$xcat1), lty = 1)
+## par(mfrow = c(1,1))
+## ##Close enough!
 
 
-plotCurves(m1, plotx="x2", modx="x1")
-##OK
+plotCurves(m1, plotx = "x2", modx = "x1")
 
-plotCurves(m1, plotx="x2", modx="xcat1")
-##OK
+plotCurves(m1, plotx = "x2", modx = "xcat1")
 
-m2 <- lm(y ~ log(x1)*xcat1 + xcat1*(x2 + I(x2^2)), data=dat)
+plotCurves(m1, plotx = "x2", modx = "xcat1", interval = "conf")
+
+
+m2 <- lm(y ~ log(x1)*xcat1 + xcat1*(x2 + I(x2^2)), data = dat)
 summary(m2)
-plotCurves(m2, plotx="x2", modx="xcat1")
-##OK 
+plotCurves(m2, plotx = "x2", modx = "xcat1")
 
-plotCurves(m2, plotx="x2", modx="x1")
-##OK
-
-plotCurves(m2, plotx="x2", modx="x1")
-##OK
+plotCurves(m2, plotx  ="x2", modx = "x1")
 
 
+m3a <- lm(y ~ poly(x2, 2) + xcat1, data = dat)
 
-m3a <- lm(y ~ poly(x2,2) + xcat1, data=dat)
-plotCurves(m3a, plotx="x2", modx="xcat1")
+plotCurves(m3a, plotx = "x2")
+plotCurves(m3a, plotx = "x2", modx = "xcat1")
 #OK
 
-m3b <- lm(y ~ x2 + I(x2^2) + xcat1, data=dat)
-plotCurves(m3b, plotx="x2", modx="xcat1")
-#OK
-
-m4 <- lm(log(y+10) ~ poly(x2, 2)*xcat1 + x1, data=dat)
+m4 <- lm(log(y+10) ~ poly(x2, 2)*xcat1 + x1, data = dat)
 summary(m4)
-plotCurves(m4, plotx="x2", modx="xcat1")
-#OK
-plotCurves(m4, plotx="x2", modx="x1")
-#OK
-plotCurves(m4, plotx="x2", modx="xcat1", modxVals=c("Monster"))
-#OK
+plotCurves(m4, plotx = "x2")
+
+plotCurves(m4, plotx  ="x2", modx = "xcat1")
+
+plotCurves(m4, plotx = "x2", modx = "x1")
+
+plotCurves(m4, plotx = "x2", modx = "xcat1")
+
+plotCurves(m4, plotx = "x2", modx = "xcat1", modxVals = c("Monster"))
+
 
 ##ordinary interaction
-m5 <- lm(y2 ~ x1*x2 + x3 +x4, data=dat)
+m5 <- lm(y2 ~ x1*x2 + x3 +x4, data = dat)
 summary(m5)
-plotCurves(m5, plotx="x1", modx="x2")
-plotCurves(m5, plotx="x1", modx="x2", modxVals=c( -2, -1, 0, 1, 2))
-plotCurves(m5, plotx="x1", modx="x2", modxVals=c(-2 ))
-plotCurves(m5, plotx="x1", modx="x2", modxVals="std.dev.")
-plotCurves(m5, plotx="x1", modx="x2", modxVals="quantile")
-plotCurves(m5, plotx="x3", modx="x2")
+plotCurves(m5, plotx = "x1", modx = "x2")
+plotCurves(m5, plotx = "x1", modx = "x2", modxVals = c( -2, -1, 0, 1, 2))
+plotCurves(m5, plotx = "x1", modx = "x2", modxVals = c(-2))
+plotCurves(m5, plotx = "x1", modx = "x2", modxVals = "std.dev.")
+plotCurves(m5, plotx = "x1", modx = "x2", modxVals = "quantile")
+plotCurves(m5, plotx = "x3", modx = "x2")
 
 
 library(car)
 mc1 <- lm(statusquo ~ income * sex, data = Chile)
 summary(mc1)
+plotCurves(mc1, plotx = "income")
 plotCurves(mc1, modx = "sex", plotx = "income")
 plotCurves(mc1, modx = "sex", plotx = "income", modxVals = "M")
 
-mc2 <- lm(statusquo ~ region * income, data= Chile)
+mc2 <- lm(statusquo ~ region * income, data =  Chile)
 summary(mc2)
 plotCurves(mc2, modx = "region", plotx = "income")
-plotCurves(mc2, modx = "region", plotx = "income", modxVals = levels(Chile$region)[c(1,4)])
+plotCurves(mc2, modx = "region", plotx = "income",
+           modxVals = levels(Chile$region)[c(1,4)])
 plotCurves(mc2, modx = "region", plotx = "income", modxVals = c("S","M","SA"))
+plotCurves(mc2, modx = "region", plotx = "income", modxVals = c("S","M","SA"),
+           interval = "conf")
 
-plotCurves(mc2, modx = "region", plotx = "income", plotPoints=FALSE)
+plotCurves(mc2, modx = "region", plotx = "income", plotPoints = FALSE)
 
 
-mc3 <- lm(statusquo ~ region * income + sex + age, data= Chile)
+mc3 <- lm(statusquo ~ region * income + sex + age, data =  Chile)
 summary(mc3)
 plotCurves(mc3, modx = "region", plotx = "income")
 
 
-mc4 <- lm(statusquo ~ income * (age + I(age^2)) + education + sex + age, data=Chile)
+mc4 <- lm(statusquo ~ income * (age + I(age^2)) + education + sex + age, data = Chile)
 summary(mc4)
-plotCurves(mc4, modx = "income", plotx = "age")
-plotCurves(mc4, modx = "income", plotx = "age", plotPoints=FALSE)
+plotCurves(mc4, plotx = "age")
+plotCurves(mc4, plotx = "age", interval = "conf")
 
-plotCurves(mc4, modx = "age", plotx = "income")
-plotCurves(mc4, modx = "income", plotx = "age", plotPoints=FALSE)
+
+plotCurves(mc4, plotx = "age", modx = "income")
+plotCurves(mc4, plotx = "age", modx = "income", plotPoints = FALSE)
+
+plotCurves(mc4,  plotx = "income", modx = "age")
+plotCurves(mc4,  plotx = "income", modx = "age", n = 8)
+
+plotCurves(mc4,  plotx = "income", modx = "age", modxVals = "std.dev.")
+plotCurves(mc4, modx = "income", plotx = "age", plotPoints = FALSE)
 }
 \author{
   Paul E. Johnson <pauljohn@ku.edu>

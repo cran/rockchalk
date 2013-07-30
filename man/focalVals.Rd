@@ -1,0 +1,47 @@
+\name{focalVals}
+\alias{focalVals}
+\title{Create a focal value vector.}
+\usage{
+  focalVals(x, divider = "quantile", n = 3)
+}
+\arguments{
+  \item{x}{The input variable may be numeric or a factor.}
+
+  \item{divider}{Either a quoted string name of an
+  algorithm or a function. Default = "quantile" for numeric
+  variables, "table" for factors. Other valid values: "seq"
+  for an evenly spaced sequence from minimum to maximum,
+  "std.dev." for a sequence that has the mean at the center
+  and values on either side that are proportional to the
+  standard deviation.}
+
+  \item{n}{Desired number of focal values.}
+}
+\value{
+  A named vector of focal values selected from a variable.
+  The values of the names should be informative and useful
+  for plotting or other diagnostic work.
+}
+\description{
+  This selects some values of a variable and creates a new
+  "focal vector" from them. Can use one "divider"
+  algorithm, to be selected by name.
+}
+\details{
+  This is a "wrapper" (or convenience) function that
+  re-directs work to other functions. The functions that do
+  the work to select the focal values for types ("table",
+  "quantile", "std.dev.", "seq") are (cutByTable(),
+  cutByQuantile(), cutBySD(), and plotSeq())
+
+  The built-in R function \code{pretty()} works as of
+  rockchalk 1.7.2. Any function that accepts an argument n
+  will work, as long as it creates a vector of values.
+}
+\author{
+  Paul E. Johnson <pauljohn@ku.edu>
+}
+\seealso{
+  \code{predictOMatic} \code{newdata}
+}
+

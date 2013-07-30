@@ -1,0 +1,51 @@
+\name{outreg2HTML}
+\alias{outreg2HTML}
+\title{Convert an outreg result to HTML markup}
+\usage{
+  outreg2HTML(outreg, filename)
+}
+\arguments{
+  \item{outreg}{output from outreg}
+
+  \item{filename}{A file name into which the regression
+  markup is to be saved. Should end in .html.}
+}
+\value{
+  A vector of strings
+}
+\description{
+  Will generate output on screen, but if a filename
+  argument is supplied, it will write a text file
+  containing the result. One can then open or insert the
+  file into Libre Office or other popular "word processor"
+  programs.
+}
+\examples{
+dat <- genCorrelatedData2(means = c(50,50,50,50,50,50),
+    sds = c(10,10,10,10,10,10), rho = 0.2, beta = rnorm(7), stde = 50)
+m1 <- lm(y ~ x1 + x2 + x3 + x4 + x5 + x6 + x1*x2, data = dat)
+summary(m1)
+
+m1out <- outreg(list("Great Regression" = m1), alpha = c(0.05, 0.01, 0.01),
+         request = c("fstatistic" = "F"), runFuns = c(AIC = "AIC"),
+         float = TRUE)
+##html markup will appear on screen
+outreg2HTML(m1out)
+## outreg2HTML(m1out, filename = "funky.html")
+## I'm not running that for you because you
+## need to be in the intended working directory
+
+m2 <- lm(y ~ x1 + x2, data = dat)
+
+m2out <- outreg(list("Great Regression" = m1, "Small Regression" = m2),
+               alpha = c(0.05, 0.01, 0.01),
+                request = c("fstatistic" = "F"), runFuns = c(BIC = "BIC"))
+outreg2HTML(m2out)
+## Run this for yourself, it will create the output file funky2.html
+## outreg2HTML(m2out, filename = "funky2.html")
+## Please inspect the file "funky2.html
+}
+\author{
+  Paul E. Johnson \email{<pauljohn@ku.edu>}
+}
+

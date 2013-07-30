@@ -1,0 +1,196 @@
+\name{genCorrelatedData2}
+\alias{genCorrelatedData2}
+\title{Generates a data frame for regression analysis.}
+\usage{
+  genCorrelatedData2(N = 100, means = c(50, 50, 50),
+    sds = c(10, 10, 10), rho = c(0, 0, 0), stde = 100,
+    beta = c(0, 0.15, 0.1, -0.1), verbose = TRUE)
+}
+\arguments{
+  \item{N}{Number of cases desired}
+
+  \item{means}{P-vector of means for X. Implicitly sets the
+  dimension of the predictor matrix as N x P.}
+
+  \item{sds}{Values for standard deviations for columns of
+  X. If less than P values are supplied, they will be
+  recycled.}
+
+  \item{rho}{Correlation coefficient for X. Several input
+  formats are allowed (see \code{lazyCor}). This can be a
+  single number (common correlation among all variables), a
+  full matrix of correlations among all variables, or a
+  vector that is interpreted as the strictly lower triangle
+  (a vech).}
+
+  \item{stde}{standard deviation of the error term in the
+  data generating equation}
+
+  \item{beta}{beta vector of coefficients for intercept,
+  slopes, and nonlinear-interaction terma.  The first P+1
+  values are the intercept and slope coefficients for the
+  predictors. Additional elements in beta are interpreted
+  as coefficients for nonlinear and interaction
+  coefficients.  I have decided to treat these as a column
+  (vech) that fills into a lower triangular matrix. See
+  Details.}
+
+  \item{verbose}{TRUE or FALSE. Should information about
+  the data generation be reported to the terminal?}
+}
+\value{
+  A data matrix that has columns c(y, x1, x2, ..., xP)
+}
+\description{
+  Unlike \code{genCorrelatedData}, this new-and-improved
+  function can generate a data frame with as many
+  predictors as the user requests along with an arbitrarily
+  complicated regression formula.  The result will be a
+  data frame with columns named (y, x1, x2, ..., xp).
+}
+\details{
+  Arguments supplied must have enought information so that
+  an N x P matrix of predictors can be constructed. The
+  matrix X is drawn from a multivariate normal
+  distribution, the expected value vector (mu vector) is
+  given by the \code{means} and the var/covar matrix
+  (Sigma) is built from user supplied standard deviations
+  \code{sds} and the correlations between the columns of X,
+  given by \code{rho}. The user can also set the standard
+  deviation of the error term (\code{stde}) and the
+  coefficients of the regression equation (\code{beta}).
+
+  If called with no arguments, this creates a data frame
+  with X ~ MVN(mu = c(50,50,50), Sigma =
+  diag(c(10,10,10))). y = X %*% c(0.15, 0.1, -0.1) + error,
+  where error is N(m = 0, sd = 200). All of these details
+  can be changed by altering the arguments.
+
+  The y (output) variable is created according to the
+  equation
+
+  y = b1 + b2 * x1 + ...+ bk * xk + b[k+1] * x1 *
+  ...interactions.. + e
+
+  For shorthand, I write b1 for beta[1], b2 for beta[2],
+  and so forth.
+
+  The first P+1 arguments in the argument beta are the
+  coefficients for the intercept and the columns of the X
+  matrix.  Any additional elements in beta are the
+  coefficients for nonlinear and interaction terms.
+
+  Those additional values in the beta vector are completely
+  optional. Without them, the true model is a linear
+  regression. However, one can incorporate the effect of
+  squared terms (conceptualize that as x1 * x1, for
+  example) or interactions (x1 * x2) easily.  This is
+  easier to illustrate than describe. Suppose there are 4
+  columns in X. Then a beta vector like beta = c(0, 1, 2,
+  3, 4, 5, 6, 7, 8) would amount to asking for
+
+  y = 0 + 1 x1 + 2 x2 + 3 x3 + 4 x4 + 5 *x1^2 + 6 x1 x2 + 7
+  x1 x3 + 8 x1 x4 + error
+
+  If beta supplies more coefficients, they are interpeted
+  as additional interactions.
+
+  When there are a many predictors and the beta vector is
+  long, this can become confusing. I think of this as a
+  vech for the lower triangle of a coefficient matrix. In
+  the example with 4 predictors, beta[1:5] are used for the
+  intercepts and slopes. The rest of the beta elements lay
+  in like so:
+
+  X1 X2 X3 X4 X1 b6 .  . X2 b7 b10 . X3 b8 b11 b13 X4 b9
+  b12 b14 b15
+
+  If the user only supplies b6 and b7, the rest are assumed
+  to be 0.
+
+  To make this clear, the formula used to calculate y is
+  printed to the console when genCorrelatedData2 is called.
+}
+\examples{
+## 1000 observations of uncorrelated X with no interactions
+set.seed(234234)
+dat <- genCorrelatedData2(N = 10, rho = 0.0, beta = c(1, 2, 1, 1),
+    means = c(0,0,0), sds = c(1,1,1), stde = 0)
+summarize(dat)
+## The perfect regression!
+m1 <- lm(y ~ x1 + x2 + x3, data = dat)
+summary(m1)
+
+dat <- genCorrelatedData2(N = 1000, rho = 0,
+    beta = c(1, 0.2, -3.3, 1.1), stde = 50)
+m1 <- lm(y ~ x1 + x2 + x3, data = dat)
+summary(m1)
+predictOMatic(m1)
+plotCurves(m1, plotx = "x2")
+
+## interaction between x1 and x2
+dat <- genCorrelatedData2(N = 1000, rho = 0.2,
+    beta = c(1, 1.0, -1.1, 0.1, 0.0, 0.16), stde = 1)
+summarize(dat)
+## Fit wrong model? get "wrong" result
+m2w <- lm(y ~ x1 + x2 + x3, data = dat)
+summary(m2w)
+## Include interaction
+m2 <- lm(y ~ x1 * x2 + x3, data = dat)
+summary(m2)
+
+dat <- genCorrelatedData2(N = 1000, rho = 0.2,
+    beta = c(1, 1.0, -1.1, 0.1, 0.0, 0.16), stde = 100)
+summarize(dat)
+m2.2 <- lm(y ~ x1 * x2 + x3, data = dat)
+summary(m2.2)
+
+dat <- genCorrelatedData2(N = 1000, means = c(100, 200, 300, 100),
+    sds = 20,  rho = c(0.2, 0.3, 0.1, 0, 0, 0),
+    beta = c(1, 1.0, -1.1, 0.1, 0.0, 0.16, 0, 0, 0.2, 0, 0, 1.1, 0, 0, 0.1),
+    stde = 200)
+summarize(dat)
+m2.3w <- lm(y ~ x1 + x2 + x3, data = dat)
+summary(m2)
+
+m2.3 <- lm(y ~ x1 * x2 + x3, data = dat)
+summary(m2.3)
+
+predictOMatic(m2.3)
+plotCurves(m2.3, plotx = "x1", modx = "x2", modxVals = "std.dev.", n = 5)
+
+simReg <- lapply(1:100, function(x){
+    dat <- genCorrelatedData2(N = 1000, rho = c(0.2),
+        beta = c(1, 1.0, -1.1, 0.1, 0.0, 0.46), verbose = FALSE)
+    mymod <- lm (y ~ x1 * x2 + x3, data = dat)
+    summary(mymod)
+})
+
+x3est <- sapply(simReg, function(reg) {coef(reg)[4 ,1] })
+summarize(x3est)
+hist(x3est,  breaks = 40, prob = TRUE,
+    xlab = "Estimated Coefficients for column x3")
+
+r2est <- sapply(simReg, function(reg) {reg$r.square})
+summarize(r2est)
+hist(r2est,  breaks = 40, prob = TRUE, xlab = "Estimates of R-square")
+
+## No interaction, collinearity
+dat <- genCorrelatedData2(N = 1000, rho = c(0.1, 0.2, 0.7),
+    beta = c(1, 1.0, -1.1, 0.1), stde = 1)
+m3 <- lm(y ~ x1 + x2 + x3, data = dat)
+summary(m3)
+
+dat <- genCorrelatedData2(N=1000, rho=c(0.1, 0.2, 0.7),
+    beta = c(1, 1.0, -1.1, 0.1), stde = 200)
+m3 <- lm(y ~ x1 + x2 + x3, data = dat)
+summary(m3)
+mcDiagnose(m3)
+
+dat <- genCorrelatedData2(N = 1000, rho = c(0.9, 0.5, 0.4),
+    beta = c(1, 1.0, -1.1, 0.1), stde = 200)
+m3b <- lm(y ~ x1 + x2 + x3, data = dat)
+summary(m3b)
+mcDiagnose(m3b)
+}
+

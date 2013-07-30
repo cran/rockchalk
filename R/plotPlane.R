@@ -44,6 +44,8 @@
 ##' @param x1lab optional label
 ##' @param x2lab optional label
 ##' @param ylab optional label
+##' @param x1lim optional lower and upper bounds for x1, as vector like c(0,1)
+##' @param x2lim optional lower and upper bounds for x2, as vector like c(0,1)
 ##' @param x1floor Default=5. Number of "floor" lines to be drawn for variable x1
 ##' @param x2floor Default=5. Number of "floor" lines to be drawn for variable x2
 ##' @param pch plot character, passed on to the "points" function
@@ -54,11 +56,10 @@
 ##' @param lcol line color, col passed to the "lines" function
 ##' @param llty line type, lty passed to the "lines" function
 ##' @param acol color for arrows, col passed to "arrows" function
-##' @param alty line type, lty passed to the "arrows" function
-##' @param alwd line width, lwd passed to the "arrows" function
+##' @param alty arrow line type, lty passed to the "arrows" function
+##' @param alwd arrow line width, lwd passed to the "arrows" function
 ##' @param alength arrow head length, length passed to "arrows" function
 ##' @param linesFrom object with information about "highlight" lines to be added to the 3d plane (output from plotCurves or plotSlopes)
-##' @param lfcol colors for the linesFrom highlight lines
 ##' @param lflwd line widths for linesFrom highlight lines
 ##' @param envir environment from whence to grab data
 ##' @param ... additional parameters that will go to persp
@@ -70,10 +71,10 @@
 
 plotPlane <-
 function(model = NULL,  plotx1 = NULL, plotx2 = NULL, drawArrows = FALSE,
-         plotPoints = TRUE, npp = 20, x1lab, x2lab, ylab, x1floor = 5,
-         x2floor = 5,  pch = 1, pcol = "blue", plwd = 0.5, pcex = 1,
-         llwd = 0.3, lcol = 1, llty = 1, acol = "red", alty = 4,
-         alwd = 0.3, alength = 0.1, linesFrom, lfcol = "red",
+         plotPoints = TRUE, npp = 20, x1lab, x2lab, ylab, x1lim, x2lim,
+         x1floor = 5, x2floor = 5,  pch = 1, pcol = "blue", plwd = 0.5,
+         pcex = 1, llwd = 0.3, lcol = 1, llty = 1, acol = "red", alty = 4,
+         alwd = 0.3, alength = 0.1, linesFrom,
          lflwd = 3, envir = environment(formula(model)),  ...){
     UseMethod("plotPlane")
 }
@@ -85,18 +86,18 @@ function(model = NULL,  plotx1 = NULL, plotx2 = NULL, drawArrows = FALSE,
 ##' was issued, 3) x1seq, the "plot sequence" for the x1 dimension, 4)
 ##' x2seq, the "plot sequence" for the x2 dimension, 5) zplane, the
 ##' values of the plane corresponding to locations x1seq and x2seq.
-##'
 ##' @rdname plotPlane
 ##' @method plotPlane default
 ##' @S3method plotPlane default
 
 plotPlane.default <-
 function(model = NULL, plotx1 = NULL, plotx2 = NULL, drawArrows = FALSE,
-         plotPoints = TRUE, npp = 20, x1lab, x2lab, ylab, x1floor = 5,
-         x2floor = 5, pch = 1, pcol = "blue", plwd = 0.5, pcex = 1,
-         llwd = 0.3, lcol = 1, llty = 1, acol = "red", alty = 4, alwd = 0.3,
-         alength = 0.1, linesFrom, lfcol ="red", lflwd = 3,
+         plotPoints = TRUE, npp = 20, x1lab, x2lab, ylab, x1lim, x2lim, 
+         x1floor = 5, x2floor = 5, pch = 1, pcol = "blue", plwd = 0.5,
+         pcex = 1, llwd = 0.3, lcol = 1, llty = 1, acol = "red", alty = 4,
+         alwd = 0.3, alength = 0.1, linesFrom, lflwd = 3,
          envir = environment(formula(model)), ...){
+
 
     if (is.null(model))
         stop("plotPlane requires a fitted regression model.")
@@ -112,25 +113,34 @@ function(model = NULL, plotx1 = NULL, plotx2 = NULL, drawArrows = FALSE,
     emf <- model.data(model)
     varnames <- attr(emf, "varNamesRHS")
 
-    if (plotx1 %in% varnames)
-        x1 <- emf[, plotx1]
+    if (!plotx1 %in% varnames) stop(paste("plotx1 variable,", plotx1, ", is not in fitted model"))
+    if (!plotx2 %in% varnames) stop(paste("plotx2 variable,", plotx2, ", is not in fitted model"))
+                                    
+    if (!missing(x1lim))
+        emf <- subset(emf, emf[ , plotx1] >= x1lim[1] & emf[ , plotx1] <= x1lim[2])
+    if (!missing(x2lim))
+        emf <- subset(emf, emf[ , plotx2] >= x2lim[1] & emf[ , plotx2] <= x2lim[2])
+    
+    x1 <- emf[, plotx1]
+    x2 <- emf[, plotx2]
     if (!is.numeric(x1))
         stop(paste("plotPlane: The variable", plotx1, "should be a numeric variable"))
-    x2 <- emf[, plotx2]
     if (!is.numeric(x2))
         stop(paste("plotPlane: The variable", plotx2, "should be a numeric variable"))
-
+    x1range <- magRange(x1, 1.15)
+    x2range <- magRange(x2, 1.15)
+  
     if (missing(ylab)) ylab <- colnames(model$model)[1]
     if (missing(x1lab)) x1lab <- plotx1
     if (missing(x2lab)) x2lab <- plotx2
 
-    x1range <- magRange(x1, 1.15)
-    x2range <- magRange(x2, 1.15)
+   
+    if (missing(x2lim)) x2range <- magRange(x2, 1.15) else x2range <- magRange(x2lim, 1.15)
 
     ##TODO must double check effect of function predictors
     otherPredictors <- setdiff(varnames, c(plotx2, plotx1)) #remove x1 x2
     if (length(otherPredictors) > 0) {
-        otherPredictorValues <- centralValues(emf[, otherPredictors, drop = FALSE])
+        otherPredictorValues <- centralValues(emf[ , otherPredictors, drop = FALSE])
     }
 
     myPredict <- function(a,b){
@@ -155,9 +165,19 @@ function(model = NULL, plotx1 = NULL, plotx2 = NULL, drawArrows = FALSE,
 
     yrange <- magRange(c(zplane,y), 1.15)
 
-    res <- perspEmpty(x1 = plotSeq(x1range, x1floor),
+    ## must block users from trying to send wrong messages to persp.
+    ## this is brutish, but don't have time figure more eloquent way.
+    dotargs <- list(...)
+    dotargs[["xlim"]] <- NULL
+    dotargs[["ylim"]] <- NULL
+    dotargs[["zlim"]] <- NULL
+
+    argList <- list(x1 = plotSeq(x1range, x1floor),
                       x2 = plotSeq(x2range, x2floor), y = yrange,
-                      x1lab = x1lab, x2lab = x2lab, ylab = ylab, ...)
+                      x1lab = x1lab, x2lab = x2lab, ylab = ylab)
+    newArgList <- modifyList(dotargs, argList)
+    
+    res <- do.call("perspEmpty", newArgList)
 
     ##for arrows. NEEDS reworking to be more general
     if ("glm" %in% class(model)) {
@@ -206,17 +226,19 @@ function(model = NULL, plotx1 = NULL, plotx2 = NULL, drawArrows = FALSE,
               lwd = llwd, col = lcol, lty = llty)
     }
 
-    if (!missing(linesFrom)){
+
+    if (!missing(linesFrom)) {
         dataSplits <- split(linesFrom$newdata, f = linesFrom$newdata[[linesFrom$call[["modx"]]]])
-        lapply(dataSplits, function(nd){
-            lines(trans3d( nd[[plotx1]], nd[[plotx2]], nd$pred, pmat=res), col = lfcol, lwd = lflwd)})
+        drawLine <- function(nd, mycol, mylty){
+            lines(trans3d(nd[[plotx1]], nd[[plotx2]], nd$fit, pmat=res), col = mycol, lwd = lflwd, lty = mylty)
+        }
+        mapply(drawLine, dataSplits, linesFrom$col, linesFrom$lty)
     }
 
-    retval <- list(res=res, call=cl, "x1seq"=x1seq, "x2seq"=x2seq, "zplane"=zplane)
+    retval <- list(res = res, call = cl, "x1seq" = x1seq, "x2seq" = x2seq, "zplane" = zplane)
     class(retval) <- "rockchalk3d"
     invisible(retval)
 }
-
 NULL
 
 
@@ -239,14 +261,28 @@ NULL
 ##' @export
 ##' @example inst/examples/addLines-ex.R
 
-addLines <- function(to = NULL, from = NULL, col = "red", lwd = 2, lty = 1){
-    if (!class(from) %in% "rockchalk") stop("addLines: from must be an output object from plotSlopes or plotCurves, of class rockchalk")
-    if (!class(to) %in% "rockchalk3d") stop("addLines: to must be a 3d plot object created by plotPlane or such")
-    if ( !(from$call[["modx"]] %in% to$call[["plotx1"]] | from$call[["modx"]] %in% to$call[["plotx2"]]) ) stop("Mismatched plotPlanes and plotSlopes objects")
+addLines <- function(to = NULL, from = NULL, col, lwd = 2, lty = 1){
+    if (!inherits(from, "rockchalk"))
+        stop("addLines: from must be an output object from plotSlopes or plotCurves, of class rockchalk")
+    if (!inherits(to, "rockchalk3d"))
+        stop("addLines: to must be a 3d plot object created by plotPlane or such")
+    if ( !(from$call[["modx"]] %in% to$call[["plotx1"]] | from$call[["modx"]] %in% to$call[["plotx2"]]) )
+        stop("Mismatched plotPlanes and plotSlopes objects")
 
     dataSplits <- split(from$newdata, f = from$newdata[[from$call[["modx"]]]])
-    lapply(dataSplits, function(nd){
-        lines(trans3d( nd[[to$call[["plotx1"]]]], nd[[to$call[["plotx2"]]]], nd$pred, pmat = to$res), col = col, lwd = lwd, lty = lty)})
+    if(missing(col)) {
+        col = from$col
+    } else {
+        if (length(col) < length(dataSplits)) col <- rep(col, length.out = length(dataSplits))
+    }
+
+    if (length(lwd) < length(dataSplits)) lwd <- rep(lwd, length.out = length(dataSplits))
+    i <- 0
+    for (i in seq_along(dataSplits)) {
+        nd <- dataSplits[[i]]
+        lines(trans3d(nd[[to$call$plotx1]], nd[[to$call$plotx2]],
+                      nd$fit, pmat = to$res), col = col[i], lwd = lwd[i], lty = lty);
+    }
     NULL
 }
 

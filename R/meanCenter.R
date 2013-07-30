@@ -8,8 +8,11 @@
 ##' @return an lm fitted with the standardized variables
 ##' @export
 ##' @author Paul Johnson <pauljohn@@ku.edu>
-##' @seealso \code{\link[rockchalk]{meanCenter}} which will center or re-scale only numberic variables
-standardize <- function(model){
+##' @seealso \code{\link[rockchalk]{meanCenter}} which will center or
+##' re-scale only numberic variables
+standardize <-
+    function(model)
+{
     UseMethod("standardize")
 }
 
@@ -19,7 +22,9 @@ standardize <- function(model){
 ##' @method standardize lm
 ##' @S3method standardize lm
 ##' @example inst/examples/standardize-ex.R
-standardize.lm <- function(model){
+standardize.lm <-
+    function(model)
+{
     formulaReplace <- function(fmla, xname, newname){
         do.call("substitute", list(fmla, setNames(list(as.name(newname)), xname)))
     }
@@ -27,18 +32,18 @@ standardize.lm <- function(model){
     mt <- terms(model)
     mdata <- model.frame(model)
     ys  <- drop(scale(mdata[, 1]))
-                                        #dm = design matrix, columns of predictors as numerically coded
+    ##dm = design matrix, columns of predictors as numerically coded
     dm <- model.matrix(model)[ , -1, drop=FALSE] #no intercept
-    dmnames <- paste(colnames(dm),"s", sep="")
-    dmnamesticked <- paste("`",dmnames,"`", sep="")
+    dmnames <- paste(colnames(dm),"s", sep = "")
+    dmnamesticked <- paste("`",dmnames,"`", sep = "")
     dmnamesticked <- gsub("``","`", dmnamesticked)
-    dvname <- paste(colnames(mdata)[1],"s", sep="")
-    dvnameticked <-  paste("`", dvname,"`", sep="")
+    dvname <- paste(colnames(mdata)[1],"s", sep = "")
+    dvnameticked <-  paste("`", dvname,"`", sep = "")
     dvnameticked <- gsub("``","`", dvnameticked)
     std <- function(x) if(is.numeric(x)) scale(x) else x
     stddat <- apply(dm, 2, std)  ##standardize numeric vars
-    colnames(stddat) <- paste(colnames(stddat), "s", sep="")
-    stddat <- cbind(ys, stddat )
+    colnames(stddat) <- paste(colnames(stddat), "s", sep = "")
+    stddat <- cbind(ys, stddat)
     stddat <- as.data.frame(stddat)
     colnames(stddat) <- c(dvname, dmnames)
     colnames(stddat) <- gsub("`","", colnames(stddat))
@@ -53,10 +58,12 @@ standardize.lm <- function(model){
 }
 
 
-##' @author <pauljohn@@ku.edu>
+##' @author Paul E. Johnson <pauljohn@@ku.edu>
 ##' @method summary stdreg
 ##' @S3method summary stdreg
-summary.stdreg <- function(object, ...){
+summary.stdreg <-
+    function(object, ...)
+{
     dm <- model.matrix(object)
     dm <- dm[ , which(attr(dm, "assign") != 0)] #remove intercept, if any
     dm <- cbind( model.frame(object)[ , deparse(terms(object)[[2]])], dm)
@@ -64,16 +71,15 @@ summary.stdreg <- function(object, ...){
     dmmeans <- apply(dm, 2, mean)
     dmstds <- apply(dm, 2, sd)
     summstat <- zapsmall(data.frame("mean" = dmmeans, "std.dev." = dmstds))
-    ##summ <- c(summary(object, ...), summstat)
     summ <- NextMethod(generic = "summary", object = object, ...)
     summ$summstat <- summstat
-    class(summ) <- paste("summary.", class(object), sep="")
+    class(summ) <- paste("summary.", class(object), sep = "")
     summ
 }
 NULL
 
 
-##' @author <pauljohn@@ku.edu>
+##' @author Paul E. Johnson <pauljohn@@ku.edu>
 ##' @method print stdreg
 ##' @S3method print stdreg
 print.stdreg <- function(x, ...){
@@ -82,11 +88,12 @@ print.stdreg <- function(x, ...){
 }
 NULL
 
-##' @author <pauljohn@@ku.edu>
+##' @author Paul E. Johnson <pauljohn@@ku.edu>
 ##' @method print summary.stdreg
 ##' @S3method print summary.stdreg
-print.summary.stdreg <- function (x, ...){
-
+print.summary.stdreg <-
+    function (x, ...)
+{
     cat("All variables in the model matrix and the dependent variable
 were centered. The centered variables have the letter \"s\" appended to their
 non-centered counterparts, even constructed
@@ -95,7 +102,6 @@ ill-advised, but you asked for it by running standardize().\n
 The rockchalk function meanCenter is a smarter option, probably. \n
 The summary statistics of the variables in the design matrix. \n")
     print(x$summstat)
-    ##NextMethod(generic = "print", x = x, ...)
     NextMethod()
 }
 NULL
@@ -106,34 +112,72 @@ NULL
 
 ##' meanCenter selectively centers or standarizes variables in a regression model.
 ##'
-##' Mean-centering has often been recommended as a way to ameliorate
-##' multi-collinearity in regression models that include interaction
-##' terms (Aiken and West, 1991; Cohen, et al 2002). While this claim
-##' may have been mistaken (Echambadi and Hess, 2007), mean-centering
-##' is still widely practiced.  This function facilitates comparison
-##' of mean-centered models with others by automatically
-##' re-calculating centered variables.  The defaults will cause a
+##' Works with "lm" class objects, objects estimated by \code{glm()}. This
+##' centers some or all of the the predictors and then re-fits the
+##' original model with the new variables. This is a convenience to
+##' researchers who are often urged to center their predictors.  This
+##' is sometimes suggested as a way to ameliorate multi-collinearity
+##' in models that include interaction terms (Aiken and West, 1991;
+##' Cohen, et al 2002). Mean-centering may enhance interpretation of
+##' the regression intercept, but it actually does not help with
+##' multicollinearity.  (Echambadi and Hess, 2007). This function
+##' facilitates comparison of mean-centered models with others by
+##' calculating centered variables.  The defaults will cause a
 ##' regression's numeric interactive variables to be mean
-##' centered. That is to say, if an interaction x1:x2 is present in
-##' the model, then x1 and x2 are replaced by (m1-mean(m1)) and
-##' (m2-mean(m2) in all of the terms in which they appear in the model
-##' (the main effect and the interaction).  If one wants all
-##' predictors to be centered, the option \code{centerOnlyInteractors}
-##' should be set to FALSE. The dependent variable will not be
-##' centered, unless the user explicitly requests it by setting
-##' centerDV = TRUE. The centered variables can be standardized
-##' (optionally, of course).
+##' centered. Variations on the arguments are discussed in details.
+##'
+##' Suppose the user's formula that fits the original model is
+##' \code{m1 <- lm(y ~ x1*x2 + x3 + x4, data = dat)}. The fitted model
+##' will include estimates for predictors \code{x1}, \code{x2},
+##' \code{x1:x2}, \code{x3} and \code{x4}. By default,
+##' \code{meanCenter(m1)} scans the output to see if there are
+##' interaction terms of the form \code{x1:x2}. If so, then x1 and x2
+##' are replaced by centered versions (m1-mean(m1)) and
+##' (m2-mean(m2)). The model is re-estimated with those new variables.
+##' model (the main effect and the interaction). The resulting thing
+##' is "just another regression model", which can be analyzed or
+##' plotted like any R regression object.
+##'
+##' The user can claim control over which variables are centered in
+##' several ways. Most directly, by specifying a vector of variable
+##' names, the user can claim direct control. For example, the
+##' argument \code{terms=c("x1","x2","x3")} would cause 3 predictors
+##' to be centered. If one wants all predictors to be centered, the
+##' argument \code{centerOnlyInteractors} should be set to
+##' FALSE. Please note, this WILL NOT center factor variables. But it
+##' will find all numeric predictors and center them.
+##'
+##' The  dependent variable will not be centered, unless the user
+##' explicitly requests it by setting centerDV = TRUE.
+##'
+##' As an additional convenience to the user, the argument
+##' \code{standardize = TRUE} can be used.  This will divide each
+##' centered variable by its observed standard deviation. For people
+##' who like standardized regression, I suggest this is a better
+##' approach than the \code{standardize} function (which is brain-dead
+##' in the style of SPSS). meanCenter with \code{standardize = TRUE}
+##' will only try to standardize the numeric predictors.
+##'
+##' To be completely clear, I believe mean-centering is not helpful
+##' with the multicollinearity problem. It doesn't help, it doesn't
+##' hurt.  Only a misunderstanding leads its proponents to claim
+##' otherwise. This is emphasized in the vignette "rockchalk" that is
+##' distributed with this package.
+##'
 ##' @title meanCenter
 ##' @param model a fitted regression model (presumably from lm)
-##' @param centerOnlyInteractors If false, all predictors in the
-##' regression data frame are centered before the regression is
-##' conducted.
-##' @param centerDV Should the dependent variable be centered?
-##' @param standardize Instead of simply mean-centering the variables, should they also be "standardized" by first mean-centering and then dividing by the estimated standard deviation.
+##' @param centerOnlyInteractors Default TRUE. If FALSE, all numeric
+##' predictors in the regression data frame are centered before the
+##' regression is conducted.
+##' @param centerDV Default FALSE. Should the dependent variable be centered? Do not set this option to TRUE unless the dependent variable is a numeric variable. Otherwise, it is an error.
+##' @param standardize Default FALSE. Instead of simply mean-centering the variables, should they also be "standardized" by first mean-centering and then dividing by the estimated standard deviation.
+##' @param terms Optional. A vector of variable names to be
+##' centered. Supplying this argument will stop meanCenter from
+##' searching for interaction terms that might need to be centered.
 ##' @export meanCenter
 ##' @rdname meanCenter
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
-##' @seealso \code{\link[pequod]{lmres}}
+##' @seealso \code{\link[pequod]{lmres}} \code{\link[rockchalk]{standardize}} \code{\link[rockchalk]{residualCenter}}
 ##' @references
 ##' Aiken, L. S. and West, S.G. (1991). Multiple Regression: Testing and Interpreting Interactions. Newbury Park, Calif: Sage Publications.
 ##'
@@ -141,7 +185,9 @@ NULL
 ##'
 ##' Echambadi, R., and Hess, J. D. (2007). Mean-Centering Does Not Alleviate Collinearity Problems in Moderated Multiple Regression Models. Marketing Science, 26(3), 438-445.
 ##' @example inst/examples/meanCenter-ex.R
-meanCenter <- function(model, centerOnlyInteractors=TRUE, centerDV=FALSE, standardize=FALSE){
+meanCenter <-
+    function(model, centerOnlyInteractors = TRUE, centerDV = FALSE, standardize=FALSE, terms = NULL)
+{
     UseMethod("meanCenter")
 }
 
@@ -152,7 +198,7 @@ meanCenter <- function(model, centerOnlyInteractors=TRUE, centerDV=FALSE, standa
 ##' @method meanCenter default
 ##' @S3method meanCenter default
 meanCenter.default <-
-    function(model, centerOnlyInteractors=TRUE, centerDV=FALSE, standardize=FALSE)
+    function(model, centerOnlyInteractors = TRUE, centerDV = FALSE, standardize = FALSE, terms = NULL)
 {
 
     std <- function(x) {
@@ -167,7 +213,7 @@ meanCenter.default <-
         list(x = x, xmean = xmean, xsd = xsd)
     }
 
-   ## rdf <- get_all_vars(formula(model), model$model) #raw data frame
+    ## rdf <- get_all_vars(formula(model), model$model) #raw data frame
     rdf <- model.data(model)
     t <- terms(model)
     tl <- attr(t, "term.labels")
@@ -175,27 +221,35 @@ meanCenter.default <-
 
     isNumeric <- names(tmdc)[ which(tmdc %in% c("numeric"))]
     isFac <-  names(tmdc)[ which(tmdc %in% c("factor"))]
-    if (tmdc[1] != "numeric") stop("Sorry, DV not a single numeric column")
+
+    if (centerDV & tmdc[1] != "numeric")
+        stop("Sorry, the DV is not a numeric column, it does not make sense to center it.")
 
     ##Build "nc", a vector of variable names that "need centering"
     ##
     if (!centerDV) {
-        if (centerOnlyInteractors == FALSE){
+        if (!is.null(terms)){
+            nc <- as.vector(terms)
+            nc <- unique(nc)
+        } else if (centerOnlyInteractors == FALSE){
             nc <- isNumeric[-1] #-1 excludes response
-            unique(nc)
+            nc <- unique(nc)
         } else {
             interactTerms <- tl[grep(":", tl)]
             nc <- unique(unlist(strsplit( interactTerms, ":")))
             nc <-  nc[which(nc %in% isNumeric)]
         }
     } else {
-        if (centerOnlyInteractors == FALSE){
+        if (!is.null(terms)){
+            nc <- as.vector(terms)
+            nc <- c(names(tmdc)[1] , nc)
+        } else if (centerOnlyInteractors == FALSE){
             nc <- isNumeric
         } else {
             interactTerms <- tl[grep(":", tl)]
             nc <- unique(unlist(strsplit( interactTerms, ":")))
             nc <- nc[which(nc %in% isNumeric)]
-            nc <- c( names(tmdc)[1] , nc)
+            nc <- c(names(tmdc)[1] , nc)
         }
     }
 
@@ -216,8 +270,8 @@ meanCenter.default <-
         icenter <- std(stddat[, nc[i]])
         centeredVars[1, nc[i]] <- icenter$xmean
         centeredVars[2, nc[i]] <- icenter$xsd
-        newname <- paste(as.character(nc[i]), "c", sep="")
-        if (isTRUE(standardize)) newname <- paste(newname, "s", sep="")
+        newname <- paste(as.character(nc[i]), "c", sep = "")
+        if (isTRUE(standardize)) newname <- paste(newname, "s", sep = "")
         stddat[ ,newname] <- icenter$x
         newFmla <- formulaReplace(newFmla,  as.character(nc[i]), newname)
         nc[i] <- newname
@@ -235,7 +289,9 @@ meanCenter.default <-
 ##' @author <pauljohn@@ku.edu>
 ##' @S3method summary mcreg
 ##' @method summary mcreg
-summary.mcreg <- function(object, ...){
+summary.mcreg <-
+    function(object, ...)
+{
     centeredVars <- attr(object, "centeredVars")
     dm <- model.matrix(object)
     dm <- dm[ , which(attr(dm, "assign") != 0), drop=FALSE] #remove intercept, if any
@@ -271,7 +327,9 @@ NULL
 ##' @author <pauljohn@@ku.edu>
 ##' @method print summary.mcreg
 ##' @S3method print summary.mcreg
-print.summary.mcreg <- function (x, ...){
+print.summary.mcreg <-
+    function (x, ...)
+{
     cat("These variables were mean-centered before any transformations were made on the design matrix.\n")
     print(colnames(x$centeredVars))
     cat("The centers and scale factors were \n")
@@ -290,27 +348,29 @@ NULL
 ##' @author <pauljohn@@ku.edu>
 ##' @method predict mcreg
 ##' @S3method predict mcreg
-predict.mcreg <- function (object, newdata, ...){
+predict.mcreg <-
+    function (object, ...)
+{
     originalCall <- object$call
+    dots <- list(...)
+    newdata <- NULL
+    if (! is.null(dots[["newdata"]])) {
+        newdata <- dots[["newdata"]]
+        dots[["newdata"]] <- NULL
+    }
     centeredVars <- attr(object, "centeredVars")
     nc <- colnames(centeredVars) #need centering
-    dvname <- parse(text=formula(originalCall)[[2]])
+    dvname <- parse(text = formula(originalCall)[[2]])
     nc <- setdiff(nc, dvname) #remove dv name if present
-    if(missing(newdata)) {
+    if (is.null(newdata)) {
         newdata <- model.frame(object)##should be centered already
-        tmeans <- sapply(newdata[ , nc], mean, na.rm=T)
-        if (! isTRUE(all.equal(abs(tmeans), rep(0, length(nc)), check.attributes=F))) stop("dead newdata walking")
-        ## } else {
-        ##     if (isTRUE(attr(newdata, "isCentered"))){
-        ##         ##verify the claim
-        ##         print("data claims it is already centered")
-        ##     } else {
-        ##         for(i in nc){
-        ##             newdata[ , i] <- (newdata[ ,i] - centeredVars["mean", i])/centeredVars["scale", i]
-        ##         }
-        ##     }
+        tmeans <- sapply(newdata[ , nc, drop = FALSE], mean, na.rm = TRUE)
+        if (! isTRUE(all.equal(abs(tmeans), rep(0, length(nc)), check.attributes = FALSE)))
+            stop(paste("In predict.mcreg, the fitted regression claims to have centered variables,",
+                       paste(nc, collapse=" "), "but not all of those centered values have",
+                       "observed means very close to 0. Something's wrong"))
     }
-    NextMethod(object, newdata = newdata, ...)
+    NextMethod(object, newdata = newdata, dots)
 }
 NULL
 
@@ -344,7 +404,9 @@ NULL
 ##' @export
 ##' @examples
 ##' set.seed(12345)
-##' dat <- data.frame(x1=rnorm(100,m=50), x2=rnorm(100,m=50), x3=rnorm(100,m=50), y=rnorm(100), x4=gl(2, 50, labels=c("Male","Female")))
+##' dat <- data.frame(x1=rnorm(100, m = 50), x2 = rnorm(100, m = 50),
+##'     x3 = rnorm(100, m = 50), y = rnorm(100),
+##'     x4 = gl(2, 50, labels = c("Male","Female")))
 ##' datc1 <- centerNumerics(dat)
 ##' head(datc1)
 ##' summarize(datc1)
@@ -352,7 +414,7 @@ NULL
 ##' head(datc2)
 ##' summarize(datc2)
 ##' attributes(datc2)
-##' datc3 <- centerNumerics(dat, center=c("x1"=30, "x2"=40))
+##' datc3 <- centerNumerics(dat, center = c("x1" = 30, "x2" = 40))
 ##' head(datc3)
 ##' summarize(datc3)
 ##' attributes(datc3)
@@ -360,7 +422,8 @@ NULL
 ##' head(datc3)
 ##' summarize(datc4)
 ##' attributes(datc4)
-##' datc5 <- centerNumerics(dat, center=c("x1"=30, "x2"=40), standardize = c("x2" = 5, "x1" = 7))
+##' datc5 <- centerNumerics(dat, center=c("x1"=30, "x2"=40),
+##' standardize = c("x2" = 5, "x1" = 7))
 ##' head(datc5)
 ##' summarize(datc5)
 ##' attributes(datc5)
@@ -375,18 +438,23 @@ centerNumerics <- function(data, center, standardize = FALSE){
         nc <- colnames(data)[isN] ##all need centering
     } else if (is.character(center)){
         if(sum (!center %in% colnames(data)[isN]) != 0)
-            stop(paste("centerNumerics failed. Argument center includes column names that are not numeric variables in the data frame", deparse(substitute(data))))
+            stop(paste("centerNumerics failed. Argument center includes",
+                       "column names that are not numeric variables in the"
+                       , "data frame", deparse(substitute(data))))
         nc <- center
         center <- TRUE
-    } else if (is.numeric(center)){
-        if(is.null(names(center))) stop("centerNumerics failed. The center vector must be a named vector so that centerNumerics can decide which columns need centering")
+    } else if (is.numeric(center)) {
+        if(is.null(names(center)))
+            stop(paste("centerNumerics failed.",
+                       "The center vector must be a named vector so that",
+                       "centerNumerics can decide which columns need centering"))
         if(sum (!names(center) %in% colnames(data)[isN]) != 0)
             stop(paste("centerNumerics failed. Argument center includes column names that are not numeric variables in the data frame", deparse(substitute(data))))
         nc <- names(center) ##names
     }
 
-    if (is.numeric(standardize)){
-        if(!setequal(names(standardize), nc))
+    if (is.numeric(standardize)) {
+        if (!setequal(names(standardize), nc))
             stop("centerNumerics failed. Names of standardize argument must be identical to names of center argument")
         standardize <- standardize[nc] ##sorts
     }
@@ -394,13 +462,13 @@ centerNumerics <- function(data, center, standardize = FALSE){
     datas <- scale(data[ , nc], center = center, scale = standardize)
     if(!is.null(attr(datas, "scaled:center"))) centers <- attr(datas, "scaled:center")
     colnames(datas) <- paste(colnames(datas), "c", sep="")
-    if(!is.null(attr(datas, "scaled:scale"))){
+    if (!is.null(attr(datas, "scaled:scale"))) {
         scales <- attr(datas, "scaled:scale")
-        colnames(datas) <- paste(colnames(datas), "s", sep="")
+        colnames(datas) <- paste(colnames(datas), "s", sep = "")
     }
     data <- as.data.frame(cbind(data, datas))
     attr(data, "centers") <- centers
-    if(!is.null(attr(datas, "scaled:scale")))attr(data, "scales") <- scales
+    if (!is.null(attr(datas, "scaled:scale")))attr(data, "scales") <- scales
 
     data
 }

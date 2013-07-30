@@ -1,228 +1,265 @@
 \name{plotSlopes}
 \alias{plotSlopes}
-\title{Assists creation of predicted value lines for values of a moderator variable.}
+\alias{plotSlopes.lm}
+\title{Generic function for plotting regressions and interaction effects}
 \usage{
-  plotSlopes(model = NULL, plotx = NULL, modx = NULL,
-    modxVals = NULL, plotPoints = TRUE, plotLegend = TRUE,
-    col, llwd, ...)
+  plotSlopes(model, plotx, ...)
+
+  \method{plotSlopes}{lm} (model, plotx, modx, n = 3,
+    modxVals = NULL,
+    interval = c("none", "confidence", "prediction"),
+    plotPoints = TRUE, plotLegend = TRUE, col = NULL,
+    llwd = 2, opacity = 100, ...)
 }
 \arguments{
-  \item{model}{Required. Fitted regression object. Must
-  have a predict method}
+  \item{model}{Required. A fitted Regression}
 
-  \item{plotx}{Required. String with name of IV to be
-  plotted on x axis}
+  \item{plotx}{Required. Name of one predictor from the
+  fitted model to be plotted on horizontal axis}
 
-  \item{modx}{Required. String for moderator variable name.
-  May be either numeric or factor.}
+  \item{...}{Additional arguments passed to methods. Often
+  includes arguments that are passed to plot. Any arguments
+  that customize plot output, such as lwd, cex, and so
+  forth, may be supplied. These arguments intended for the
+  predict method will be used: c("type", "se.fit",
+  "dispersion", "terms", "na.action")}
 
-  \item{modxVals}{Optional. If modx is numeric, either a
-  character string, "quantile", "std.dev.", or "table", or
-  a vector of values for which plotted lines are sought. If
-  modx is a factor, the default approach will create one
-  line for each level, but the user can supply a vector of
-  levels if a subset is desired..}
+  \item{modx}{Optional. String for moderator variable name.
+  May be either numeric or factor. If omitted, a single
+  predicted value line will be drawn.}
+
+  \item{n}{Optional. Number of focal values of \code{modx},
+  used by algorithms specified by modxVals; will be ignored
+  if modxVals supplies a vector of focal values.}
+
+  \item{modxVals}{Optional. Focal values of \code{modx} for
+  which lines are desired. May be a vector of values or the
+  name of an algorithm, "quantile", "std.dev.", or
+  "table".}
+
+  \item{interval}{Optional. Intervals provided by the
+  \code{predict.lm} may be supplied, either "confidence"
+  (95% confidence interval for the estimated conditional
+  mean) or "prediction" (95% interval for observed values
+  of y given the rest of the model).}
 
   \item{plotPoints}{Optional. TRUE or FALSE: Should the
   plot include the scatterplot points along with the
   lines.}
 
   \item{plotLegend}{Optional. TRUE or FALSE: Include a
-  default legend. Set to FALSE if use wants to run a
-  different legend command after the plot has been drawn.}
+  default legend. Set to FALSE if user wants to customize a
+  legend after the plot has been drawn.}
 
-  \item{col}{Optional. A color vector.  By default, the R's
-  builtin colors will be used, which are "black", "red",
-  and so forth.  Instead, a vector of color names can be
-  supplied, as in c("pink","black", "gray70").  A
-  color-vector generating function like rainbow(10) or
-  gray.colors(5) can also be used. A vector of color names
-  can be supplied with this function. Color names will be
-  recycled if the plot requires more different colors than
-  the user provides.}
+  \item{col}{Optional. A color vector for predicted value
+  lines (and intervals if requested). If not specified, the
+  R's builtin palette() will be used. User may supply a
+  vector of valid color names, either explicitly
+  c("pink","black", "gray70") or implicitly, rainbow(10) or
+  gray.colors(5). Color names will be recycled if there are
+  more focal values of \code{modx} than colors provided.}
 
-  \item{llwd}{An optional vector of line widths used while
-  plotting the lines that represent the values of the
-  factor. This applies only to the lines in the plot. The
-  ... argument will also allow one to pass options that are
-  parsed by plot, such as lwd. That deterimine the
-  thickness of points in the plot.}
+  \item{llwd}{Optional, default = 2. Line widths for
+  predicted values. Can be single value or a vector, which
+  will be recycled as necessary.}
 
-  \item{...}{further arguments that are passed to plot}
+  \item{opacity}{Optional, default = 100. A number between
+  1 and 255. 1 means "transparent" or invisible, 255 means
+  very dark. the darkness of confidence interval regions}
 }
 \value{
-  The plot is drawn on the screen, and the return object
-  includes the "newdata" object that was used to create the
-  plot, along with the "modxVals" vector, the values of the
-  moderator for which lines were drawn. It also includes
-  the call that generated the plot.
+  Creates a plot and an output object that summarizes it.
+
+  The return object includes the "newdata" object that was
+  used to create the plot, along with the "modxVals"
+  vector, the values of the moderator for which lines were
+  drawn, and the color vector. It also includes the call
+  that generated the plot.
 }
 \description{
-  This is a "simple slope" plotter for linear regression.
-  The term "simple slopes" was coined by psychologists
-  (Aiken and West, 1991; Cohen, et al 2002) to refer to
-  analysis of interaction effects for particular values of
-  a moderating variable, be it continuous or categorical.
-  To use this function, the user should estimate a
-  regression (with as many variables as desired, including
-  interactions) and the resulting regression object is then
-  supplied to this function, along with user requests for
-  plots of certain variables.
+  This is a generic function for plotting regression
+  objects. So far, there is an implementation for
+  \code{lm()} objects. This allows interaction effects, but
+  not nonlinearities like log(x1). For that, please see
+  \code{plotCurves}.
+
+  This is a "simple slope" plotter for linear regression
+  objects that are created by \code{lm()}.  The function
+  \code{plotCurves()} can handle nonlinear predictive
+  equations and generalized linear models. The term "simple
+  slopes" was coined by psychologists (Aiken and West,
+  1991; Cohen, et al 2002) for analysis of interaction
+  effects for particular values of a moderating variable.
+  The moderating variable may be continuous or categorical,
+  lines will be plotted for focal values of that variable.
 }
 \details{
-  The variable \code{plotx} will be the horizontal plotting
-  variable; it must be numeric.  The variable \code{modx}
-  is the moderator variable. It may be either a numeric or
-  a factor variable.  A line will be drawn to represent the
-  predicted value for selected values of the moderator.
+  This function works well with lm models in which the
+  predictor formula includes interactions, but it does not
+  work well with nonlinear predictors (log(x) and poly(x)).
+  For that, please use \code{plotCurves}. plotSlopes is
+  needed only when one wants to create an output object
+  that can be used as input for \code{testSlopes()}.
 
-  The parameter \code{modxVals} is optional.  It is used to
-  fine-tune the values of the moderator that are used to
-  create the simple slope plot.  Numeric and factor
-  moderators are treated differently. If the moderator is a
-  numeric variable, then some particular values must be
-  chosen for plottings. If the user does not specify the
-  parameter \code{modxVals}, then lines will be drawn for
-  the quantile values of the moderator.  If the moderator
-  is a factor, then lines are drawn for each different
-  value of the factor variable, unless the user specifies a
-  subset of levels with the \code{modxVals} parameter.
+  The argument \code{plotx} is the name of the horizontal
+  plotting variable; it must be numeric.  The argument
+  \code{modx} is the moderator variable. It may be either a
+  numeric or a factor variable. As of version 1.7, the modx
+  argument may be omitted. A single predicted value line
+  will be drawn. That version also introduced the arguments
+  interval and n.
 
-  For numeric moderators, the user may specify a vector of
-  values for the numeric moderator variable, such as
-  c(1,2,3). The user may also specify an algorithm, either
-  "quantile" (which would be selected by default) or
-  "std.dev." The alternative method at this time is
-  "std.dev.", which causes 5 lines to be drawn. These lines
-  are the "standard deviations about the mean of
-  \code{modx}" lines, at which modx is set at mean - k*
-  standard deviation, and k takes on values -2, -1, 0, 1,
-  2.
+  There are many ways to specify focal values using the
+  arguments \code{modxVals} and \code{n}. This changed in
+  rockchalk-1.7.0.  If \code{modxVals} is omitted, a
+  default algorithm will be used, selecting \code{n} values
+  for plotting. \code{modxVals} may be a vector of values
+  (for a numeric moderator) or levels (for a factor).  If
+  modxVals is a vector of values, then the argument
+  \code{n} is ignored.  However, if modxVals is one of the
+  name of one of the algorithms, "table", "quantile", or
+  "std.dev.", then the argument \code{n} sets number of
+  focal values to be selected. For numeric \code{modx}, n
+  defaults to 3, but for factors \code{modx} will be the
+  number of observed values of \code{modx}. If modxVals is
+  omitted, the defaults will be used ("table" for factors,
+  "quantile" for numeric variables).
 
-  Here is a wrinkle. There can be many variables in a
-  regression model, and we are plotting only for the
-  \code{plotx} and \code{modx} variables. How should we
-  calculate predicted values when the values of the other
-  variables are required?  For the other variables, the
-  ones that are not explicitly inlcluded in the plot, we
-  use the mean and mode, for numeric or factor variables
+  For the predictors besides \code{modx} and \code{plotx}
+  (the ones that are not explicitly included in the plot),
+  predicted values are calculated with variables set to the
+  mean and mode, for numeric or factor variables
   (respectively). Those values can be reviewed in the
   newdata object that is created as a part of the output
   from this function
 }
 \examples{
+## Manufacture some predictors
 set.seed(12345)
-x1 <- rnorm(100)
-x2 <- rnorm(100)
-x3 <- rnorm(100)
-x4 <- rnorm(100)
-xcat1 <- gl(2,50, labels=c("M","F"))
-xcat2 <- cut(rnorm(100), breaks=c(-Inf, 0, 0.4, 0.9, 1, Inf), labels=c("R", "M", "D", "P", "G"))
-dat <- data.frame(x1, x2, x3, x4, xcat1, xcat2)
-rm(x1, x2, x3, x4, xcat1, xcat2)
 
-##ordinary regression. 
-dat$y <- with(dat, 0.03 + 0.1*x1 + 0.1*x2 + 0.4*x3 -0.1*x4 + 2*rnorm(100))
-m1 <- lm(y ~ x1 + x2 +x3 + x4, data=dat)
-## These will be parallel lines emf 
-plotSlopes(m1, plotx="x1", modx="x2")
-plotSlopes(m1, plotx="x1", modx="x2", modxVals=c(-0.5,0,0.5))
-plotSlopes(m1, plotx="x1", modx="x2", modxVals="std.dev.", main="A plotSlopes result with \\"std.dev.\\" values of modx")
+dat <- genCorrelatedData2 (N = 100, means = rep(0,4), sds = 1, rho = 0.2,
+                           beta = c(0.3, 0.5, -0.45, 0.5, -0.1, 0, 0.6),
+                           stde = 2)
 
+dat$xcat1 <- gl(2, 50, labels = c("M", "F"))
+dat$xcat2 <- cut(rnorm(100), breaks = c(-Inf, 0, 0.4, 0.9, 1, Inf),
+                 labels = c("R", "M", "D", "P", "G"))
+## incorporate effect of categorical predictors
+dat$y <- dat$y + 1.9 * dat$x1 * contrasts(dat$xcat1)[dat$xcat1] +
+           contrasts(dat$xcat2)[dat$xcat2 , ] \%*\% c(0.1, -0.1, 0, 0.2)
 
-plotSlopes(m1, plotx="x1", modx="x2", modxVals="std.dev.", ylab="Call Y What You Want")
-plotSlopes(m1, plotx="x1", modx="x2")
-plotSlopes(m1, plotx="x4", modx="x1")
+m1 <- lm(y ~ x1 * x2 + x3 + x4 + xcat1 + xcat2, data = dat)
+summary(m1)
 
+## New in rockchalk 1.7.x. No modx required:
+plotSlopes(m1, plotx = "x1")
 
-## now some numeric interactions worth plotting
-dat$y2 <- with(dat, 0.03 + 0.1*x1 + 0.1*x2 + 0.25*x1*x2 + 0.4*x3 -0.1*x4 + 1*rnorm(100))
+## Confidence interval, anybody?
+plotSlopes(m1, plotx = "x1", interval = "conf")
 
-m2 <- lm(y2 ~ x1*x2 + x3 + x4, data=dat)
-summary(m2)
-plotSlopes(m2, plotx="x1", modx="x2")
-plotSlopes(m2, plotx="x1", modx="x2", modxVals=c( -2, -1, 0, 1))
-plotSlopes(m2, plotx="x2", modx="x1", modxVals="std.dev.")
-plotSlopes(m2, plotx="x2", modx="x1", modxVals="std.dev.", xlab="Any label You Want")
+## Prediction interval.
+plotSlopes(m1, plotx = "x1", interval = "pred")
 
-## Catch output, send to testSlopes
+## Now experiment with a moderator variable
+## let default quantile algorithm do its job
+plotSlopes(m1, plotx = "x1", modx = "x2")
+## previous uses default equivalent to
+## plotSlopes(m1, plotx = "x1", modx = "x2", modxVals = "quantile")
+## Want more focal values?
+plotSlopes(m1, plotx = "x1", modx = "x2", n = 5)
+## Pick focal values yourself?
+plotSlopes(m1, plotx = "x1", modx = "x2", modxVals = c(-2, 0, 0.5))
+## Alternative algorithm?
+plotSlopes(m1, plotx = "x1", modx = "x2", modxVals = "std.dev.",
+           main = "Uses \\"std.dev.\\" Divider for the Moderator",
+           xlab = "My Predictor", ylab = "Write Anything You Want for ylab")
 
-m2ps1 <- plotSlopes(m2, plotx="x1", modx="x2")
-testSlopes(m2ps1)
+## Will catch output object from this one
+m1ps <- plotSlopes(m1, plotx = "x1", modx = "x2", modxVals = "std.dev.", n = 5,
+                 main = "Setting n = 5 Selects More Focal Values for Plotting")
+
+m1ts <- testSlopes(m1ps)
+
+plot(m1ts)
 
 ### Examples with categorical Moderator variable
 
-stde <- 8
-dat$y3 <- with(dat, 3 + 0.5*x1 + 1.2 * (as.numeric(xcat1)-1) +
--0.8* (as.numeric(xcat1)-1) * x1 +  stde * rnorm(100))
-
-m3 <- lm (y3 ~ x1 + xcat1, data=dat)
+m3 <- lm (y ~ x1 + xcat1, data = dat)
+summary(m3)
 plotSlopes(m3, modx = "xcat1", plotx = "x1")
+plotSlopes(m3, modx = "xcat1", plotx = "x1", interval = "predict")
 
-m4 <- lm (y ~ x1 * xcat1, data=dat)
+
+m4 <- lm (y ~ x1 * xcat1, data = dat)
 summary(m4)
 plotSlopes(m4, modx = "xcat1", plotx = "x1")
-
-dat$xcat2n <- with(dat, contrasts(xcat2)[xcat2, ])
-dat$y4 <- with(dat, 3 + 0.5*x1 + xcat2n \%*\% c(0.1, -0.2, 0.3, 0.05)  + stde * rnorm(100))
-m5 <- lm(y4 ~ x1 + xcat2, data=dat)
-plotSlopes(m5, plotx="x1", modx="xcat2")
-m6 <- lm(y4 ~ x1 * xcat2, data=dat)
-plotSlopes(m6, plotx="x1", modx="xcat2")
-
-## Make data with a more pronounced interaction
-dat$y5 <- with(dat, 3 + 0.5*x1 + xcat2n \%*\% c(0.1, -0.2, 0.3, 0.05)  + (xcat2n \%*\% c(0.-1, 0.2, -0.3, 0.25)  )*x1 + stde * rnorm(100))
-m7 <- lm(y4 ~ x1 * xcat2, data=dat)
-plotSlopes(m7, plotx="x1", modx="xcat2")
-##only plot first and third levels
-m7ps <- plotSlopes(m7, plotx="x1", modx="xcat2", modxVals=levels(dat$xcat2)[c(1,3)]) 
-##see what testSlopes says about this one
-##testSlopes(m7ps)
-
-## Now examples with real data
-library(car)
-m3 <- lm(statusquo ~ income * sex, data = Chile)
-summary(m3)
-plotSlopes(m3, modx = "sex", plotx = "income")
+plotSlopes(m4, modx = "xcat1", plotx = "x1", interval = "conf")
 
 
-m4 <- lm(statusquo ~ region * income, data= Chile)
-summary(m4)
-plotSlopes(m4, modx = "region", plotx = "income")
-
-plotSlopes(m4, modx = "region", plotx = "income", plotPoints=FALSE)
-
-
-m5 <- lm(statusquo ~ region * income + sex + age, data= Chile)
+m5 <- lm (y ~ x1 + x2 + x1 * xcat2, data = dat)
 summary(m5)
-plotSlopes(m5, modx = "region", plotx = "income")
+plotSlopes(m5, modx = "xcat2", plotx = "x1")
+m5ps <- plotSlopes(m5, modx = "xcat2", plotx = "x1", interval = "conf")
 
-m6 <- lm(statusquo ~ income * age + education + sex + age, data=Chile)
+testSlopes(m5ps)
+
+
+
+## Now examples with real data. How about Chilean voters?
+library(car)
+m6 <- lm(statusquo ~ income * sex, data = Chile)
 summary(m6)
-plotSlopes(m6, modx = "income", plotx = "age")
+plotSlopes(m6, modx = "sex", plotx = "income")
+plotSlopes(m6, modx = "sex", plotx = "income", col = c("yellow", "blue"))
 
-plotSlopes(m6, modx = "income", plotx = "age", plotPoints=FALSE)
+
+m7 <- lm(statusquo ~ region * income, data= Chile)
+summary(m7)
+plotSlopes(m7, plotx = "income", modx = "region")
+
+plotSlopes(m7, plotx = "income", modx = "region", plotPoints = FALSE)
+plotSlopes(m7, plotx = "income", modx = "region", plotPoints = FALSE,
+           interval = "conf")
+plotSlopes(m7, plotx = "income", modx = "region", modxVals = c("SA","S", "C"),
+           plotPoints = FALSE, interval = "conf")
+## Same, choosing 3 most frequent values
+plotSlopes(m7, plotx = "income", modx = "region", n = 3, plotPoints = FALSE,
+           interval = "conf")
 
 
-## Should cause error because education is not numeric
-## m7 <- lm(statusquo ~ income * age + education + sex + age, data=Chile)
-## summary(m7)
-## plotSlopes(m7, modx = "income", plotx = "education")
+m8 <- lm(statusquo ~ region * income + sex + age, data= Chile)
+summary(m8)
+plotSlopes(m8, modx = "region", plotx = "income")
 
-## Should cause error because "as.numeric(education") not same as
-## plotx="education"
-## m8 <- lm(statusquo ~ income * age + as.numeric(education) + sex + age, data=Chile)
-## summary(m8)
-## plotSlopes(m8, modx = "income", plotx = "education")
 
-## Still fails. 
-## plotSlopes(m8, modx = "income", plotx = "as.numeric(education)")
-
-## Must recode variable first so that variable name is coherent
-Chile$educationn <- as.numeric(Chile$education)
-m9 <- lm(statusquo ~ income * age + educationn + sex + age, data=Chile)
+m9 <- lm(statusquo ~ income * age + education + sex + age, data = Chile)
 summary(m9)
-plotSlopes(m9, modx = "income", plotx = "educationn")
+plotSlopes(m9, modx = "income", plotx = "age")
+
+plotSlopes(m9, modx = "income", plotx = "age", plotPoints = FALSE)
+
+
+## Convert education to numeric, for fun
+Chile$educationn <- as.numeric(Chile$education)
+m10 <- lm(statusquo ~ income * educationn + sex + age, data = Chile)
+summary(m10)
+plotSlopes(m10, plotx = "educationn",  modx = "income")
+
+## Now, the occupational prestige data. Please note careful attention
+## to consistency of colors selected
+data(Prestige)
+m11 <- lm(prestige ~ education * type, data = Prestige)
+
+plotSlopes(m11, plotx = "education", modx = "type", interval = "conf")
+dev.new()
+plotSlopes(m11, plotx = "education", modx = "type",
+           modxVals = c("prof"), interval = "conf")
+dev.new()
+plotSlopes(m11, plotx = "education", modx = "type",
+           modxVals = c("bc"), interval = "conf")
+dev.new()
+plotSlopes(m11, plotx = "education", modx = "type",
+           modxVals = c("bc", "wc"), interval = "conf")
 }
 \author{
   Paul E. Johnson <pauljohn@ku.edu>
@@ -237,6 +274,7 @@ plotSlopes(m9, modx = "income", plotx = "educationn")
   for the Behavioral Sciences (Third.). Routledge Academic.
 }
 \seealso{
-  plotCurves and testSlopes
+  \code{\link[rockchalk]{testSlopes}}
+  \code{\link[rockchalk]{plotCurves}}
 }
 
