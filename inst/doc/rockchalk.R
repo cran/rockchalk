@@ -2,7 +2,7 @@
 ### Encoding: UTF-8
 
 ###################################################
-### code chunk number 1: rockchalk.Rnw:17-18
+### code chunk number 1: rockchalk.Rnw:18-19
 ###################################################
   if(exists(".orig.enc")) options(encoding = .orig.enc)
 
@@ -16,39 +16,40 @@ options(useFancyQuotes = FALSE)
 
 
 ###################################################
-### code chunk number 3: rockchalk.Rnw:202-203
+### code chunk number 3: rockchalk.Rnw:203-204
 ###################################################
 library(rockchalk)
 
 
 ###################################################
-### code chunk number 4: rockchalk.Rnw:209-211
+### code chunk number 4: rockchalk.Rnw:210-213
 ###################################################
+library(car)
 data(Chile)
 (summChile <- summarize(Chile))
 
 
 ###################################################
-### code chunk number 5: rockchalk.Rnw:225-226
+### code chunk number 5: rockchalk.Rnw:227-228
 ###################################################
 centralValues(Chile)
 
 
 ###################################################
-### code chunk number 6: rockchalk.Rnw:244-245
+### code chunk number 6: rockchalk.Rnw:246-247
 ###################################################
-m1 <- lm(statusquo ~ age + income + population + region + sex, data=Chile)
+m1 <- lm(statusquo ~ age + income + population + region + sex, data = Chile)
 
 
 ###################################################
-### code chunk number 7: rockchalk.Rnw:251-253
+### code chunk number 7: rockchalk.Rnw:253-255
 ###################################################
 m1pred <- predictOMatic(m1)
 m1pred
 
 
 ###################################################
-### code chunk number 8: rockchalk.Rnw:284-290
+### code chunk number 8: rockchalk.Rnw:286-292
 ###################################################
 mypred2 <- predictOMatic(m1, predVals = c("age", "region"), n = 3)
 mypred2
@@ -59,35 +60,35 @@ mypred4
 
 
 ###################################################
-### code chunk number 9: rockchalk.Rnw:311-313
+### code chunk number 9: rockchalk.Rnw:313-315
 ###################################################
 mynewdf <- newdata(m1, predVals = c("age","region"), n = 3)
 mynewdf
 
 
 ###################################################
-### code chunk number 10: rockchalk.Rnw:316-318
+### code chunk number 10: rockchalk.Rnw:318-320
 ###################################################
 mynewdf2 <- newdata(m1, predVals = list(age = "std.dev.", region = c("SA", "C","N")))
 mynewdf2
 
 
 ###################################################
-### code chunk number 11: rockchalk.Rnw:321-323
+### code chunk number 11: rockchalk.Rnw:323-325
 ###################################################
 mynewdf3 <- newdata(m1, predVals = list(age = c(20, 30, 40), region = c("SA", "C","N")))
 mynewdf3
 
 
 ###################################################
-### code chunk number 12: rockchalk.Rnw:328-330
+### code chunk number 12: rockchalk.Rnw:330-332
 ###################################################
 mynewdf <- newdata(m1, predVals = list(age = getFocal(Chile$age, n = 3), region = getFocal(Chile$region, n = 3)))
 mynewdf
 
 
 ###################################################
-### code chunk number 13: rockchalk.Rnw:353-358
+### code chunk number 13: rockchalk.Rnw:355-360
 ###################################################
 df <- data.frame(ldose = rep(0:5, 2), sex = factor(rep(c("M", "F"), c(6, 6))), 
 	SF.numdead = c(1, 4, 9, 13, 18, 20, 0, 2, 6, 10, 12, 16))      
@@ -141,13 +142,13 @@ m1ps <- plotSlopes(m1, plotx = "x2", xlab = "x2 from model m1", interval = "conf
 
 
 ###################################################
-### code chunk number 20: rockchalk.Rnw:500-501 (eval = FALSE)
+### code chunk number 20: rockchalk.Rnw:502-503 (eval = FALSE)
 ###################################################
 ## m1ps <- plotSlopes(m1, plotx = "x2", xlab = "x2 from model m1", interval = "confidence", opacity = 80, col = "red", ylim = c(20, 70))
 
 
 ###################################################
-### code chunk number 21: rockchalk.Rnw:515-516
+### code chunk number 21: rockchalk.Rnw:517-518
 ###################################################
 m1ps$newdata[1:3, ]
 
@@ -169,7 +170,7 @@ par(mfcol=c(1,1))
 
 
 ###################################################
-### code chunk number 24: rockchalk.Rnw:555-556 (eval = FALSE)
+### code chunk number 24: rockchalk.Rnw:557-558 (eval = FALSE)
 ###################################################
 ## par(mfcol=c(2,1))
 ## m4psa <- plotSlopes(m4, plotx = "x1", modx = "x2", xlab = "x1 is a fun plotx")
@@ -178,7 +179,7 @@ par(mfcol=c(1,1))
 
 
 ###################################################
-### code chunk number 25: rockchalk.Rnw:572-576
+### code chunk number 25: rockchalk.Rnw:574-578
 ###################################################
 fourCat <- gl(4,25, labels=c("East","West","South", "Midwest"))
 dat$x4 <- sample(fourCat, 100, replace = TRUE)
@@ -199,13 +200,13 @@ m5psb <- plotSlopes(m5, plotx = "x1", modx = "x4", modxVals = c("West","East"), 
 
 
 ###################################################
-### code chunk number 28: rockchalk.Rnw:601-602 (eval = FALSE)
+### code chunk number 28: rockchalk.Rnw:603-604 (eval = FALSE)
 ###################################################
 ## m5psa <- plotSlopes(m5, plotx = "x1", modx = "x4", xlab = "x1 is a Continuous Predictor", xlim = magRange(dat$x1, c(1.2,1)))
 
 
 ###################################################
-### code chunk number 29: rockchalk.Rnw:613-614 (eval = FALSE)
+### code chunk number 29: rockchalk.Rnw:615-616 (eval = FALSE)
 ###################################################
 ## m5psb <- plotSlopes(m5, plotx = "x1", modx = "x4", modxVals = c("West","East"), xlab = "x1 is a Continuous Predictor", xlim=magRange(dat$x1, c(1.2,1)), interval = "conf")
 
@@ -218,7 +219,7 @@ plot(m4psats)
 
 
 ###################################################
-### code chunk number 31: rockchalk.Rnw:726-727
+### code chunk number 31: rockchalk.Rnw:728-729
 ###################################################
 dat$y5 <- with(dat, -3*x1 + 15*log(0.1 + x2 - min(x2)) + 1.1*x2 + 8.2 *x1 * x2 + 10*rnorm(100))
 
@@ -231,7 +232,7 @@ m5pc <- plotCurves(m5, plotx = "x2", modx = "x1")
 
 
 ###################################################
-### code chunk number 33: rockchalk.Rnw:743-744 (eval = FALSE)
+### code chunk number 33: rockchalk.Rnw:745-746 (eval = FALSE)
 ###################################################
 ## m5 <- lm(y5 ~ log(x2) + x1 * x2, data = dat)
 ## m5pc <- plotCurves(m5, plotx = "x2", modx = "x1")
@@ -244,7 +245,7 @@ p100 <- plotPlane(m4, plotx1 = "x1", plotx2 = "x2", phi = 10, theta = -80, lcol 
 
 
 ###################################################
-### code chunk number 35: rockchalk.Rnw:780-781 (eval = FALSE)
+### code chunk number 35: rockchalk.Rnw:782-783 (eval = FALSE)
 ###################################################
 ## p100 <- plotPlane(m4, plotx1 = "x1", plotx2 = "x2", phi = 10, theta = -80, lcol = gray(.70))
 
@@ -257,14 +258,14 @@ addLines(from = m5pc, to = ppm5, col = m5pc$col)
 
 
 ###################################################
-### code chunk number 37: rockchalk.Rnw:831-833
+### code chunk number 37: rockchalk.Rnw:833-835
 ###################################################
 m4 <- lm (y4 ~ x1 * x2, data = dat)
 m4s <- standardize(m4)
 
 
 ###################################################
-### code chunk number 38: rockchalk.Rnw:839-840
+### code chunk number 38: rockchalk.Rnw:841-842
 ###################################################
 summary(m4s)
 
@@ -276,21 +277,21 @@ outreg(list(m4, m4s), tight = F, modelLabels = c("Not Standardized","Standardize
 
 
 ###################################################
-### code chunk number 40: rockchalk.Rnw:893-895
+### code chunk number 40: rockchalk.Rnw:895-897
 ###################################################
 m4mc <- meanCenter(m4)
 summary(m4mc)
 
 
 ###################################################
-### code chunk number 41: rockchalk.Rnw:928-930
+### code chunk number 41: rockchalk.Rnw:932-934
 ###################################################
 m4rc <- residualCenter(m4)
 summary(m4rc)
 
 
 ###################################################
-### code chunk number 42: rockchalk.Rnw:1081-1086
+### code chunk number 42: rockchalk.Rnw:1083-1088
 ###################################################
 dat2 <- genCorrelatedData(N=400, rho=.4, stde=300, beta=c(2,0.1,0.1,0.2))
 m6linear <- lm (y ~ x1 + x2, data=dat2)

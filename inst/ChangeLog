@@ -1,3 +1,191 @@
+2014-08-09  Paul Johnson  <pauljohn@dellap14>
+
+	* ../DESCRIPTION (Package): drop dependency on lme4. Don't need
+	anymore because I copied formatVC into outreg. Still can fit lme4
+
+	* ../R/outreg.R (getBSE): noticed rlm fits use "Value", not
+	"Estimate" for column header, so put in a checker on the col name.
+	Should go back do same on the SE as well. Maybe would solve
+	lots of idiosyncratic problems with funny packages.
+	* ../R/outreg.R (outreg): examples revised to show ability
+	to input B's, SE's and P values.
+
+2014-08-05  Paul Johnson  <pauljohn@dellap14>
+
+	* ../R/summarize.R (summarizeNumerics): noted that poly objects
+	were not working with summarize, summarizeFactors,
+	summarizeNumerics. Revised the "is.atomic" checker to multiply
+	column names.
+
+2014-07-24  Paul Johnson  <pauljohn@dellap14>
+
+	* ../R/summarize.R (normedEntropy): POSIXt variable crashed
+	summary. Revised that to ignore POSIXt, with warning comment in
+	instructions.
+
+2014-07-15  Paul Johnson  <pauljohn@dellap14>
+
+	* ../R/outreg.R (checkReg): Insert new argument BList, which
+	can provide B's for a model separate from rest.
+	* Reworked bse to try harder to recognize standard errors and
+	pvalues as provided through various parts of the interface
+
+2014-06-29  Paul Johnson  <pauljohn@dellap14>
+
+	* ../R/outreg.R (getBSE): calculate p values from standard errors
+	if SElist is used. Previously, wrongly, had not reclaculated
+	stars. Legacy to time when I refused to give stars.
+
+2014-04-29  Paul Johnson  <pauljohn@dellap7>
+
+	* ../R/outreg.R: browser argument to stop web browser from popping
+	up when html table is created.
+
+2014-04-23  Paul Johnson  <pauljohn@dellap7>
+
+	* ../R/summarize.R (summarizeNumerics): removed signif, replaced
+	with round on the numberic rows.
+
+2014-04-21  Paul Johnson  <pauljohn@dellap7>
+
+	* ../R/predictOMatic.R (model.data): changing default action to
+	na.omit. Had been na.pass, but method for S4 objects was failing.
+
+2014-04-17  Paul Johnson  <pauljohn@dellap7>
+
+	* ../R/predictOMatic.R (newdata.default): model.data includes
+	missing values in it. They need to be dropped. I remember futzing
+	this before in order to make it include missings, but now there
+	is a bad ripple effect across other functions that use model.data.
+
+2014-04-10  Paul Johnson  <pauljohn@dellap7>
+
+	* ../R/utils.R (getFocal.factor): padW0 is new convenience.
+	Delete ::: accesses to functions in rockchalk
+
+2014-03-28  Paul Johnson  <pauljohn@dellap7>
+
+	* ../R/outreg.R (harvest): Ben Rogers pointed out error in LLR report
+
+	* (outreg): noticed myModelClass was undefined, causing -2LLR to disappear 
+
+2014-03-17  Paul Johnson  <pauljohn@dellap7>
+
+	* ../R/utils.R (cutByTable): problem: character variables return
+	all NA from this. I did not plan for anything but numeric or
+	factor
+
+2014-03-15  Paul Johnson  <pauljohn@dellap7>
+
+	* ../R/predictOMatic.R (lenVar): converting newdata and model.data
+	to generic methods. Trying to wrestle with weird results with
+	merMod objects.
+
+	* ../R/genCorrelatedData.R (vech2mat): new argument: lowerOnly = FALSE
+
+	* ../R/plotCurves.R (plotCurves): Trying to tolerate non-quoted
+	argument for plotx and modx.  Am copying strategy in library.R,
+	where they tolerate either help = "package" or help = package.  if
+	(!missing(modx)) modx <- as.character(substitute(modx))[1L]
+
+
+2014-03-02  Paul Johnson  <pauljohn@dellap7>
+
+	* ../R/summarize.R (summarizeNumerics): noted that when argument
+	is just a vector, name is lost. I always assumed input would be
+	list or data frame or matrix. So add an if(is.vector... check.
+
+2014-02-23  Paul Johnson  <pauljohn@dellap7>
+
+	* ../R/outreg.R (pline): allow the pline as many columns as there
+	are in the table, to prevent it from distorting column placement above
+
+2014-02-22  Paul Johnson  <pauljohn@dellap7>
+
+	* ../R/outreg.R (sigtest): note multicol error. When reg table has
+	only 1 model, error results from  & \multicol because that assumes
+	3 columns.
+
+2014-01-30  Paul Johnson  <pauljohn@dellap7>
+
+	* ../R/outreg.R (outreg): battle of century to clean up model list
+	at top so that html output does not strangle MS Word import
+
+2014-01-29  Paul Johnson  <pauljohn@dellap7>
+
+	* ../R/outreg.R (##     pline): EOC -> EOMC to clear up notation
+
+2014-01-23  Paul Johnson  <pauljohn@dellap7>
+
+	* ../R/predictOMatic.R (newdata): if divider argument is a
+	function, not a character string, ignore it. If it is characters,
+	check it. I don't know why this wasn't crashing before, but the
+	examples don't run with divider = pretty.  Which should be OK now.
+
+	* ../R/plotCurves.R (plotCurves): noticed plotCurve did not work
+	with logit models where DV was true false. So assume all "logical"
+	DVs need to be on 0,1 scale.  Still don't know why I'm obliteraing
+	ylimits.
+
+	* ../R/predictOMatic.R (predictOMatic): use of newdata must pass
+	along n and divider, else they ignored
+
+2014-01-22  Paul Johnson  <pauljohn@dellap7>
+
+	* ../R/summarize.R: if entropy = 0, normedEntropy = 0, no
+	matter how many cases there are
+
+2014-01-15  Paul Johnson  <pauljohn@dellap7>
+
+	* ../R/predictOMatic.R (predictCI): predictCI needs to respond to
+	type "link" or "response" correctly!
+	*model.data needs to have class marker "model.class" so we know we
+	can trust the RHS it gives. Silly minuet going on here.
+
+2014-01-14  Paul Johnson  <pauljohn@dellap7>
+
+	* ../R/centralValues.R (centralValues): fiddle return value to
+	be factor with same levels as they came in with.
+
+	* ../R/utils.R (cutByTable): testing cutByTable to return factor
+	with old levels, mitigate lmer error about factors with 1 level
+
+2014-01-07  Paul Johnson  <pauljohn@dellap7>
+
+	* ../R/predictOMatic.R (model.data):model$call did not work on S4
+	objects.  So add conditional on isS4. Must be better way.
+
+2014-01-02  Paul Johnson  <pauljohn@dellap7>
+
+	* ../R/outreg.R (markup): new function to insert either HTML or
+	LaTeX Markup. Mostly works!
+	(outreg): New version of outreg, trying to completely break the
+	markup specifics apart, so one can have a document in the abstract
+	which is then converted to html or latex.  It doesn't work
+	perfectly yet because I don't understand how to work around
+	language specific things, like LaTeX requiring a table's width to
+	be declared, while HTML does not.
+
+2013-12-17  Paul Johnson  <pauljohn@dellap7>
+
+	* ../R/plotSlopes.R (plotSlopes): add argument legendTitle
+
+2013-09-22  pauljohn  <pauljohn@pjlap-d7.pjlap-d7.pols.ku.edu>
+
+	* ../R/plotCurves.R (plotCurves): llwd argument added to parms for
+	plotFancy
+
+	* ../R/plotSlopes.R (plotFancy): dotargs[["lty"]] argument was not
+	handled properly in plotfancy
+
+	* ../R/plotCurves.R (plotCurves): focalVals has to be many
+	points from min to max, even for a linear model, because I have
+	not learned of a way to ask the regression if its use of plotx is
+	shearly linear or not.
+
+	* ../R/genCorrelatedData.R (genCorrelatedData2): fix (d+1) in
+	writeout of genCorrelatedData2.
+
 2013-07-12  pauljohn  <pauljohn@pjlap-d7.pjlap-d7.pols.ku.edu>
 
 	* ../R/plotPlane.R (myPredict): re-work so user can supply

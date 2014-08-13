@@ -82,6 +82,8 @@ plotSlopes <- function(model, plotx, ...) UseMethod("plotSlopes")
 ##' @param plotPoints Optional. TRUE or FALSE: Should the plot include
 ##' the scatterplot points along with the lines.
 ##' @param plotLegend Optional. TRUE or FALSE: Include a default
+##' @param legendTitle Optional. You'll get an automatically generated title, such as "Moderator: modx",
+##' but if you don't like that, specify your own string here.
 ##' legend. Set to FALSE if user wants to customize a legend after the
 ##' plot has been drawn.
 ##' @param col Optional. A color vector for predicted value lines (and
@@ -96,7 +98,6 @@ plotSlopes <- function(model, plotx, ...) UseMethod("plotSlopes")
 ##' the darkness of confidence interval regions
 ##' @export
 ##' @method plotSlopes lm
-##' @S3method plotSlopes lm
 ##' @rdname plotSlopes
 ##' @import car
 ##' @return The return object includes the "newdata" object that was
@@ -111,7 +112,7 @@ plotSlopes <- function(model, plotx, ...) UseMethod("plotSlopes")
 plotSlopes.lm <-
     function (model, plotx, modx, n = 3, modxVals = NULL ,
               interval = c("none", "confidence", "prediction"),
-              plotPoints = TRUE, plotLegend = TRUE, col = NULL,
+              plotPoints = TRUE, plotLegend = TRUE, legendTitle = NULL, col = NULL,
               llwd = 2, opacity = 100, ...)
 {
     if (missing(model))
@@ -124,8 +125,15 @@ plotSlopes.lm <-
     interval <- match.arg(interval)
 
     depVar <- model.response(model.frame(model))
-
-    ##  depVar <- model$model[, 1]
+    
+    zzz <- as.character(substitute(plotx))
+    plotx <- zzz[1L]
+   
+    if (!missing(modx)) {
+        zzz <- as.character(substitute(modx))
+        modx <- zzz[1L]
+    }
+    
     plotxVar <- model$model[, plotx]
 
     if (!is.numeric(plotxVar))
@@ -200,10 +208,17 @@ plotSlopes.lm <-
     plotyRange <- if(is.numeric(depVar)){
         magRange(depVar, mult = c(1, 1.2))
     } else {
-        stop("plotSlopes: I've not decided yet what should be done when this is not numeric. Please be patient, I'll figure it out")
+        stop(paste("plotSlopes: I've not decided yet what should be done when this is not numeric.",
+                   "Please be patient, I'll figure it out"))
     }
 
-    parms <- list(newdf = newdf, olddf = data.frame(modxVar, plotxVar, depVar), plotx = plotx, modx = modx, modxVals = modxVals, interval = interval, plotPoints = plotPoints, plotLegend = plotLegend, col = col, opacity = opacity, xlim = plotxRange, ylim = plotyRange, ylab = ylab, llwd = llwd)
+    parms <- list(newdf = newdf, olddf = data.frame(modxVar, plotxVar, depVar),
+                  plotx = plotx, modx = modx, modxVals = modxVals,
+                  interval = interval, plotPoints = plotPoints,
+                  plotLegend = plotLegend, legendTitle = legendTitle,
+                  col = col, opacity = opacity, xlim = plotxRange,
+                  ylim = plotyRange, ylab = ylab, llwd = llwd)
+
     parms <- modifyList(parms, dotargs)
     plotArgs <- do.call("plotFancy", parms)
 
@@ -226,6 +241,8 @@ NULL
 ##' @param interval TRUE or FALSE: want confidence intervals?
 ##' @param plotPoints TRUE or FALSE: want to see observed values in plot?
 ##' @param plotLegend TRUE or FALSE: draw defaut legend
+##' @param legendTitle Optional. You'll get an automatically generated title, such as "Moderator: modx",
+##' but if you don't like that, specify your own string here.
 ##' @param col requested color scheme for lines and points. One per value of modxVals.
 ##' @param llwd requested line width, will re-cycle.
 ##' @param opacity Value in 0, 255 for darkness of interval shading
@@ -234,7 +251,8 @@ NULL
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
 ##'
 plotFancy <-
-    function(newdf, olddf, plotx, modx, modxVals, interval, plotPoints, plotLegend, col = NULL, llwd = 2, opacity, ...)
+    function(newdf, olddf, plotx, modx, modxVals, interval, plotPoints,
+             plotLegend, legendTitle, col = NULL, llwd = 2, opacity, ...)
 {
     dotargs <- list(...)
 
@@ -291,14 +309,19 @@ plotFancy <-
     }
     names(llwd) <- names(col)
 
-    ## Deal w lty
-    lty <- if(is.factor(modxVar)) {
-        seq_along(modxLevels)
-    } else {
-        seq_along(modxVals)
+    lty <- seq_along(col)
+    if (!is.null(dotargs[["lty"]])) {
+        lty <-  rep(dotargs[["lty"]], length.out = lmx)
+        dotargs[["lty"]] <- NULL ## erase
     }
+    ## lty <- seq_along(col)
+    ## if (is.factor(modxVar)) {
+    ##     lty <- seq_along(modxLevels)
+    ## } else {
+    ##     lty <- seq_along(modxVals)
+    ## }
+    
     names(lty) <- names(col)
-
 
 
     parms <- list(x = plotxVar, y = depVar, xlab = plotx, ylab = ylab,
@@ -376,7 +399,7 @@ plotFancy <-
 
         }
         if (missing(modx) || is.null(modx)) {
-            titl <- "Regression analysis"
+            titl <-  if(missing(legendTitle)) "Regression analysis"
             legnd <- c("Predicted values")
             if (interval != "none") {
                 legnd[2] <- paste("95%", interval, "interval")
@@ -385,10 +408,10 @@ plotFancy <-
                 llwd <- c(llwd, 0)
             }
         } else if (is.null(names(modxVals))) {
-            titl <- paste("Moderator:", modx)
+            titl <- if(missing(legendTitle)) paste("Moderator:", modx) else legendTitle
             legnd <- paste(modxVals, sep = "")
         } else {
-            titl <- paste("Moderator:", modx)
+            titl <- if(missing(legendTitle)) paste("Moderator:", modx) else legendTitle
             legnd <- paste(names(modxVals), sep = "")
         }
         legend("topleft", legend = legnd, lty = lty, col = col,

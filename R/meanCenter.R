@@ -20,7 +20,6 @@ standardize <-
 ##' @rdname standardize
 ##' @export
 ##' @method standardize lm
-##' @S3method standardize lm
 ##' @example inst/examples/standardize-ex.R
 standardize.lm <-
     function(model)
@@ -50,7 +49,7 @@ standardize.lm <-
 
     mc <- model$call
     mc$data <- quote(stddat)
-    fmla <- paste(dvnameticked, " ~ ", paste(dmnamesticked, collapse= " + "))
+    fmla <- paste(dvnameticked, " ~ ", "-1 + ", paste(dmnamesticked, collapse= " + "))
     mc$formula <- formula(fmla)
     res <- eval(mc)
     class(res) <- c("stdreg", class(model))
@@ -60,7 +59,7 @@ standardize.lm <-
 
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
 ##' @method summary stdreg
-##' @S3method summary stdreg
+##' @export
 summary.stdreg <-
     function(object, ...)
 {
@@ -81,7 +80,7 @@ NULL
 
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
 ##' @method print stdreg
-##' @S3method print stdreg
+##' @export 
 print.stdreg <- function(x, ...){
     cat("The standardized variables are suffixed with the letter \"s\" \n")
     NextMethod(generic = "print", object = x, ...)
@@ -90,7 +89,7 @@ NULL
 
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
 ##' @method print summary.stdreg
-##' @S3method print summary.stdreg
+##' @export 
 print.summary.stdreg <-
     function (x, ...)
 {
@@ -147,7 +146,7 @@ NULL
 ##' FALSE. Please note, this WILL NOT center factor variables. But it
 ##' will find all numeric predictors and center them.
 ##'
-##' The  dependent variable will not be centered, unless the user
+##' The dependent variable will not be centered, unless the user
 ##' explicitly requests it by setting centerDV = TRUE.
 ##'
 ##' As an additional convenience to the user, the argument
@@ -179,11 +178,16 @@ NULL
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
 ##' @seealso \code{\link[pequod]{lmres}} \code{\link[rockchalk]{standardize}} \code{\link[rockchalk]{residualCenter}}
 ##' @references
-##' Aiken, L. S. and West, S.G. (1991). Multiple Regression: Testing and Interpreting Interactions. Newbury Park, Calif: Sage Publications.
+##' Aiken, L. S. and West, S.G. (1991). Multiple Regression: Testing and
+##' Interpreting Interactions. Newbury Park, Calif: Sage Publications.
 ##'
-##' Cohen, J., Cohen, P., West, S. G., and Aiken, L. S. (2002). Applied Multiple Regression/Correlation Analysis for the Behavioral Sciences (Third.). Routledge Academic.
+##' Cohen, J., Cohen, P., West, S. G., and Aiken, L. S. (2002). Applied
+##' Multiple Regression/Correlation Analysis for the Behavioral Sciences
+##' (Third.). Routledge Academic.
 ##'
-##' Echambadi, R., and Hess, J. D. (2007). Mean-Centering Does Not Alleviate Collinearity Problems in Moderated Multiple Regression Models. Marketing Science, 26(3), 438-445.
+##' Echambadi, R., and Hess, J. D. (2007). Mean-Centering Does Not Alleviate
+##' Collinearity Problems in Moderated Multiple Regression Models.
+##' Marketing Science, 26(3), 438-445.
 ##' @example inst/examples/meanCenter-ex.R
 meanCenter <-
     function(model, centerOnlyInteractors = TRUE, centerDV = FALSE, standardize=FALSE, terms = NULL)
@@ -196,7 +200,7 @@ meanCenter <-
 ##' @rdname meanCenter
 ##' @export
 ##' @method meanCenter default
-##' @S3method meanCenter default
+##' @export 
 meanCenter.default <-
     function(model, centerOnlyInteractors = TRUE, centerDV = FALSE, standardize = FALSE, terms = NULL)
 {
@@ -204,7 +208,7 @@ meanCenter.default <-
     std <- function(x) {
         if(!is.numeric(x)) stop("can't center a factor variable. No Can Do!")
         xmean <- mean(x, na.rm = TRUE)
-        if(standardize){
+        if (standardize) {
             xsd <- sd(x, na.rm = TRUE)
         } else {
             xsd <- 1
@@ -216,6 +220,7 @@ meanCenter.default <-
     ## rdf <- get_all_vars(formula(model), model$model) #raw data frame
     rdf <- model.data(model)
     t <- terms(model)
+    ## TODO 20140417: look at using na.action attribute of model to be more delicate here.
     tl <- attr(t, "term.labels")
     tmdc <- attr(t, "dataClasses") ##term model data classes
 
@@ -287,7 +292,7 @@ meanCenter.default <-
 }
 
 ##' @author <pauljohn@@ku.edu>
-##' @S3method summary mcreg
+##' @export 
 ##' @method summary mcreg
 summary.mcreg <-
     function(object, ...)
@@ -311,7 +316,7 @@ NULL
 
 ##' @author <pauljohn@@ku.edu>
 ##' @method print mcreg
-##' @S3method print mcreg
+##' @export 
 print.mcreg <- function(x, ...){
     centeredVars <- attr(x, "centeredVars")
     cat("The centered variables are: \n")
@@ -326,7 +331,7 @@ NULL
 
 ##' @author <pauljohn@@ku.edu>
 ##' @method print summary.mcreg
-##' @S3method print summary.mcreg
+##' @export 
 print.summary.mcreg <-
     function (x, ...)
 {
@@ -347,7 +352,7 @@ NULL
 
 ##' @author <pauljohn@@ku.edu>
 ##' @method predict mcreg
-##' @S3method predict mcreg
+##' @export
 predict.mcreg <-
     function (object, ...)
 {

@@ -16,59 +16,67 @@
 ## packages like termplot that attempt to re-construct input data
 ## sets from fitted models.
 
-
-
-##' Creates the newdata frame required in predict methods.
+##' Create a newdata frame for usage in predict methods
 ##'
-##' This function uses various tricks to create a "newdata" object
-##' suitable for use in predict methods for R regression objects. It
-##' scans the fitted model, discerns the names of the predictors, and
-##' then generates a new data frame.  The argument \code{predVals}
-##' (predictor values) is very important. It determines which
-##' variables are selected for more careful inspection. This argument
-##' was called \code{"fl"} in previous editions of rockchalks.
+##' This is a generic function. The default method covers almost all
+##' regression models.
 ##'
-##' This is used by several rockchalk functions, including plotSlopes,
-##' plotCurves, and predictOMatic.  However, I have found many
-##' occassions on which it is useful to create newdata objects
-##' directly.
+##' It scans the fitted model, discerns the names of the predictors,
+##' and then generates a new data frame.  It can guess values of the
+##' variables that might be substantively interesting, but that
+##' depends on the user-supplied value of predVals.  If not supplied
+##' with a predVals argument, newdata returns a data frame with one
+##' row -- the central values (means and modes) of the variables in
+##' the data frame that was used to fit the model. The user can supply
+##' a keyword "auto" or "margins". The function will try to do the
+##' "right thing."
 ##'
-##' If not supplied with a predVals  argument, newdata returns a data
-##' frame with one row -- the central values (means and modes) of the
-##' variables in the data frame that was used to fit the model.
-##'
-##' The \code{predVals} argument allows users to make fine-grained
-##' requests. \code{predVals} can be a named list that supplies
-##' specific values for particular predictors.  The omitted predictors
-##' will be set at their central values. Any legal vector of values is
-##' allowed. For example, \code{predVals = list(x1 = c(10, 20, 30), x2 =
-##' c(40, 50), xcat = levels(xcat)))}. That will create a newdata
+##' The \code{predVals} can be a named list that supplies specific
+##' values for particular predictors.  Any legal vector of values is
+##' allowed. For example, \code{predVals = list(x1 = c(10, 20, 30), x2
+##' = c(40, 50), xcat = levels(xcat)))}. That will create a newdata
 ##' object that has all of the "mix and match" combinations for those
 ##' values, while the other predictors are set at their central
 ##' values.
 ##'
-##' In rockchalk 1.7.3, a convenience feature was added that gives
-##' automatic value selection via keywords. If the user declares a
-##' variable with the "default" keyword, then the default divider
-##' algorithm is used to select focal values.  The default divider
-##' algorithm is an optional argument of this function. If the default
-##' is not desired, the user can specify a divider algorithm by
-##' character string, either "quantile", "std.dev.", "seq", or "table".
-##' The user can mix and match algorithms along with requests
-##' for specific focal values, as in
-##' \code{predVals = list(x1 = "quantile", x2 = "std.dev.",
-##' x3 = c(10, 20, 30), xcat1 <- levels(xcat1))}
-##'
+##' If the user declares a variable with the "default" keyword, then
+##' the default divider algorithm is used to select focal values.  The
+##' default divider algorithm is an optional argument of this
+##' function. If the default is not desired, the user can specify a
+##' divider algorithm by character string, either "quantile",
+##' "std.dev.", "seq", or "table".  The user can mix and match
+##' algorithms along with requests for specific focal values, as in
+##' \code{predVals = list(x1 = "quantile", x2 = "std.dev.", x3 = c(10,
+##' 20, 30), xcat1 <- levels(xcat1))}
+##' 
 ##' @param model Required. Fitted regression model
 ##' @param predVals Predictor Values that deserve investigation.
-##' Previously, the argument was called "fl".  This can be a vector of
-##' variable names, a vector that names variables and divider
-##' algorithms, or a full list that supplies variables and possible
-##' values. Please see details and examples.
+##' Previously, the argument was called "fl".  This can be 1) a
+##' keyword, one of c("auto", "margins") 2) a vector
+##' of variable names, which will use default methods for all named
+##' variables and the central values for non-named variabled, 3) a
+##' named vector with predictor variables and divider algorithms, or
+##' 4) a full list that supplies variables and possible values. Please
+##' see details and examples.
 ##' @param n Optional. Default = 3. How many focal values are desired?
 ##' This value is used when various divider algorithms are put to use
 ##' if the user has specified keywords "default", "quantile", "std.dev."
 ##' "seq", and "table".
+
+##' @param ... Other arguments.
+##' @return A data frame of x values that could be used as the
+##' data = argument in the original regression model. The attribute
+##' "varNamesRHS" is a vector of the predictor variable names.
+##' @rdname newdata
+##' @author Paul E. Johnson <pauljohn@@ku.edu>
+##' @export
+##' @seealso \code{predictOMatic}
+newdata <- function(model, predVals, n,  ...) UseMethod("newdata")
+
+NULL
+
+##' Creates a new data frame from which a model could be re-estimated.
+##' 
 ##' @param divider Default is "quantile". Determines the method of
 ##' selection. Should be one of c("quantile", "std.dev", "seq", "table").
 ##' @param emf Optional. data frame used to fit model (not a model
@@ -76,31 +84,68 @@
 ##' log(x1). Instead, use output from function \code{model.data}). It
 ##' is UNTRANSFORMED variables ("x" as opposed to poly(x,2).1 and
 ##' poly(x,2).2).
-##' @return A data frame of x values that could be used as the
-##' data = argument in the original regression model. The attribute
-##' "varNamesRHS" is a vector of the predictor variable names.
-##' @author Paul E. Johnson <pauljohn@@ku.edu>
 ##' @export
-##' @seealso \code{predictOMatic}
+##' @method newdata default
+##' @export 
+##' @rdname newdata
 ##' @example inst/examples/predictOMatic-ex.R
-newdata <- function (model = NULL, predVals = NULL, emf = NULL, n = 3,
-                     divider = "quantile"){
-    if (is.null(emf)) emf <- model.data(model = model)
-    divider <- match.arg(tolower(divider),
-                         c("quantile", "std.dev.","table","seq"))
+newdata.default <-
+    function (model = NULL, predVals = NULL, n = 3, emf = NULL,
+              divider = "quantile", ...){
+   
+    if (is.null(emf)){
+        emf <- model.data(model = model)
+        ##20140417 Danger: missings. Doublecheck later on model.data change
+    }
+    if (is.character(divider)) {
+        divider <- match.arg(tolower(divider),
+                             c("quantile", "std.dev.","table","seq"))
+    }
 
-    varNamesRHS <- attr(emf, "varNamesRHS")
-    emf <- emf[ , varNamesRHS, drop = FALSE]
+    ## 20140115: why did i do this, what was I cleaning up by trying
+    ## to remove variables from the model frame? First appraoch
+    ## emf[ , varNamesRHS, drop = FALSE]
+    ## Destroys the attributes.
+    ##
+    ## If this is truly necessary, there is a way to remove columns that does
+    ## not kill attributes. Get the "reject names" and Null them out.
+    ## This is only necesssary if the emf argument is given, since
+    ## result from model.data should be OK. But I cant' remember why
+    ## it seemed important to me to clear out columns. And then it is
+    ## tricky to get varNamesRHS
+    
+    if (inherits(emf, "model.data"))  {
+        varNamesRHS <- attr(emf, "varNamesRHS")
+    } else {
+        Terms <- terms(model)
+        varNames <- all.vars(Terms) ## all variable names
+        Terms[[2L]] <- 0 ## removes DV
+        varNamesRHS <- all.vars(Terms)
+    }
+
+    ## 20140115: check varNamesRHS are all in emf?
+    if (!missing(emf)){
+        rejectNames <- setdiff(colnames(emf),  varNamesRHS)
+        for (x in rejectNames) emf[ , x] <- NULL
+    }
     modelcv <- centralValues(emf)
     if (is.null(predVals)) return(modelcv)
+    
+    auto <- FALSE   ## 20141015 brain freeze on how to do this more elegantly
+    margins <- FALSE
 
-    ## if predVals is a vector with no names, create predVals,
-    ## a list with predVals's values as names
-    ## if predVals is a vector with names, create predVals, a list
-    if(!is.list(predVals)){
-        flnames <- names(predVals)
-        if (is.null(flnames)){
-            flnames <- predVals
+    if (isTRUE(predVals == "auto")) {
+        predVals <- vector("list", length = length(varNamesRHS))
+        names(predVals) <- varNamesRHS
+        auto <- TRUE
+    } else if (isTRUE(predVals == "margins")) {
+        predVals <- vector("list", length = length(varNamesRHS))
+        names(predVals) <- varNamesRHS
+        margins <- TRUE
+    } else if (!is.list(predVals)) {
+        flnames <- names(predVals) 
+        if (is.null(flnames)) {  ##no names
+            flnames <- predVals ## values become names
             predVals <- vector("list", length = length(flnames))
             names(predVals) <- flnames
         } else {
@@ -108,12 +153,15 @@ newdata <- function (model = NULL, predVals = NULL, emf = NULL, n = 3,
         }
     }
 
-    if (sum(!names(predVals) %in% varNamesRHS) > 0) stop(cat(c("Error. The focus list:  predVals requests variables that are not included in the original model. The names of the variables in the focus list be drawn from this list: ",  varNamesRHS, "\n")))
-    ## TODO: Consider "padding" range of predVals for numeric variables so that we
-    ## get newdata objects including the min and max values.
+    errMessg <- paste("Error. The focus list:\n", predVals,
+                      "requests variables that are not included in the original model.\n",
+                      "The names of the variables in predVals must be drawn from this list: ",
+                      varNamesRHS, "\n")
+    
+    if (sum(!names(predVals) %in% varNamesRHS) > 0) stop(errMessg)
     flnames <- names(predVals)
 
-    for(x in flnames) {
+    for (x in flnames) {
         if (is.null(predVals[[x]])){
             predVals[[x]] <- focalVals(emf[ ,x], divider, n)
         } else if (length(predVals[[x]]) == 1)
@@ -124,32 +172,67 @@ newdata <- function (model = NULL, predVals = NULL, emf = NULL, n = 3,
         }
     }
 
-    mixAndMatch <- expand.grid(predVals)
-    ## TODO: Its OK to select columns this way, but no better way add names?
-    unames <- colnames(modelcv)[!colnames(modelcv) %in% colnames(mixAndMatch)]
-    newdf <- cbind(mixAndMatch, modelcv[  , unames])
-    colnames(newdf) <- c(colnames(mixAndMatch), unames)
+    if (margins) {
+        newdf <- lapply(flnames, function(x) {
+            newList <- list(predVals[[x]])
+            names(newList) <- x
+            ndsub <- newdata(model, predVals = newList)
+        })
+        names(newdf) <- flnames
+    } else {
+        mixAndMatch <- expand.grid(predVals)
+        ## TODO: Its OK to select columns this way, but no better way add names?
+        unames <- colnames(modelcv)[!colnames(modelcv) %in% colnames(mixAndMatch)]
+        newdf <- cbind(mixAndMatch, modelcv[  , unames])
+        colnames(newdf) <- c(colnames(mixAndMatch), unames)
+        newdf <- newdf[ , colnames(emf), drop = FALSE] ## 20140115: Doublecheck me
+    }
     newdf
 }
 NULL
 
-##' Creates a "raw" (UNTRANSFORMED) data frame equivalent
-##' to the input data that would be required to fit the given model.
+
+##' Create a "raw" (UNTRANSFORMED) data frame equivalent to the input
+##' data that would be required to fit the given model.
 ##'
-##' Unlike model.frame and model.matrix, this does not return transformed
-##' variables. It deals with regression formulae that have
-##' functions like poly(x, d) in them. It differentiates x from d in
-##' those expressions. And it also manages log(x + 10).
+##' This is a generic method. Unlike model.frame and
+##' model.matrix, this does not return transformed variables. It deals
+##' with regression formulae that have functions like poly(x, d) in
+##' them. It differentiates x from d in those expressions. And it also
+##' manages log(x + 10). The default method works for standarad R
+##' regression models like lm and glm. 
 ##'
 ##' @param model A fitted regression model in which the data argument
 ##' is specified. This function will fail if the model was not fit
 ##' with the data option.
-##' @param na.action Defaults to na.pass, so model as it would appear in user workspace is re-created.
+##' @param ... Arguments passed to implementing methods.
+##' @return A data frame
+##' @author Paul Johnson <pauljohn@@ku.edu>
+##' @export
+model.data <-
+    function(model, ...)
+{
+    UseMethod("model.data")
+}
+
+NULL
+
+##' Create a data frame suitable for estimating a model
+##'
+##' This is the default method. Works for lm and glm fits.
+##' 
+##' @param model A fitted model
+##' @param na.action Defaults to na.omit, so model as it would appear
+##' in user workspace is re-created, except that rows with missing
+##' values are deleted.  Changing this argument to na.pass will
+##' provide the data as it was in the workspace.
+##' @param ...  Place holder for other arguments, not used at present
 ##' @return A data frame
 ##' @export
+##' @method model.data default
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
 ##' @example inst/examples/model.data-ex.R
-model.data <- function(model, na.action = na.pass){
+model.data.default <- function(model, na.action = na.omit, ...){
     ## from nls, returns -1 for missing variables
     lenVar <- function(var, data) tryCatch(NROW(eval(as.name(var),
                          data, env)), error = function(e) -1)
@@ -161,9 +244,12 @@ model.data <- function(model, na.action = na.pass){
     varNamesLHS <- setdiff(varNames, varNamesRHS)
     env <- environment(fmla)
     if (is.null(env))
-        env <- parent.frame()
-
-    dataOrig <-  eval(model$call$data, env)
+        env <- parent.frame() 
+    if (isS4(model)) {
+        dataOrig <- eval(model@call$data, env)
+    } else {
+        dataOrig <-  eval(model$call$data, env)
+    }
     if (is.null(dataOrig)) dataOrig <- model.frame(model)
 
     dataOrigRN <- row.names(dataOrig)
@@ -177,31 +263,26 @@ model.data <- function(model, na.action = na.pass){
     varNamesRHS <- varNamesRHS[varNamesRHS %in% varNames]
     varNamesLHS <- varNamesLHS[varNamesLHS %in% varNames]
 
-
-#    ldata <- lapply(varNames, function(x) {
-#        myv <- eval(as.name(x), dataOrig, env)
-#        row.names(myv) <- NULL
-#        myv
-#    }
-#                    )
-#    names(ldata) <- varNames
-#    data <- data.frame(ldata[varNames])
-#    if (!is.null(dataOrigRN)) row.names(data) <- dataOrigRN
-
     mylhs <- eval(varNamesLHS)
     myrhs <- eval(paste(varNamesRHS, collapse = " + "))
     myfmla <- as.formula(paste(mylhs, " ~", myrhs), env = environment(formula(model)))
     data <- model.frame(myfmla, dataOrig, na.action = na.action)
 
-
-    ## remove rows listed in model's na.action
+    ## FIXME 20140421: commenting out again because lme4 objects don't have
+    ## model$na.action, instead (model@frame)$na.action. And I don't want
+    ## to keep messing with this.
+    ## 2013:remove rows listed in model's na.action
     ## TODO: double check. Following not needed because model.frame does it
-    ##if (!is.null(model$na.action)){
-    ##     data <- data[ -as.vector(model$na.action), , drop = FALSE]
-    ##}
+    ## 20140417: Previous conjecture false. commenting this out causes hell
+    ## with NAs floating into analysis. It hits meanCenter, standardize.
+    ## Fixed there, but now putting this back in.
+    ## if (!is.null(model$na.action)){
+    ##      data <- data[ -as.vector(model$na.action), , drop = FALSE]
+    ## }
 
     ## keep varNamesRHS
     attr(data, "varNamesRHS") <- setdiff(colnames(data), varNamesLHS)
+    class(data) <- c("model.data", "data.frame")
     invisible(data)
 }
 NULL
@@ -229,7 +310,6 @@ NULL
 ##' mean at the center and values on either side that are proportional
 ##' to the standard deviation.
 ##' @param n Desired number of focal values.
-##' @export
 ##' @return A named vector of focal values selected from a variable. The
 ##' values of the names should be informative and useful for plotting or
 ##' other diagnostic work.
@@ -248,13 +328,13 @@ focalVals <-
         divider <- match.arg(tolower(divider),
                              c("quantile", "std.dev.","table", "seq"))
         res <- switch(divider,
-                      table = rockchalk:::cutByTable(x, n),
-                      quantile = rockchalk:::cutByQuantile(x, n),
-                      "std.dev." = rockchalk:::cutBySD(x, n),
-                      "seq" = rockchalk:::plotSeq(x, n),
+                      table = cutByTable(x, n),
+                      quantile = cutByQuantile(x, n),
+                      "std.dev." = cutBySD(x, n),
+                      "seq" = plotSeq(x, n),
                       stop("unknown 'divider' algorithm"))
     }  else {
-        res <- rockchalk:::cutByTable(x, n)
+        res <- cutByTable(x, n)
     }
     res
 }
@@ -262,21 +342,33 @@ NULL
 
 
 
-##' predictOMatic creates predicted values for a fitted regression
-##' model. This demonstrates marginal effects of the predictor
-##' variables.
+##' Create predicted values after choosing values of predictors.  Can
+##' demonstrate marginal effects of the predictor variables.
 ##'
-##' The behavior of this function depends on the argument predVals
-##' (predictor values).  If no predVals argument is supplied,
-##' predictOMatic creates a list of new data frames, one for each
-##' predictor variable. It uses the default divider algorithm (see the
-##' divider argument) and it estimates predicted values for \code{n}
-##' different values of the predictor. A model with formula \code{y ~
-##' x1 + x2 + x3} will cause 3 separate output data frames, one for
-##' each predictor. They will be named objects in the list.
+##' It creates "newdata" frames which are passed
+##' to predict. The key idea is that each predictor has certain focal
+##' values on which we want to concentrate. We want a more-or-less
+##' easy way to spawn complete newdata objects along with fitted values.
+##' The \code{newdata} function creates those objects, its documentation
+##' might be helpful in understanding some nuances.
 ##'
-##' If predVals is supplied, it must name only predictors that are
-##' fitted in the model. \code{predictOMatic} will choose the mean or mode for
+##' If no predVals argument is supplied (same as
+##' \code{predVals = "margins"}, predictOMatic creates a list of new
+##' data frames, one for each predictor variable. It uses the default
+##' divider algorithm (see the divider argument) and it estimates
+##' predicted values for \code{n} different values of the predictor. A
+##' model with formula \code{y ~ x1 + x2 + x3} will cause 3 separate
+##' output data frames, one for each predictor. They will be named
+##' objects in the list.
+##'
+##' The default approach will have marginal tables, while the setting
+##' \code{predVals = "auto"} will create a single large newdata frame
+##' that holds the Cartesian product of the focal values of each predictor.
+##' 
+##' \code{predVals} may be a vector of variable names, or it may be a
+##' list of names and particular values. Whether a vector or a list is supplied,
+##' \code{predVals} must name only predictors that are fitted in the
+##' model. \code{predictOMatic} will choose the mean or mode for
 ##' variables that are not explicitly listed, and selected values of
 ##' the named variables are "mixed and matched" to make a data set.
 ##
@@ -289,11 +381,11 @@ NULL
 ##' and income and height will have target values selected according
 ##' to the divider algorithm (see the argument \code{divider}).
 ##'
-##' If the user wants various divider algorithms to be used, change
-##' the argument to predvals = c(income = "quantile", height =
-##' "std.dev."). The dividers provided by the rockchalk package are
-##' "quantile", "std.dev.", "seq" and "table".  Those are discussed
-##' more completely in the help for \code{focalVals}.  The appropriate
+##' The user can spcecify divider algoriths to choose focal values,
+##' \code{predvals = c(income = "quantile", height = "std.dev.")}. The
+##' dividers provided by the rockchalk package are "quantile",
+##' "std.dev.", "seq" and "table".  Those are discussed more
+##' completely in the help for \code{focalVals}.  The appropriate
 ##' algorithms will select focal values of the predictors and they
 ##' will supply \code{n} values for each in a "mix and match" data
 ##' frame. After rockchalk 1.7.2, the divider argument can also be the
@@ -301,13 +393,14 @@ NULL
 ##'
 ##' Finally, users who want very fine grained control over
 ##' predictOMatic can supply a named list of predictor
-##' values. For example, predVals = list(height = c(5.5, 6.0, 6.5),
-##' income = c(10, 20, 30, 40, 50), sex = levels(dat$sex)). One can
-##' also use algorithm names here.  Some predVals = list(height =
-##' c(5.5, 6.0, 6.5), income = "quantile") and so forth. Examples are
+##' values. For example,
+##' \code{predVals = list(height = c(5.5, 6.0, 6.5),
+##' income = c(10, 20, 30, 40, 50), sex = levels(dat$sex))}. One can
+##' also use algorithm names, \code{predVals = list(height =
+##' c(5.5, 6.0, 6.5), income = "quantile")} and so forth. Examples are
 ##' offered below.
 ##'
-##' The variables named in the predVals argument should be the names
+##' The variables named in the \code{predVals} argument should be the names
 ##' of the variables in the raw data frame, not the names that R
 ##' creates when it interprets a formula. We want "x", not the
 ##' transformation in the functions (not \code{log(x)}, or
@@ -324,38 +417,36 @@ NULL
 ##' function \code{model.data} is the magic bullet for that part of
 ##' the problem.
 ##'
-##' Here is one strategy for doing this.
+##' Here is one example sequence that fits a model, discerns some
+##' focal values, and then uses predictOMatic.
 ##'
-##' Fit a regression model
-##'
+##' \code{
 ##' d <- 3
 ##' alpha <- 13
 ##' m1 <- lm(yout ~ xin + xout + poly(xother,2) + log(xercise + alpha), data = dat)
-##'
-##' Then grab the data that was used from the model
-##'
 ##' m1dat <- model.data(m1)
-##'
+##' }
+##' 
 ##' Now, when you are thinking about which values you might like to
 ##' specify in predVals, use m1dat to decide. Try
 ##'
-##' summarize(m1dat)
+##' \code{summarize(m1dat)}
 ##'
 ##' Then run something like
 ##'
-##' predictOMatic( m1, predVals = list(xin = median(m1dat$xin), xout =
-##' c(1,2,3), xother = quantile(m1dat$xother))
+##' \code{predictOMatic( m1, predVals = list(xin = median(m1dat$xin), xout =
+##' c(1,2,3), xother = quantile(m1dat$xother))}
 ##'
 ##' Get the idea?
 ##'
 ##' @param model Required. A fitted regression model. A \code{predict}
 ##' method must exist for that model.
-##' @param predVals Predictor values. Optional. Users can supply
-##' detailed information to determine which predictors and which
-##' values for them are selected. The allowed format has been
-##' generalized a great deal in rockchalk 1.7.4, allowing now a vector
-##' of variable names, a vector of named algorithms, or a list
-##' containing detailed value selections. See details and examples.
+##' @param predVals Optional. How to choose predictor values?  Can be
+##' as simple as a keyword "auto" or "margins". May also be very
+##' fine-grained detail, including 1) a vector of variable names (for
+##' which values will be automatically selected) 2) a named
+##' vector of variable names and divider functions, or 3) a list
+##' naming variables and values. See details and examples.
 ##' @param divider An algorithm name from c("quantile", "std.dev",
 ##' "seq", "table") or a user-provided function.  This sets the method
 ##' for selecting values of the predictor. Documentation for the
@@ -372,8 +463,9 @@ NULL
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
 ##' @example inst/examples/predictOMatic-ex.R
 predictOMatic <-
-    function(model = NULL, predVals = NULL, divider = "quantile", n = 5, ...)
+    function(model = NULL, predVals = "margins", divider = "quantile", n = 5, ...)
 {
+
     dots <- list(...)
     dotnames <- names(dots)
 
@@ -388,7 +480,6 @@ predictOMatic <-
         se.fit <- dots[["se.fit"]]
         dots[["se.fit"]] <- NULL
     }
-
 
     ## 2013-05-12 TODO, or FIXME 1) no smarter way than previous?  2)
     ## Why not trust modifyList below to do the work for us. 3) Why
@@ -407,25 +498,27 @@ predictOMatic <-
     ##2013-04-18. Considering changing user interface
     ## if(length(n) < length(predVals)) n <- rep(n, length.out = length(predVals))
     ## if(length(divider) < length(predVals)) divider <- rep(divider, length.out = length(predVals)
-
-    if (is.null(predVals)){
-        flxxx <- list()
-        nd <- lapply (varNamesRHS, function(x) {
-            flxxx[[x]]  <- focalVals(emf[ ,x], divider, n)
-            ndnew <- newdata(model, predVals = flxxx[x], emf = emf)
-            row.names(ndnew) <- names(flxxx[[x]])
-            pargs <- list(model, newdata = ndnew, type = "response", interval = interval, se.fit = se.fit)
+    
+    if (((predVals == "auto") && (!any(predVals %in% varNamesRHS))) ||
+        ((predVals == "margins") && (!any(predVals %in% varNamesRHS)))) {
+        
+        ndat <- newdata(model, predVals = predVals, emf = emf, divider = divider, n = n)
+        ## auto returns a data frame, margins returns a list of data frames
+        ## put the single df in a list
+        if (!setequal(class(ndat), "list")) {
+            ndat <- list(ndat)
+        }
+        
+        nd <- lapply(ndat, function(ndsub){
+            pargs <- list(model, newdata = ndsub, type = "response", interval = interval)
             pargs <-  modifyList(pargs, dots)
             fit <-  do.call("predictCI", pargs)
-            if (interval != "none")  ndnew <- cbind(ndnew, fit$fit)
-            else ndnew <- cbind(ndnew, fit = fit$fit[ ,"fit"])
-            if (se.fit) ndnew <- cbind(ndnew, fit$se.fit)
-            attr(ndnew, "residual.scale") <- fit$residual.scale
-            ndnew
+            if (interval != "none") ndsub <- cbind(ndsub, fit$fit)
+            else ndsub <- cbind(ndsub, fit = fit$fit[ ,"fit"])
+            if (se.fit) ndsub <- cbind(ndsub, fit$se.fit)
+            attr(ndsub, "residual.scale") <- fit$residual.scale
+            ndsub
         })
-        attr(nd, "pnames") <- varNamesRHS
-
-        names(nd) <- varNamesRHS
     } else {
         if (!is.list(predVals) & is.vector(predVals)) {
             if (is.null(names(predVals))){ ##no names
@@ -449,16 +542,15 @@ predictOMatic <-
                 }
         }
 
-        nd <- newdata(model, predVals, emf = emf)
+        nd <- newdata(model, predVals, emf = emf, divider = divider, n = n)
+        attr(nd, "pnames") <- pnames ## 20140114. doublecheck
         pargs <- list(model, newdata = nd, type = "response", interval = interval)
         pargs <-  modifyList(pargs, dots)
-
         fit <-  do.call("predictCI", pargs)
-        if (interval != "none")  nd <- cbind(nd, fit$fit)
+        if (interval != "none") nd <- cbind(nd, fit$fit)
         else nd <- cbind(nd, fit = fit$fit[ ,"fit"])
         if (se.fit) nd <- cbind(nd, fit$se.fit)
         attr(nd, "residual.scale") <- fit$residual.scale
-        attr(nd, "pnames") <- pnames
     }
     nd
 }
@@ -474,8 +566,7 @@ NULL
 ##'
 ##' R's predict.glm does not have an interval argument. There are
 ##' about 50 methods to calculate CIs for predicted values of GLMs,
-##' that's a major worry. I don't want to simulate them, that seems
-##' brutish.  This function takes the simplest route, calculating the
+##' that's a major worry. This function takes the simplest route, calculating the
 ##' (fit, lwr, upr) in the linear predictor scale, and then if type=
 ##' "response", those 3 columns are put through linkinv().  This is
 ##' the same method that SAS manuals suggest they use, same as Ben
@@ -498,8 +589,11 @@ NULL
 ##' @param interval One of c("none", "confidence",
 ##' "prediction"). "prediction" is defined only for lm objects, not
 ##' for glm.
-##' @param dispersion Will be estimated if not provided. The variance coefficient of the glm, same as scale squared. Dispersion is allowed as an argument in predict.glm.
-##' @param scale  The square root of dispersion. In an lm, this is the RMSE, called sigma in summary.lm.
+##' @param dispersion Will be estimated if not provided. The variance
+##' coefficient of the glm, same as scale squared. Dispersion is
+##' allowed as an argument in predict.glm.
+##' @param scale The square root of dispersion. In an lm, this is the
+##' RMSE, called sigma in summary.lm.
 ##' @param na.action What to do with missing values
 ##' @param level 0.95 or whatever confidence level one desires.
 ##' @param ... Other arguments to be passed to predict
@@ -511,18 +605,30 @@ predictCI <-
            dispersion = NULL, scale = NULL,
            na.action = na.pass, level = .95, ...)
 {
+    dots <- list(...)
     interval <- match.arg(interval)
-    type <- match.arg(type)
-    na.act <- object$na.action
-    object$na.action <- NULL ## Why did predict.glm do this?
+    type <- if(!missing(type)) match.arg(type) else "response"
 
+    if (inherits(object, "merMod")){
+        na.action <- attr(object@frame, "na.action")
+        dots[["REform"]] <- NA
+        interval <- "none"
+    } else {
+        na.act <- object$na.action
+    }
+    ## commented out 2014-01-10 bc not compatible with S4
+    ##object$na.action <- NULL ## Why did predict.glm do this?
+    
     ## if interval = none, figure if the predict method gives us a vector of numbers,
     ## or a matrix, or a list with fit as an argument. Oh, this is
     ## frustrating.
     if (interval == "none") {
-        dots <- list(...)
-        pargs <- list(object, newdata = newdata, type = "response", se.fit = TRUE, na.action = na.action)
-        pargs <-  modifyList(pargs, dots)
+		if (inherits(object, "merMod")){
+			pargs <- list(object, newdata = newdata, type = type, na.action = na.action)
+		} else {
+        	pargs <- list(object, newdata = newdata, type = type, se.fit = TRUE, na.action = na.action)
+		}
+		pargs <-  modifyList(pargs, dots)
         predtry <-  try(do.call("predict", pargs))
         if (inherits(predtry, "try-error")) {
             stop("rockchalk:::predCI: predict(object) gave an error. Maybe this regression model does not have a predict method? \n")
@@ -645,7 +751,7 @@ predictCI <-
         ## make them have it! Trying to make return structure more understandable.
 
         pred <- predict.lm(object, newdata = newdata, se.fit = TRUE, scale = scale,
-                           type = "response", interval = "none", na.action = na.action)
+                           type = type, interval = "none", na.action = na.action)
 
         ## pred insides, at least:
         ## pred$fit      on linear predictor (==link) scale

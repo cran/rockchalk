@@ -8,7 +8,7 @@
 ##' order of interaction, unlike other implementations of the same
 ##' approach. See also function \code{lmres} in package pequod.
 ##' @param model A fitted lm object
-##' @export residualCenter
+##' @export 
 ##' @rdname residualCenter
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
 ##' @seealso \code{\link[pequod]{lmres}}
@@ -17,8 +17,7 @@
 ##' Powered and Product Terms: Implications for Modeling
 ##' Interactions Among Latent Variables.
 ##' Structural Equation Modeling, 13(4), 497-519.
-residualCenter <-
-    function(model)
+residualCenter <- function(model)
 {
     UseMethod("residualCenter")
 }
@@ -35,7 +34,7 @@ residualCenter <-
 ##' hypothetical values of the inputs. If there are no interactive
 ##' terms, then NULL is returned.
 ##' @method residualCenter default
-##' @S3method residualCenter default
+##' @export
 ##' @example inst/examples/residualCenter-ex.R
 residualCenter.default <- function (model)
 {
@@ -96,7 +95,7 @@ NULL
 ##' residual centered interaction regressions estimated in
 ##' any type of regression framework (lm, glm, etc).
 ##' @method predict rcreg
-##' @S3method predict rcreg
+##' @export 
 ##' @rdname residualCenter
 ##' @example inst/examples/predict.rcreg-ex.R
 ##' @param object Fitted residual-centered regression from residualCenter

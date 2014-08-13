@@ -38,7 +38,6 @@
 ##' the plotSlopes object, and, for numeric
 ##' modx variables, 3) the Johnson-Neyman (J-N) interval boundaries.
 ##' @export
-##' @rdname testSlopes
 ##' @import car
 ##' @seealso plotSlopes
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
@@ -204,12 +203,11 @@ NULL
 ##' @return \code{NULL}
 ##' @author <pauljohn@@ku.edu>
 ##' @method plot testSlopes
-##' @S3method plot testSlopes
+##' @export
 ##' @param x   A testSlopes object.
 ##' @param ... Additional arguments that are ignored currently.
 ##' @param shade Optional. Create colored polygon for significant regions.
 ##' @param col Optional. Color of the shaded area. Default transparent pink.
-##' @rdname testSlopes
 plot.testSlopes <-
     function(x, ..., shade = TRUE, col = rgb(1, 0, 0, 0.10))
 {

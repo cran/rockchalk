@@ -50,6 +50,8 @@
 ##' @param plotPoints Optional. TRUE or FALSE: Should the plot include
 ##' the scatterplot points along with the lines.
 ##' @param plotLegend Optional. TRUE or FALSE: Should the default legend be included?
+##' @param legendTitle Optional. You'll get an automatically generated title, such as "Moderator: modx",
+##' but if you don't like that, specify your own string here.
 ##' @param col Optional.  A color vector to differentiate the moderator
 ##' values in the plot. If not specified, the R's builtin palette()
 ##' will be used. User may supply a vector of valid color names,
@@ -72,7 +74,7 @@
 plotCurves <-
     function (model, plotx, modx, n, modxVals = NULL,
               interval = c("none", "confidence", "prediction"),
-              plotPoints = TRUE, plotLegend = TRUE,
+              plotPoints = TRUE, plotLegend = TRUE, legendTitle = NULL,
               col = NULL, llwd = 2, opacity = 100,
               envir = environment(formula(model)), ...)
 {
@@ -84,8 +86,16 @@ plotCurves <-
     cl <- match.call()
     interval <- match.arg(interval)
     mf <- model.frame(model)
-    emf <- model.data(model, na.action = na.omit)
+    emf <- model.data(model)
 
+    zzz <- as.character(substitute(plotx))
+    plotx <- zzz[1L]
+    
+    if (!missing(modx)) {
+        zzz <- as.character(substitute(modx))
+        modx <- zzz[1L]
+    }
+        
     plotxVar <- emf[ , plotx]
     if (!is.numeric(plotxVar))
         stop(paste("plotCurves: The variable", plotx, "should be a numeric variable"))
@@ -98,11 +108,14 @@ plotCurves <-
     plotxRange <- range(plotxVar, na.rm = TRUE)
     plotxVals <- plotSeq(plotxRange, length.out = 40)
 
-
+    ##Bug noticed 2013-09-22
+    ## focalVals for a nonlinear model needs to be long set,
+    ## not just end points as I imagined before. See 3 lines below
     if (missing(modx) || is.null(modx)) {
         modxVar <- rep(1, nobs(model))
         if (interval == "none") {
-            focalVals <- list(plotxRange)
+            ## focalVals <- list(plotxRange)
+            focalVals <- list(plotxVals)
         } else {
             focalVals <- list(plotxVals)
         }
@@ -152,18 +165,22 @@ plotCurves <-
 
     if ((!is.null(parms[["se.fit"]])) && (parms[["se.fit"]] == TRUE)) newdf <- cbind(newdf, np$se.fit)
 
-
-    plotyRange <- if(is.numeric(depVar)){
+    plotyRange <- if (is.logical(depVar) || (is.factor(depVar) && length(levels(depVar)) == 2)) {
+        c(0, 1.2)
+    } else if (is.numeric(depVar)) {
         magRange(depVar, mult = c(1, 1.2))
     } else {
-        stop("plotCurves: I've not decided yet what should be done when this is not numeric. Please be patient, I'll figure it out")
+        stop("plotCurves: The dependent variable is neither numeric nor logical. I don't know what you want me to do. Please be patient, I'll figure it out")
     }
-
-
-    parms <- list(newdf = newdf, olddf = data.frame(modxVar, plotxVar, depVar), plotx = plotx, modx = modx, modxVals = modxVals, interval = interval, plotPoints = plotPoints, plotLegend = plotLegend, col = col,  opacity = opacity, xlim = plotxRange,  ylab = ylab, ylim = plotyRange)
+    
+    parms <- list(newdf = newdf, olddf = data.frame(modxVar, plotxVar, depVar),
+                  plotx = plotx, modx = modx, modxVals = modxVals,
+                  interval = interval, plotPoints = plotPoints,
+                  plotLegend = plotLegend, legendTitle = legendTitle,
+                  col = col,  opacity = opacity, xlim = plotxRange,
+                  ylab = ylab, ylim = plotyRange, llwd = llwd)
     parms <- modifyList(parms, dotargs)
     plotArgs <- do.call("plotFancy", parms)
-
 
     z <- list(call = cl, newdata = newdf, modxVals = modxVals, col = plotArgs$col, lty = plotArgs$lty)
 
