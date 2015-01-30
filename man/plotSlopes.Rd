@@ -7,20 +7,25 @@
 plotSlopes(model, plotx, ...)
 
 \method{plotSlopes}{lm}(model, plotx, modx, n = 3, modxVals = NULL,
-  interval = c("none", "confidence", "prediction"), plotPoints = TRUE,
-  plotLegend = TRUE, legendTitle = NULL, col = NULL, llwd = 2,
-  opacity = 100, ...)
+  plotxRange = NULL, interval = c("none", "confidence", "prediction"),
+  plotPoints = TRUE, plotLegend = TRUE, legendTitle = NULL, col = NULL,
+  llwd = 2, opacity = 100, ...)
 }
 \arguments{
 \item{model}{Required. A fitted Regression}
 
-\item{plotx}{Required. Name of one predictor from the fitted model to be plotted on horizontal axis}
+\item{plotx}{Required. Name of one predictor from the fitted
+model to be plotted on horizontal axis}
 
-\item{...}{Additional arguments passed to methods. Often
-includes arguments that are passed to plot. Any
-arguments that customize plot output, such as lwd, cex, and so
-forth, may be supplied. These arguments intended for the predict
-method will be used: c("type", "se.fit", "dispersion", "terms", "na.action")}
+\item{...}{Additional arguments passed to methods. Often includes
+arguments that are passed to plot. Any arguments that customize
+plot output, such as lwd, cex, and so forth, may be
+supplied. These arguments intended for the predict method will be
+used: c("type", "se.fit", "interval", "level", "dispersion",
+"terms", "na.action")}
+
+\item{plotxRange}{Optional. If not specified, the observed
+range of plotx will be used to determine the axis range.}
 
 \item{modx}{Optional. String for moderator variable name. May be
 either numeric or factor. If omitted, a single predicted value line
@@ -35,19 +40,21 @@ lines are desired. May be a vector of values or the name of an
 algorithm, "quantile", "std.dev.", or "table".}
 
 \item{interval}{Optional. Intervals provided by the
-\code{predict.lm} may be supplied, either "confidence" (95% confidence
-interval for the estimated conditional mean) or "prediction" (95%
-interval for observed values of y given the rest of the model).}
+\code{predict.lm} may be supplied, either "confidence" (confidence
+interval for the estimated conditional mean) or "prediction"
+(interval for observed values of y given the rest of the model).
+The level can be specified as an argument (which goes into ...
+and then to the predict method)}
 
 \item{plotPoints}{Optional. TRUE or FALSE: Should the plot include
 the scatterplot points along with the lines.}
 
 \item{plotLegend}{Optional. TRUE or FALSE: Include a default}
 
-\item{legendTitle}{Optional. You'll get an automatically generated title, such as "Moderator: modx",
-but if you don't like that, specify your own string here.
-legend. Set to FALSE if user wants to customize a legend after the
-plot has been drawn.}
+\item{legendTitle}{Optional. You'll get an automatically generated
+title, such as "Moderator: modx", but if you don't like that,
+specify your own string here.  legend. Set to FALSE if user wants
+to customize a legend after the plot has been drawn.}
 
 \item{col}{Optional. A color vector for predicted value lines (and
 intervals if requested). If not specified, the R's builtin palette()
@@ -59,8 +66,9 @@ are more focal values of \code{modx} than colors provided.}
 \item{llwd}{Optional, default = 2. Line widths for predicted values. Can be
 single value or a vector, which will be recycled as necessary.}
 
-\item{opacity}{Optional, default = 100. A number between 1 and 255. 1 means "transparent" or invisible, 255 means very dark.
-the darkness of confidence interval regions}
+\item{opacity}{Optional, default = 100. A number between 1 and 255.
+1 means "transparent" or invisible, 255 means very dark.
+Determines the darkness of confidence interval regions}
 }
 \value{
 Creates a plot and an output object that summarizes it.
@@ -254,9 +262,12 @@ plotSlopes(m11, plotx = "education", modx = "type",
 Paul E. Johnson <pauljohn@ku.edu>
 }
 \references{
-Aiken, L. S. and West, S.G. (1991). Multiple Regression: Testing and Interpreting Interactions. Newbury Park, Calif: Sage Publications.
+Aiken, L. S. and West, S.G. (1991). Multiple Regression:
+Testing and Interpreting Interactions. Newbury Park, Calif: Sage Publications.
 
-Cohen, J., Cohen, P., West, S. G., and Aiken, L. S. (2002). Applied Multiple Regression/Correlation Analysis for the Behavioral Sciences (Third.). Routledge Academic.
+Cohen, J., Cohen, P., West, S. G., and Aiken, L. S. (2002).
+Applied Multiple Regression/Correlation Analysis for the Behavioral
+Sciences (Third.). Routledge Academic.
 }
 \seealso{
 \code{\link[rockchalk]{testSlopes}} \code{\link[rockchalk]{plotCurves}}

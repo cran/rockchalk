@@ -6,12 +6,14 @@
 ##' For that, please see \code{plotCurves}.
 ##'
 ##' @param model Required. A fitted Regression
-##' @param plotx Required. Name of one predictor from the fitted model to be plotted on horizontal axis
-##' @param ... Additional arguments passed to methods. Often
-##' includes arguments that are passed to plot. Any
-##' arguments that customize plot output, such as lwd, cex, and so
-##' forth, may be supplied. These arguments intended for the predict
-##' method will be used: c("type", "se.fit", "dispersion", "terms", "na.action")
+##' @param plotx Required. Name of one predictor from the fitted
+##' model to be plotted on horizontal axis
+##' @param ... Additional arguments passed to methods. Often includes
+##' arguments that are passed to plot. Any arguments that customize
+##' plot output, such as lwd, cex, and so forth, may be
+##' supplied. These arguments intended for the predict method will be
+##' used: c("type", "se.fit", "interval", "level", "dispersion",
+##' "terms", "na.action")
 ##' @export plotSlopes
 ##' @rdname plotSlopes
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
@@ -66,6 +68,8 @@ plotSlopes <- function(model, plotx, ...) UseMethod("plotSlopes")
 ##' in the newdata object that is created as a part of the output from
 ##' this function
 ##'
+##' @param plotxRange Optional. If not specified, the observed
+##' range of plotx will be used to determine the axis range.
 ##' @param modx Optional. String for moderator variable name. May be
 ##' either numeric or factor. If omitted, a single predicted value line
 ##' will be drawn.
@@ -76,16 +80,18 @@ plotSlopes <- function(model, plotx, ...) UseMethod("plotSlopes")
 ##' lines are desired. May be a vector of values or the name of an
 ##' algorithm, "quantile", "std.dev.", or "table".
 ##' @param interval Optional. Intervals provided by the
-##' \code{predict.lm} may be supplied, either "confidence" (95% confidence
-##' interval for the estimated conditional mean) or "prediction" (95%
-##' interval for observed values of y given the rest of the model).
+##' \code{predict.lm} may be supplied, either "confidence" (confidence
+##' interval for the estimated conditional mean) or "prediction"
+##' (interval for observed values of y given the rest of the model).
+##' The level can be specified as an argument (which goes into ...
+##' and then to the predict method)
 ##' @param plotPoints Optional. TRUE or FALSE: Should the plot include
 ##' the scatterplot points along with the lines.
 ##' @param plotLegend Optional. TRUE or FALSE: Include a default
-##' @param legendTitle Optional. You'll get an automatically generated title, such as "Moderator: modx",
-##' but if you don't like that, specify your own string here.
-##' legend. Set to FALSE if user wants to customize a legend after the
-##' plot has been drawn.
+##' @param legendTitle Optional. You'll get an automatically generated
+##' title, such as "Moderator: modx", but if you don't like that,
+##' specify your own string here.  legend. Set to FALSE if user wants
+##' to customize a legend after the plot has been drawn.
 ##' @param col Optional. A color vector for predicted value lines (and
 ##' intervals if requested). If not specified, the R's builtin palette()
 ##' will be used. User may supply a vector of valid color names,
@@ -94,8 +100,9 @@ plotSlopes <- function(model, plotx, ...) UseMethod("plotSlopes")
 ##' are more focal values of \code{modx} than colors provided.
 ##' @param llwd Optional, default = 2. Line widths for predicted values. Can be
 ##' single value or a vector, which will be recycled as necessary.
-##' @param opacity Optional, default = 100. A number between 1 and 255. 1 means "transparent" or invisible, 255 means very dark.
-##' the darkness of confidence interval regions
+##' @param opacity Optional, default = 100. A number between 1 and 255.
+##' 1 means "transparent" or invisible, 255 means very dark.
+##' Determines the darkness of confidence interval regions
 ##' @export
 ##' @method plotSlopes lm
 ##' @rdname plotSlopes
@@ -105,13 +112,16 @@ plotSlopes <- function(model, plotx, ...) UseMethod("plotSlopes")
 ##' values of the moderator for which lines were drawn, and the color
 ##' vector. It also includes the call that generated the plot.
 ##' @references
-##' Aiken, L. S. and West, S.G. (1991). Multiple Regression: Testing and Interpreting Interactions. Newbury Park, Calif: Sage Publications.
+##' Aiken, L. S. and West, S.G. (1991). Multiple Regression:
+##' Testing and Interpreting Interactions. Newbury Park, Calif: Sage Publications.
 ##'
-##' Cohen, J., Cohen, P., West, S. G., and Aiken, L. S. (2002). Applied Multiple Regression/Correlation Analysis for the Behavioral Sciences (Third.). Routledge Academic.
+##' Cohen, J., Cohen, P., West, S. G., and Aiken, L. S. (2002).
+##' Applied Multiple Regression/Correlation Analysis for the Behavioral
+##' Sciences (Third.). Routledge Academic.
 ##' @example inst/examples/plotSlopes-ex.R
 plotSlopes.lm <-
     function (model, plotx, modx, n = 3, modxVals = NULL ,
-              interval = c("none", "confidence", "prediction"),
+              plotxRange = NULL, interval = c("none", "confidence", "prediction"),
               plotPoints = TRUE, plotLegend = TRUE, legendTitle = NULL, col = NULL,
               llwd = 2, opacity = 100, ...)
 {
@@ -140,7 +150,7 @@ plotSlopes.lm <-
         stop(paste("plotSlopes: The variable", plotx, "should be a numeric variable"))
     ylab <- colnames(model$model)[1]
 
-    plotxRange <- range(mm[, plotx], na.rm = TRUE)
+    plotxRange <- if(is.null(plotxRange)) range(mm[, plotx], na.rm = TRUE) else plotxRange
     plotxVals <- plotSeq(plotxRange, length.out = 40)
 
     ## Create focalVals object, needed by newdata
@@ -178,7 +188,8 @@ plotSlopes.lm <-
 
     dotargs <- list(...)
     dotnames <- names(dotargs)
-
+    level <- if (!is.null(dotargs[["level"]])) dotargs[["level"]] else 0.95
+    
     ## scan dotargs for predict keywords. Remove from dotargs
     ## the ones we only want going to predict. Leave
     ## others.
@@ -193,7 +204,9 @@ plotSlopes.lm <-
         }
     }
 
-    validForPredict <- c("se.fit", "dispersion", "terms", "na.action")
+    validForPredict <- c("se.fit", "dispersion", "terms", "na.action",
+                         "level", "pred.var", "weights")
+
     dotsForPredict <- dotnames[dotnames %in% validForPredict]
 
     if (length(dotsForPredict) > 0) {
@@ -208,13 +221,14 @@ plotSlopes.lm <-
     plotyRange <- if(is.numeric(depVar)){
         magRange(depVar, mult = c(1, 1.2))
     } else {
-        stop(paste("plotSlopes: I've not decided yet what should be done when this is not numeric.",
+        stop(paste("plotSlopes: I've not decided yet what
+                   should be done when the dependent variable is not numeric.",
                    "Please be patient, I'll figure it out"))
     }
 
     parms <- list(newdf = newdf, olddf = data.frame(modxVar, plotxVar, depVar),
                   plotx = plotx, modx = modx, modxVals = modxVals,
-                  interval = interval, plotPoints = plotPoints,
+                  interval = interval, level = level, plotPoints = plotPoints,
                   plotLegend = plotLegend, legendTitle = legendTitle,
                   col = col, opacity = opacity, xlim = plotxRange,
                   ylim = plotyRange, ylab = ylab, llwd = llwd)
@@ -255,11 +269,17 @@ plotFancy <-
              plotLegend, legendTitle, col = NULL, llwd = 2, opacity, ...)
 {
     dotargs <- list(...)
-
+    
     ## Damn. Need ylab from dotargs explicitly
     ylab <- "Dependent Variable"
     if (!is.null(dotargs[["ylab"]])) ylab <- dotargs[["ylab"]]
-
+    ## Also need level
+    if (!is.null(dotargs[["level"]])) {
+        level <- dotargs[["level"]]
+        dotargs[["level"]] <- NULL
+    } else {
+        level <- 0.95
+    }
     modxVar <- olddf$modxVar
     plotxVar <- olddf$plotxVar
     depVar <- olddf$depVar
@@ -320,9 +340,7 @@ plotFancy <-
     ## } else {
     ##     lty <- seq_along(modxVals)
     ## }
-    
     names(lty) <- names(col)
-
 
     parms <- list(x = plotxVar, y = depVar, xlab = plotx, ylab = ylab,
                   type = "n")
@@ -333,9 +351,12 @@ plotFancy <-
     ## iCol: rgb color matrix. Why does rgb insist the columns be
     iCol <- col2rgb(col)
     ### bCol: border color
-    bCol <-  mapply(rgb, red = iCol[1,], green = iCol[2,], blue = iCol[3,], alpha = opacity, maxColorValue = 255)
+
+    bCol <- mapply(rgb, red = iCol[1,], green = iCol[2,],
+                   blue = iCol[3,], alpha = opacity, maxColorValue = 255)
     ### sCol: shade color
-    sCol <-  mapply(rgb, red = iCol[1,], green = iCol[2,], blue = iCol[3,], alpha = opacity/3, maxColorValue = 255)
+    sCol <-  mapply(rgb, red = iCol[1,], green = iCol[2,],
+                    blue = iCol[3,], alpha = opacity/3, maxColorValue = 255)
 
 
     if (interval != "none") {
@@ -349,9 +370,11 @@ plotFancy <-
             } else {
                 pdat <- newdf[newdf[ , modx] %in% j, ]
             }
-            parms <- list(x = c(pdat[, plotx], pdat[NROW(pdat):1 , plotx]), y = c(pdat$lwr, pdat$upr[NROW(pdat):1]), lty = lty[i])
+            parms <- list(x = c(pdat[, plotx], pdat[NROW(pdat):1 , plotx]),
+                          y = c(pdat$lwr, pdat$upr[NROW(pdat):1]), lty = lty[i])
             parms <- modifyList(parms, dotargs)
-            parms <- modifyList(parms, list(border = bCol[i], col = sCol[i], lwd = 0.3* llwd[k]))
+            parms <- modifyList(parms, list(border = bCol[i],
+                                            col = sCol[i], lwd = 0.3* llwd[k]))
             do.call("polygon", parms)
         }
     }
@@ -396,13 +419,12 @@ plotFancy <-
             col <- col[names(modxVals)]
             lty <- lty[names(modxVals)]
             llwd <- llwd[names(modxVals)]
-
         }
         if (missing(modx) || is.null(modx)) {
             titl <-  if(missing(legendTitle)) "Regression analysis"
             legnd <- c("Predicted values")
             if (interval != "none") {
-                legnd[2] <- paste("95%", interval, "interval")
+                legnd[2] <- paste(level, interval, "interval")
                 col <- c(col, 0)
                 lty <- c(lty, 0)
                 llwd <- c(llwd, 0)

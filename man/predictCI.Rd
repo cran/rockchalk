@@ -28,7 +28,8 @@ RMSE, called sigma in summary.lm.}
 
 \item{na.action}{What to do with missing values}
 
-\item{level}{0.95 or whatever confidence level one desires.}
+\item{level}{Optional. Default = 0.95.  Specify whatever
+confidence level one desires.}
 
 \item{...}{Other arguments to be passed to predict}
 }

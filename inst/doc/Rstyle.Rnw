@@ -1,6 +1,6 @@
 %% LyX 2.0.8.1 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[american,noae]{article}
+\documentclass[american,noae]{scrartcl}
 \usepackage{lmodern}
 \renewcommand{\sfdefault}{lmss}
 \renewcommand{\ttdefault}{cmtt}
@@ -22,7 +22,6 @@
 
 \makeatletter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
-\usepackage{Sweavel}
 <<echo=F>>=
   if(exists(".orig.enc")) options(encoding = .orig.enc)
 @

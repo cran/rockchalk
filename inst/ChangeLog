@@ -1,3 +1,42 @@
+2015-01-28  Paul Johnson  <pauljohn@dellap14>
+
+	* ../R/plotSlopes.R (plotFancy): try to silence warnings from plot
+	"level not valid argument" by weeding out dotargs
+
+2015-01-23  Paul Johnson  <pauljohn@dellap14>
+
+	* ../R/utils.R (getFocal.factor): Revise getFocal methods so they
+	all go into one documentation file
+
+	* ../R/mcGraph.R (mcGraph1): revised so all 3 functions go into
+	same documentation file (rdname = mcGraph)
+
+2015-01-22  Paul Johnson  <pauljohn@dellap14>
+
+	* ../R/pctable.R (summary.pctable): pctable reworked
+	with summary and print.summary methods
+
+2015-01-15  Paul Johnson  <pauljohn@dellap14>
+
+	* ../R/plotCurves.R: level argument passed through as in
+	plotCurves.
+	* ../R/plotSlopes.R: plotFancy update to print correct level in
+	legend.
+
+2014-10-25  Paul Johnson  <pauljohn@dellap14>
+
+	* ../R/predictOMatic.R (predictCI): fiddling with level on
+	confidence interval to fix bug I caused last time
+
+2014-10-14  Paul Johnson  <pauljohn@dellap14>
+
+	* ../R/plotCurves.R (plotCurves): plotxRange
+
+	* ../R/predictOMatic.R (predictCI): level argument passed through
+
+	* ../R/plotSlopes.R (plotSlopes): plotxRange: new argument
+	level: new predict argument pass through
+
 2014-08-09  Paul Johnson  <pauljohn@dellap14>
 
 	* ../DESCRIPTION (Package): drop dependency on lme4. Don't need

@@ -3,16 +3,19 @@
 \alias{plotCurves}
 \title{Assists creation of predicted value curves for regression models.}
 \usage{
-plotCurves(model, plotx, modx, n, modxVals = NULL, interval = c("none",
-  "confidence", "prediction"), plotPoints = TRUE, plotLegend = TRUE,
-  legendTitle = NULL, col = NULL, llwd = 2, opacity = 100,
-  envir = environment(formula(model)), ...)
+plotCurves(model, plotx, modx, plotxRange = NULL, n, modxVals = NULL,
+  interval = c("none", "confidence", "prediction"), plotPoints = TRUE,
+  plotLegend = TRUE, legendTitle = NULL, col = NULL, llwd = 2,
+  opacity = 100, envir = environment(formula(model)), ...)
 }
 \arguments{
 \item{model}{Required. Fitted regression object. Must have a
 predict method}
 
 \item{plotx}{Required. String with name of predictor for the x axis}
+
+\item{plotxRange}{Optional. If not specified, the observed
+range of plotx will be used to determine the axis range.}
 
 \item{modx}{Optional. String for moderator variable name. May be
 either numeric or factor.}
@@ -36,10 +39,12 @@ interval for observed values of y given the rest of the model).}
 \item{plotPoints}{Optional. TRUE or FALSE: Should the plot include
 the scatterplot points along with the lines.}
 
-\item{plotLegend}{Optional. TRUE or FALSE: Should the default legend be included?}
+\item{plotLegend}{Optional. TRUE or FALSE: Should the default
+legend be included?}
 
-\item{legendTitle}{Optional. You'll get an automatically generated title, such as "Moderator: modx",
-but if you don't like that, specify your own string here.}
+\item{legendTitle}{Optional. You'll get an automatically generated
+title, such as "Moderator: modx", but if you don't like that,
+specify your own string here.}
 
 \item{col}{Optional.  A color vector to differentiate the moderator
 values in the plot. If not specified, the R's builtin palette()
@@ -51,18 +56,22 @@ are more focal values of \code{modx} than colors provided.}
 \item{envir}{environment to search for variables.}
 
 \item{llwd}{Optional. Line widths for predicted values. Can be
-single value or a vector, which will be recycled as necessary.
-##'}
+single value or a vector, which will be recycled as necessary.}
 
-\item{opacity}{Optional, default = 100. A number between 1 and 255. 1 means "transparent" or invisible, 255 means very dark.
-the darkness of confidence interval regions}
+\item{opacity}{Optional, default = 100. A number between 1 and
+255. 1 means "transparent" or invisible, 255 means very dark.  the
+darkness of confidence interval regions}
 
-\item{...}{further arguments that are passed to plot or predict. The arguments that are monitored to be sent to predict are c("type", "se.fit", "dispersion", "terms", "na.action").}
+\item{...}{further arguments that are passed to plot or
+predict. The arguments that are monitored to be sent to predict
+are c("type", "se.fit", "dispersion", "interval", "level",
+"terms", "na.action").}
 }
 \value{
-A plot is created as a side effect, a list is returned including
-1) the call, 2) a newdata object that includes information on the curves that were
-plotted, 3) a vector modxVals, the values for which curves were drawn.
+A plot is created as a side effect, a list is returned
+including 1) the call, 2) a newdata object that includes
+information on the curves that were plotted, 3) a vector modxVals,
+the values for which curves were drawn.
 }
 \description{
 Creates a predicted value plot that includes a separate predicted

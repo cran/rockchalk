@@ -2,13 +2,13 @@
 ### Encoding: UTF-8
 
 ###################################################
-### code chunk number 1: Rstyle.Rnw:26-27
+### code chunk number 1: Rstyle.Rnw:25-26
 ###################################################
   if(exists(".orig.enc")) options(encoding = .orig.enc)
 
 
 ###################################################
-### code chunk number 2: Rstyle.Rnw:171-172
+### code chunk number 2: Rstyle.Rnw:170-171
 ###################################################
 dir.create("plots", showWarnings=F)
 
@@ -23,7 +23,7 @@ pdf.options(onefile=F,family="Times",pointsize=12)
 
 
 ###################################################
-### code chunk number 4: Rstyle.Rnw:949-956
+### code chunk number 4: Rstyle.Rnw:948-955
 ###################################################
 x <- runif(1000, min = 0, max = 100)
 xf <- cut(x, breaks = c(-1, 20, 50, 80, 101), labels = c("cold", "luke", "warm", "hot"))
@@ -35,7 +35,7 @@ head(dat)
 
 
 ###################################################
-### code chunk number 5: Rstyle.Rnw:964-975 (eval = FALSE)
+### code chunk number 5: Rstyle.Rnw:963-974 (eval = FALSE)
 ###################################################
 ## set.seed(12345)
 ## x1 <- rnorm(200, m = 300, s = 140)

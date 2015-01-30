@@ -9,7 +9,7 @@ outreg(modelList, type = "latex", modelLabels = NULL, varLabels = NULL,
   tight = TRUE, showAIC = FALSE, float = FALSE, request, runFuns,
   digits = 3, alpha = c(0.05, 0.01, 0.001), SElist = NULL,
   PVlist = NULL, Blist = NULL, title, label, gofNames,
-  browser = identical(type, "html"))
+  browser = identical(type, "html") && interactive())
 }
 \arguments{
 \item{modelList}{A regression model or an R list of regression

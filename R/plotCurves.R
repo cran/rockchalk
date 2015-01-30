@@ -32,6 +32,8 @@
 ##' @param model Required. Fitted regression object. Must have a
 ##' predict method
 ##' @param plotx Required. String with name of predictor for the x axis
+##' @param plotxRange Optional. If not specified, the observed
+##' range of plotx will be used to determine the axis range.
 ##' @param modx Optional. String for moderator variable name. May be
 ##' either numeric or factor.
 ##' @param n Optional.  Number of focal values of \code{modx}, used by
@@ -49,9 +51,11 @@
 ##' interval for observed values of y given the rest of the model).
 ##' @param plotPoints Optional. TRUE or FALSE: Should the plot include
 ##' the scatterplot points along with the lines.
-##' @param plotLegend Optional. TRUE or FALSE: Should the default legend be included?
-##' @param legendTitle Optional. You'll get an automatically generated title, such as "Moderator: modx",
-##' but if you don't like that, specify your own string here.
+##' @param plotLegend Optional. TRUE or FALSE: Should the default
+##' legend be included?
+##' @param legendTitle Optional. You'll get an automatically generated
+##' title, such as "Moderator: modx", but if you don't like that,
+##' specify your own string here.
 ##' @param col Optional.  A color vector to differentiate the moderator
 ##' values in the plot. If not specified, the R's builtin palette()
 ##' will be used. User may supply a vector of valid color names,
@@ -61,18 +65,23 @@
 ##' @param envir environment to search for variables.
 ##' @param llwd Optional. Line widths for predicted values. Can be
 ##' single value or a vector, which will be recycled as necessary.
-##' ##' @param opacity Optional, default = 100. A number between 1 and 255. 1 means "transparent" or invisible, 255 means very dark.
-##' the darkness of confidence interval regions
-##' @param ... further arguments that are passed to plot or predict. The arguments that are monitored to be sent to predict are c("type", "se.fit", "dispersion", "terms", "na.action").
+##' @param opacity Optional, default = 100. A number between 1 and
+##' 255. 1 means "transparent" or invisible, 255 means very dark.  the
+##' darkness of confidence interval regions
+##' @param ... further arguments that are passed to plot or
+##' predict. The arguments that are monitored to be sent to predict
+##' are c("type", "se.fit", "dispersion", "interval", "level",
+##' "terms", "na.action").
 ##' @export
 ##' @import car
-##' @return A plot is created as a side effect, a list is returned including
-##' 1) the call, 2) a newdata object that includes information on the curves that were
-##' plotted, 3) a vector modxVals, the values for which curves were drawn.
+##' @return A plot is created as a side effect, a list is returned
+##' including 1) the call, 2) a newdata object that includes
+##' information on the curves that were plotted, 3) a vector modxVals,
+##' the values for which curves were drawn.
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
 ##' @example  inst/examples/plotCurves-ex.R
 plotCurves <-
-    function (model, plotx, modx, n, modxVals = NULL,
+    function (model, plotx, modx,  plotxRange = NULL, n, modxVals = NULL,
               interval = c("none", "confidence", "prediction"),
               plotPoints = TRUE, plotLegend = TRUE, legendTitle = NULL,
               col = NULL, llwd = 2, opacity = 100,
@@ -104,8 +113,7 @@ plotCurves <-
     depVar <- model.response(mf)[row.names(emf)]
 
     ylab <- names(mf)[1]  ## returns transformed DV
-
-    plotxRange <- range(plotxVar, na.rm = TRUE)
+    plotxRange <- if(is.null(plotxRange)) range(plotxVar, na.rm = TRUE) else plotxRange
     plotxVals <- plotSeq(plotxRange, length.out = 40)
 
     ##Bug noticed 2013-09-22
@@ -144,6 +152,8 @@ plotCurves <-
     ## the ones we only want going to predict. Leave
     ## others.
 
+    level <- if (!is.null(dotargs[["level"]])) dotargs[["level"]] else 0.95
+
     parms <- list(model, newdata = newdf, type = "response" , interval = interval)
     ## type requires special handling because it may go to predict or plot
     if (!is.null(dotargs[["type"]])) {
@@ -153,7 +163,7 @@ plotCurves <-
         }
     }
     predArgs <- list()
-    validForPredict <- c("se.fit", "dispersion", "terms", "na.action")
+    validForPredict <- c("se.fit", "dispersion", "level", "terms", "na.action")
     dotsForPredict <- dotnames[dotnames %in% validForPredict]
 
     if (length(dotsForPredict) > 0){
@@ -175,14 +185,16 @@ plotCurves <-
     
     parms <- list(newdf = newdf, olddf = data.frame(modxVar, plotxVar, depVar),
                   plotx = plotx, modx = modx, modxVals = modxVals,
-                  interval = interval, plotPoints = plotPoints,
+                  interval = interval, level = level, plotPoints = plotPoints,
                   plotLegend = plotLegend, legendTitle = legendTitle,
                   col = col,  opacity = opacity, xlim = plotxRange,
                   ylab = ylab, ylim = plotyRange, llwd = llwd)
+    
     parms <- modifyList(parms, dotargs)
     plotArgs <- do.call("plotFancy", parms)
 
-    z <- list(call = cl, newdata = newdf, modxVals = modxVals, col = plotArgs$col, lty = plotArgs$lty)
+    z <- list(call = cl, newdata = newdf, modxVals = modxVals,
+              col = plotArgs$col, lty = plotArgs$lty)
 
     class(z) <- "rockchalk"
 

@@ -86,7 +86,8 @@ Balch, T. (2000). Hierarchic Social Entropy: An Information
 Theoretic Measure of Robot Group Diversity. Auton. Robots, 8(3),
 209-238.
 
-Shannon, Claude. E. (1949). The Mathematical Theory of Communication. Urbana: University of Illinois Press.
+Shannon, Claude. E. (1949). The Mathematical Theory of
+Communication. Urbana: University of Illinois Press.
 }
 \seealso{
 \code{\link{summarizeFactors}} and \code{\link{summarizeNumerics}}
