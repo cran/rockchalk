@@ -3,8 +3,7 @@
 \alias{mvrnorm}
 \title{Minor revision of mvrnorm (from \code{MASS}) to facilitate replication}
 \usage{
-mvrnorm(n = 1, mu, Sigma, tol = 1e-06, empirical = FALSE,
-  EISPACK = FALSE)
+mvrnorm(n = 1, mu, Sigma, tol = 1e-06, empirical = FALSE)
 }
 \arguments{
 \item{n}{the number of samples ("rows" of data) required.}
@@ -19,9 +18,6 @@ of positive-definiteness in \code{Sigma}}
 
 \item{empirical}{logical. If true, mu and Sigma specify the empirical
 not population mean and covariance matrix.}
-
-\item{EISPACK}{logical. Set to true to reproduce results from MASS
-versions prior to 3.1-21.}
 }
 \value{
 If \code{n = 1} a vector of the same length as \code{mu}, otherwise an

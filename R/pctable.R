@@ -165,16 +165,20 @@ pctable.formula <- function(formula, data = NULL,  rvlab = NULL,
 {
     if (missing(formula) || (length(formula) != 3L))
         stop("pctable requires a two sided formula")
+    dots <- list(...)
+    dotnames <- names(dots)
+    
     mt <- terms(formula, data = data)
     if (attr(mt, "response") == 0L) stop("response variable is required")
     mf <- match.call(expand.dots = TRUE)
     mfnames <- c("formula", "data", "subset", "xlev", "na.action", "drop.unused.levels")
     keepers <- match(mfnames, names(mf), 0L)
     mf <- mf[c(1L, keepers)]
+    
     ## mf$drop.unused.levels <- FALSE
-   
+    if (!"na.action" %in% dotnames) mf$na.action <- na.pass
     mf[[1L]] <- quote(stats::model.frame)
-    dots <- list(...)
+
     ## remove used arguments from dots, otherwise errors happen
     ## when unexpected arguments pass through. Don't know why
     for (i in c("subset", "xlev", "na.action", "drop.unused.levels")) dots[[i]] <- NULL

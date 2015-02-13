@@ -1,8 +1,8 @@
 Package: rockchalk
 Type: Package
 Title: Regression Estimation and Presentation
-Version: 1.8.91
-Date: 2015-01-29
+Version: 1.8.92
+Date: 2015-02-05
 Author: Paul E. Johnson <pauljohn@ku.edu>
 Maintainer: Paul E. Johnson <pauljohn@ku.edu>
 Description: A collection of functions for ease of
@@ -21,8 +21,8 @@ Description: A collection of functions for ease of
 License: GPL (>= 3.0)
 LazyLoad: yes
 Imports: grDevices, lme4, car, MASS, tables
-Packaged: 2015-01-29 17:59:14 UTC; pauljohn
+Packaged: 2015-02-13 21:05:35 UTC; pauljohn
 Depends: R (>= 2.10)
 NeedsCompilation: no
 Repository: CRAN
-Date/Publication: 2015-01-30 08:47:46
+Date/Publication: 2015-02-13 22:45:53
