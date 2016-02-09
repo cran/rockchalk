@@ -26,6 +26,7 @@
 ##' @param beta beta vector of at most 4 coefficients for intercept,
 ##' slopes, and interaction
 ##' @export genCorrelatedData
+##' @importFrom stats rnorm
 ##' @examples
 ##' ## 1000 observations of uncorrelated x1 and x2 with no
 ##' ## interaction between x1 and x2
@@ -622,6 +623,7 @@ NULL
 ##'    of positive-definiteness in \code{Sigma}
 ##' @param empirical logical. If true, mu and Sigma specify the empirical
 ##'    not population mean and covariance matrix.
+##' @import MASS
 ##' @export
 ##' @return If \code{n = 1} a vector of the same length as \code{mu}, otherwise an
 ##'  \code{n} by \code{length(mu)} matrix with one sample in each row.

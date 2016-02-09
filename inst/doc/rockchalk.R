@@ -2,7 +2,7 @@
 ### Encoding: UTF-8
 
 ###################################################
-### code chunk number 1: rockchalk.Rnw:17-18
+### code chunk number 1: rockchalk.Rnw:16-17
 ###################################################
   if(exists(".orig.enc")) options(encoding = .orig.enc)
 

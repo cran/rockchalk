@@ -122,11 +122,11 @@ pctable.default <- function(rv, cv,
     colnames(t1)[is.na(colnames(t1))] <- "NA"
     if (rounded) t1 <- round(t1, -1)
     t2 <- addmargins(t1, c(1,2))
-    t1colpct <- round(100*prop.table(t1, 2), 1)
-    t1rowpct <- round(100*prop.table(t1, 1), 1)
-    t1colpct <- apply(t1colpct, c(1,2), function(x) gsub("NaN", "", x))
-    t1rowpct <- apply(t1rowpct, c(1,2), function(x) gsub("NaN", "", x))
-    res <- list("count" = t2, "colpct" = t1colpct, "rowpct" = t1rowpct,
+    t1cpct <- round(100*prop.table(t1, 2), 1)
+    t1rpct <- round(100*prop.table(t1, 1), 1)
+    t1cpct <- apply(t1cpct, c(1,2), function(x) gsub("NaN", "", x))
+    t1rpct <- apply(t1rpct, c(1,2), function(x) gsub("NaN", "", x))
+    res <- list("count" = t2, "cpct" = t1cpct, "rpct" = t1rpct,
                 call = match.call())
     class(res) <- "pctable"
     print.pctable(res, colpct = colpct, rowpct = rowpct)
@@ -220,7 +220,6 @@ NULL
 ##' a quoted string if the user intends the method pctable.character
 ##' to be dispatched. The column variable cv may be a string or just a
 ##' variable name (which this method will coerce to a string).
-##' @import tables
 ##' @examples
 ##' dat <- data.frame(x1 = gl(4, 25, labels = c("Good", "Bad", "Ugly", "Indiff")),
 ##'                 x2 = gl(5, 20, labels = c("Denver", "Cincy", "Baltimore", "NY", "LA")), 
@@ -235,23 +234,25 @@ NULL
 ##' tab <- pctable(y ~ x2, data = dat, rvlab = "A Giant Variable")
 ##' summary(tab, rowpct = TRUE, colpct = FALSE)
 ##' tabsum <- summary(tab)
+##' \donttest{
 ##' ## if user has tables package, can push out to latex or html
-##' if (require(tables)){
-##'     tabsumtab <- as.tabular(tabsum)
-##'     html(tabsumtab)
+##' if (require(tables) & require(Hmisc)){
+##'     tabsumtab <- tables::as.tabular(tabsum)
+##'     Hmisc::html(tabsumtab)
 ##'     fn <- tempfile(pattern = "file", tmpdir = tempdir(), 
 ##'             fileext = ".html")
-##'     html(tabsumtab, file = fn)
+##'     Hmisc::html(tabsumtab, file = fn)
 ##'     print(paste("The file saved was named", fn, "go get it."))
 ##'     if (interactive()) browseURL(fn)
 ##'     ## go get the fn file if you want to import it in document
 ##'     ## Now LaTeX output
 ##'     ## have to escape the percent signs
 ##'     tabsumtab <- apply(tabsumtab, 1:2, function(x) {gsub("%", "\\\\%", x) })
-##'     latex(tabsumtab)
 ##'     fn2 <- tempfile(pattern = "file", tmpdir = tempdir(), 
 ##'                    fileext = ".tex")
+##'     Hmisc::latex(tabsumtab, file = fn2)
 ##'     print(paste("The file saved was named", fn2, "go get it."))
+##' }
 ##' }
 ##' @rdname pctable
 ##' @method pctable character
@@ -299,37 +300,42 @@ summary.pctable <- function(object, ..., colpct = TRUE, rowpct = FALSE)
     attr(t3, which = "rowpct") <- rowpct
     class(t3) <- c("summary.pctable", "table")
     if (colpct && !rowpct) {
-        cpct <- object[["colpct"]]
+        cpct <- object[["cpct"]]
         for(j in rownames(cpct)){
             for(k in colnames(cpct)){
-                t3[j, k] <- paste0(count[j, k], "(", cpct[j, k], "%)")
+                if(j != "" & k != ""){
+                    t3[j, k] <- paste0(count[j, k], "(", cpct[j, k], "%)")
+                }
             }
         }
         return(t3)
     }
     
     ## rowpct == TRUE else would have returned
-    rpct <- object[["rowpct"]]
+    rpct <- object[["rpct"]]
     for(j in rownames(rpct)){
         for(k in colnames(rpct)){
-            t3[j, k] <- paste0(count[j, k], "(", rpct[j, k], "%)")
+            if (j != "" & k != ""){
+                t3[j, k] <- paste0(count[j, k], "(", rpct[j, k], "%)")
+            }
         }
     }
     
     if (!colpct) {
         return(t3)
     } else {
-        cpct <- object[["colpct"]]
-        t4 <- array("", dim = c(1, 1) + c(2,1)*dim(object$colpct))
+        cpct <- object[["cpct"]]
+        t4 <- array("", dim = c(1, 1) + c(2,1)*dim(object$cpct))
         t4[seq(1, NROW(t4), 2), ] <- t3
         rownames(t4)[seq(1, NROW(t4), 2)] <- rownames(t3)
         rownames(t4)[is.na(rownames(t4))] <- "" 
         colnames(t4) <- colnames(t3)
-        for(j in rownames(object[["colpct"]])) {
-            for(k in colnames(object[["colpct"]])){
-                t4[1 + which(rownames(t4) == j) ,k] <- paste0(object[["colpct"]][j, k], "%")
+        for(j in rownames(object[["cpct"]])) {
+            for(k in colnames(object[["cpct"]])){
+                if(j != "" & k != "") {
+                    t4[1 + which(rownames(t4) == j) ,k] <- paste0(cpct[j, k], "%")
+                }
             }
-            
         }
         t4 <- as.table(t4)
         names(dimnames(t4)) <- names(dimnames(count))

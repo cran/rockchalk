@@ -779,7 +779,6 @@ NULL
 ##' ## A new feature in 1.85 is ability to provide vectors of beta estimates
 ##' ## standard errors, and p values if desired. 
 ##' ## Suppose you have robust standard errors!
-##' library(car)
 ##' newSE <- sqrt(diag(car::hccm(m3)))
 ##' ## See 2 versions of m3 in the table?
 ##' outreg(list("Model A" = m1, "Model B" = m2, "Model C" = m3, "Model C w Robust SE" = m3),
@@ -847,8 +846,7 @@ NULL
 ##'   gm2 <- glmer(cbind(incidence, size - incidence) ~ period + (1 | herd),
 ##'                    data = cbpp, family = binomial)
 ##'   lm2 <- lm(incidence/size ~ period,  data = cbpp)
-##'   lm2rse <- sqrt(diag(hccm(lm2)))
-##'   library(MASS)
+##'   lm2rse <- sqrt(diag(car::hccm(lm2)))
 ##'   ## Lets see what MASS::rlm objects do? Mostly OK
 ##'   rlm2 <- MASS::rlm(incidence/size ~ period, data = cbpp)
 ##'   \donttest{
