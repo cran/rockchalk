@@ -19,16 +19,22 @@ kurtosis(x, na.rm = TRUE, excess = TRUE, unbiased = TRUE)
 A scalar value or NA
 }
 \description{
-Kurtosis is a summary of the peakedness of a distribution. In a Normal distribution,
-the kurtosis is 3.  The term "excess kurtosis" refers to the difference
+Kurtosis is a summary of the fatness of a distribution's tails,
+often (almost always) using the Normal distribution as a
+comparison. In a Normal distribution, the kurtosis is 3.  The term
+"excess kurtosis" refers to the difference \eqn{kurtosis - 3}.
+Many researchers use the term kurtosis to refer to
+"excess kurtosis" and this function follows suit by returning
+excess kurtosis.  The user may avoid this by setting excess =
+FALSE, in which case kurtosis is returned.
 }
 \details{
-kurtosis - 3
-
-Many researchers use the term kurtosis to refer to "excess
-kurtosis" and this function follows suit by returning excess
-kurtosis.  The user may avoid this by setting excess = FALSE, in
-which case kurtosis is returned.
+If kurtosis is smaller than 3 (or excess kurtosis is negative),
+the tails are "fatter" than Normal, the distribution is "spread
+wider" than the Normal. If kurtosis is greater than 3 (excess kurtosis
+positive, then the observations are packed more closely around the
+mean than in the normal distribution and few observations are
+found in the tails.
 
 If na.rm = FALSE and there are missing values, the mean and
 variance are undefined and this function returns NA.
@@ -40,11 +46,9 @@ this is necessary, hence the argument unbiased. According to the
 US NIST,
 \url{http://www.itl.nist.gov/div898/handbook/eda/section3/eda35b.htm},
 kurtosis is defined as
-      
-                mean((x - mean(x))^4)
-kurtosis =    ___________________
-                 var(x)^2
-
+                  
+\deqn{kurtosis =  ( mean((x - mean(x))^4) )/ var(x)^2}
+            
 where var(x) is calculated with the denominator N, rather than N-1.
 
 A distribution is said to be leptokurtotic if it is tightly bunched in the center (spiked) and there are long, narrow tails representing extreme values that might occur.
