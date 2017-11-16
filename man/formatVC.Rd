@@ -29,4 +29,3 @@ this function at some time in future. Until then, I need to copy it.
 \author{
 Doug Bates, Martin Machler, Ben Bolker, Stephen Walker
 }
-

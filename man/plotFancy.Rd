@@ -44,4 +44,3 @@ This is the back-end for the functions plotSlopes and plotCurves. Don't use it d
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-

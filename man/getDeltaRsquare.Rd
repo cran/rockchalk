@@ -34,4 +34,3 @@ getDeltaRsquare(m2)
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-

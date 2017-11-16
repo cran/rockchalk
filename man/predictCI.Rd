@@ -61,4 +61,3 @@ There's some confusing term translation. I wish R lm and glm would
 be brought into line. For lm, residual.scale = sigma. For glm,
 residual.scale = sqrt(dispersion)
 }
-

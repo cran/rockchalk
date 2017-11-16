@@ -38,4 +38,3 @@ magRange(x1)
 magRange(x1, 1.5)
 magRange(x1, c(1,1.5))
 }
-

@@ -96,9 +96,6 @@ m9 <- lm(statusquo ~ age + income * education + sex + age, data = Chile)
 m9ps <- plotSlopes(m9, modx = "education", plotx = "age", plotPoints = FALSE)
 m9psts <- testSlopes(m9ps)
 }
-\author{
-Paul E. Johnson <pauljohn@ku.edu>
-}
 \references{
 Preacher, Kristopher J, Curran, Patrick J.,and Bauer, Daniel J. (2006).
 Computational Tools for Probing Interactions in Multiple Linear
@@ -112,4 +109,6 @@ Statistical Research Memoirs, 1, 57-93.
 \seealso{
 plotSlopes
 }
-
+\author{
+Paul E. Johnson <pauljohn@ku.edu>
+}

@@ -38,4 +38,3 @@ summary(mod1[[1]])
 Paul E. Johnson \email{pauljohn@ku.edu} and Anonymous
 }
 \keyword{datasets}
-

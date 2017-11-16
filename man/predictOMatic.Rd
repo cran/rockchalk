@@ -392,4 +392,3 @@ summarize(m3.data)
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-

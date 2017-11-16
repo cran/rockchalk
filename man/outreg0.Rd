@@ -211,4 +211,3 @@ outreg0(list(ModelA = gm1, "Model B label with Spaces" = m2),
 Paul E. Johnson \email{<pauljohn@ku.edu>}
 }
 \keyword{regression}
-

@@ -54,4 +54,3 @@ res <- perspEmpty(x1, x2, y, ticktype="detailed", nticks=10)
 mypoints1 <- trans3d ( x1, x2, y, pmat = res )
 points( mypoints1, pch = 16, col= "blue")
 }
-

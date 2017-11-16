@@ -18,4 +18,3 @@ calculates vif = 1/(1-R-square)
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-

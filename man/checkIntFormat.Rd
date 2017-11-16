@@ -13,9 +13,9 @@ checkIntFormat(s)
 logical: TRUE or FALSE
 }
 \description{
-A copy from R's grDevices:::checkIntFormat because it is not exported there
+A copy from R's grDevices:::checkIntFormat because it is not
+exported there
 }
 \author{
 R Core Development Team
 }
-

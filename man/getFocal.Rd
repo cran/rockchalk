@@ -2,9 +2,9 @@
 % Please edit documentation in R/utils.R
 \name{getFocal}
 \alias{getFocal}
-\alias{getFocal.character}
 \alias{getFocal.default}
 \alias{getFocal.factor}
+\alias{getFocal.character}
 \title{Select focal values from an observed variable.}
 \usage{
 getFocal(x, ...)
@@ -81,7 +81,6 @@ getFocal(x, xvals = "quantile", n = 5)
 getFocal(x, xvals = "std.dev")
 getFocal(x, xvals = "std.dev", n = 5)
 getFocal(x, xvals = c(-1000, 0.2, 0,5))
-
 x <- factor(c("A","B","A","B","C","D","D","D"))
 getFocal(x)
 getFocal(x, n = 2)
@@ -94,4 +93,3 @@ getFocal(x, n = 2)
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-

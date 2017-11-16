@@ -2,8 +2,8 @@
 % Please edit documentation in R/rockchalk-package.R
 \docType{package}
 \name{rockchalk-package}
-\alias{rockchalk}
 \alias{rockchalk-package}
+\alias{rockchalk}
 \title{rockchalk: regression functions}
 \description{
 Includes an ever-growing collection of functions that assist in
@@ -33,12 +33,11 @@ interactive terms, many scholars have argued that it does.  The
 meanCenter function can be compared with the "residual centering"
 of interaction terms.
 }
-\author{
-Paul E. Johnson \email{pauljohn@ku.edu}
-}
 \references{
 http://pj.freefaculty.org/R
 }
+\author{
+Paul E. Johnson \email{pauljohn@ku.edu}
+}
 \keyword{hplot}
 \keyword{regression}
-

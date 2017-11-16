@@ -27,4 +27,3 @@ calculated by R's \code{pretty} function.
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-

@@ -52,4 +52,3 @@ outreg2HTML(m2out)
 \author{
 Paul E. Johnson \email{<pauljohn@ku.edu>}
 }
-

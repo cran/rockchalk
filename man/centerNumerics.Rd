@@ -66,4 +66,3 @@ attributes(datc5)
 \author{
 <pauljohn@ku.edu>
 }
-

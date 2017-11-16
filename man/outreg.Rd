@@ -228,19 +228,20 @@ outreg(list("Model A" = m1, "Model B" = m2, "Model C" = m3, "Model C w Robust SE
 newSE <- 0.3*newSE
 newPvals <- rep(0.1, length(newSE))
 
-\donttest{
+
 ## Pass in your own SE and P values.
 outreg(list("Model A" = m1, "Model B" = m2, "Model C" = m3),
        SElist = list("Model C" = newSE), 
        PVlist = list("Model C" = newPvals), alpha = c(0.05, 0.01, 0.001))
 ## It took me a while to realize we might as well allow the user to
 ## pass in a vector of Beta estimates as well. Seems obvious now, though.
-outreg(list("Model C" = m3, "Model C Robust SE" = m3, "Model C MLv2" = m3),
+if(interactive())outreg(list("Model C" = m3, 
+       "Model C Robust SE" = m3, "Model C MLv2" = m3),
        Blist = list("Model C MLv2" = c("(Intercept)" = 0.222, "x1" = 0.222, "x2" = 0.222)),
        SElist = list("Model C Robust SE" = newSE, "Model C MLv2" = 1.4*newSE), 
        PVlist = list("Model C" = newPvals),
        alpha = c(0.05, 0.01, 0.001), type = "html")
-}
+
 
 outreg(list("I Love Long Titles" = m1,
        "Prefer Brevity" = m2,
@@ -276,10 +277,11 @@ if (require(lme4)){
   lm1 <- lm(Reaction ~ Days, sleepstudy)
   ## Get robust standard errors
   lm1rse <- sqrt(diag(car::hccm(lm1)))
-\donttest{
-  outreg(list("Random Effects" = fm1, "OLS" = lm1, "OLS Robust SE" = lm1),
+
+  if(interactive())outreg(list("Random Effects" = fm1, 
+       "OLS" = lm1, "OLS Robust SE" = lm1),
        SElist = list("OLS Robust SE" = lm1rse), type = "html")
-  }
+  
   ## From the glmer examples
   gm2 <- glmer(cbind(incidence, size - incidence) ~ period + (1 | herd),
                    data = cbpp, family = binomial)
@@ -297,4 +299,3 @@ if (require(lme4)){
 Paul E. Johnson \email{<pauljohn@ku.edu>}
 }
 \keyword{regression}
-

@@ -56,4 +56,3 @@ discusses this, in case you are interested (http://pj.freefaculty.org/R).
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-

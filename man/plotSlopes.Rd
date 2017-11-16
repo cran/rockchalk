@@ -261,9 +261,6 @@ dev.new()
 plotSlopes(m11, plotx = "education", modx = "type",
            modxVals = c("bc", "wc"), interval = "conf")
 }
-\author{
-Paul E. Johnson <pauljohn@ku.edu>
-}
 \references{
 Aiken, L. S. and West, S.G. (1991). Multiple Regression:
 Testing and Interpreting Interactions. Newbury Park, Calif: Sage Publications.
@@ -275,4 +272,6 @@ Sciences (Third.). Routledge Academic.
 \seealso{
 \code{\link[rockchalk]{testSlopes}} \code{\link[rockchalk]{plotCurves}}
 }
-
+\author{
+Paul E. Johnson <pauljohn@ku.edu>
+}

@@ -25,4 +25,3 @@ centralValues(myDat)
 \author{
 Paul E. Johnson \email{pauljohn@ku.edu}
 }
-

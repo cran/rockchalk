@@ -51,4 +51,3 @@ m1 <- lm(y ~ x1 + x2, data = dat)
 plotPlane(m1, plotx1 = "x1", plotx2 = "x2")
 
 }
-

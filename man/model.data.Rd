@@ -28,4 +28,3 @@ regression models like lm and glm.
 \author{
 Paul Johnson <pauljohn@ku.edu>
 }
-

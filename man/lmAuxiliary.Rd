@@ -18,4 +18,3 @@ This is a convenience for analysis of multicollinearity in regression.
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-

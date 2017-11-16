@@ -6,7 +6,7 @@
 \usage{
 genCorrelatedData2(N = 100, means = c(50, 50, 50), sds = c(10, 10, 10),
   rho = c(0, 0, 0), stde = 100, beta = c(0, 0.15, 0.1, -0.1),
-  verbose = TRUE)
+  intercept = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{N}{Number of cases desired}
@@ -27,11 +27,16 @@ strictly lower triangle (a vech).}
 generating equation}
 
 \item{beta}{beta vector of coefficients for intercept, slopes, and
-nonlinear-interaction terma.  The first P+1 values are the
+interaction terma.  The first P+1 values are the
 intercept and slope coefficients for the predictors. Additional
 elements in beta are interpreted as coefficients for nonlinear and
 interaction coefficients.  I have decided to treat these as a
-column (vech) that fills into a lower triangular matrix. See Details.}
+column (vech) that fills into a lower triangular matrix. It
+is easy to see what's going on if you run the examples. There
+is also explanation in Details.}
+
+\item{intercept}{Default FALSE. Should the predictors include an
+intercept?}
 
 \item{verbose}{TRUE or FALSE. Should information about the data
 generation be reported to the terminal?}
@@ -47,7 +52,7 @@ regression formula.  The result will be a data frame with
 columns named (y, x1, x2, ..., xp).
 }
 \details{
-Arguments supplied must have enought information so that an
+Arguments supplied must have enough information so that an
 N x P matrix of predictors can be constructed.
 The matrix X is drawn from a multivariate normal
 distribution, the expected value vector (mu vector) is given by
@@ -65,15 +70,15 @@ is N(m = 0, sd = 200). All of these details can be
 changed by altering the arguments.
 
 The y (output) variable is created according to the
-equation
-
-y = b1 + b2 * x1 + ...+ bk * xk + b[k+1] * x1 * ...interactions.. + e
-
-For shorthand, I write b1 for beta[1], b2 for beta[2], and so forth.
+equation\cr
+\deqn{
+y = b1 + b2 * x1 + ...+ bk * xk + b[k+1] * x1 * ...interactions.. + e}
+\cr
+For shorthand, I write b1 for beta[1], b2 for beta[2], and so forth.\cr
 
 The first P+1 arguments in the argument beta are the coefficients
 for the intercept and the columns of the X matrix.  Any additional
-elements in beta are the coefficients for nonlinear and interaction terms.
+elements in beta are the coefficients for nonlinear and interaction terms.\cr
 
 Those additional values in the beta vector are completely
 optional. Without them, the true model is a linear
@@ -82,26 +87,27 @@ regression. However, one can incorporate the effect of squared terms
 (x1 * x2) easily.  This is easier to illustrate than describe.
 Suppose there are 4 columns in X. Then a beta
 vector like beta = c(0, 1, 2, 3, 4, 5, 6, 7, 8) would amount to
-asking for
-
-y = 0 + 1 x1 + 2 x2 + 3 x3 + 4 x4 + 5 *x1^2 + 6 x1 x2 + 7 x1 x3 + 8 x1 x4 + error
-
+asking for\cr
+\deqn{
+y = 0 + 1 x1 + 2 x2 + 3 x3 + 4 x4 + 5 x1^2 + 6 x1 x2 + 7 x1 x3 + 8 x1 x4 + error
+}
+\cr
 If beta supplies more coefficients, they are interpeted as additional
-interactions.
+interactions.\cr
 
 When there are a many predictors and the beta vector is long, this
 can become confusing. I think of this as a vech for the lower
 triangle of a coefficient matrix. In the example with 4
 predictors, beta[1:5] are used for the intercepts and slopes. The
-rest of the  beta elements lay in like so:
+rest of the  beta elements lay in like so:\cr
 
-X1   X2  X3  X4
-X1 b6   .    .
-X2 b7   b10  .
-X3 b8   b11  b13
-X4 b9   b12  b14 b15
+X1   X2  X3  X4\cr
+X1 b6   .    .\cr
+X2 b7   b10  .\cr
+X3 b8   b11  b13\cr
+X4 b9   b12  b14 b15\cr
 
-If the user only supplies b6 and b7, the rest are assumed  to  be 0.
+If the user only supplies b6 and b7, the rest are assumed  to  be 0.\cr
 
 To make this clear, the formula used to calculate y is printed to
 the console when genCorrelatedData2 is called.
@@ -189,4 +195,3 @@ summary(m3b)
 mcDiagnose(m3b)
 
 }
-

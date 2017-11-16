@@ -143,4 +143,3 @@ Paul E. Johnson <pauljohn@ku.edu>
 }
 \keyword{hplot}
 \keyword{regression}
-

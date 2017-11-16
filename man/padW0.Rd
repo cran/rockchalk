@@ -34,4 +34,3 @@ x <- c("Alabama", "Iowa", "Washington")
 \author{
 Paul Johnson <pauljohn@ku.edu>
 }
-

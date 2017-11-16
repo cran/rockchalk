@@ -2,50 +2,62 @@
 % Please edit documentation in R/summarize.R
 \name{summarizeNumerics}
 \alias{summarizeNumerics}
-\title{Extracts numeric variables and presents an alphabetized summary in
+\title{Extracts numeric variables and presents an summary in
 a workable format.}
 \usage{
-summarizeNumerics(dat, alphaSort = TRUE, sumstat = TRUE, digits = max(3,
-  getOption("digits") - 3), na.rm = TRUE, unbiased = TRUE)
+summarizeNumerics(dat, alphaSort = FALSE, probs = c(0, 0.5, 1),
+  stats = TRUE, na.rm = TRUE, unbiased = TRUE)
 }
 \arguments{
 \item{dat}{a data frame or a matrix}
 
-\item{alphaSort}{If TRUE (default), the columns are re-organized
-in alphabetical order. If FALSE, they are presented in the
+\item{alphaSort}{If TRUE, the columns are re-organized in
+alphabetical order. If FALSE, they are presented in the
 original order.}
 
-\item{sumstat}{If TRUE (default), include mean, standard deviation, and count of NAs.}
+\item{probs}{Controls calculation of quantiles. If FALSE, no
+quantile estimates are provided. If TRUE, the quantile
+function is called with \code{probs = c(0, 0.5, 1.0)},
+corresponding to labels which will appear in output,
+\code{c("min", "med", "max")}. Users may specify any
+vector of real values in [0,1]. In output, however, labels
+will be \code{c("min", "med", "max")} or "pctile_dd%" for
+clarity.}
 
-\item{digits}{integer, used for number formatting output.}
+\item{stats}{Can be TRUE/FALSE or a vector of desired summary
+stats.  The full set of allowed labels is c("mean", "sd",
+"var", "skewness", "kurtosis", "nobs", "nmiss").  If TRUE
+(default), result includes everything except variance. I.e.,
+TRUE is same as c("mean", "sd", "skewness", "kurtosis",
+"nobs", "nmiss").  If FALSE, provide none of these. "nobs"
+means number of observations with non-missing, finite scores
+(not NA, NaN, -Inf, or Inf). "nmiss" is the number of cases
+with values of NA.}
 
 \item{na.rm}{default TRUE. Should missing data be removed?}
 
-\item{unbiased}{If TRUE (default), skewness and kurtosis are calculated with
-biased corrected (N-1) divisor in the standard devation.}
+\item{unbiased}{If TRUE (default), skewness and kurtosis are
+calculated with biased corrected (N-1) divisor in the standard
+devation.}
 }
 \value{
-a matrix with one column per variable and the rows
-representing the quantiles as well as the mean, standard
-deviation, and variance.
+a data.frame with one row per summary element and the rows
+    representing the variables.
 }
 \description{
-This function finds the numeric variables and ignores the
-others. (See \code{summarizeFactors} for a function that
-handles non-numeric variables.). It calculates the quantiles for
-each variable, as well as the mean, standard deviation, and
-variance, and then packs those results into a matrix. The main
+Finds the numeric variables, and ignores the others. (See
+\code{summarizeFactors} for a function that handles non-numeric
+variables). It will provide quantiles (which ones are specified by
+\code{probs} as well as other summary statistics, as specified by
+\code{stats}.  Results are returned in a data frame. The main
 benefits from this compared to R's default summary are 1) more
 summary information is returned for each variable (dispersion), 2)
-the results are returned in a matrix that is easy to use in
-further analysis, 3) the columns in the output are
-alphabetized. To prevent alphabetization, use
-alphaSort = FALSE.
-}
-\author{
-Paul E. Johnson <pauljohn@ku.edu>
+the results are returned in a form that is easy to use in further
+analysis, 3) the columns in the output may be alphabetized.
 }
 \seealso{
 summarize and summarizeFactors
 }
-
+\author{
+Paul E. Johnson <pauljohn@ku.edu>
+}

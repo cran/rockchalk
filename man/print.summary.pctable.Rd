@@ -20,4 +20,3 @@ prints pctab objects. Needed only to deal properly with quotes
 \author{
 Paul Johnson <pauljohn@ku.edu>
 }
-

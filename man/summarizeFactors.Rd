@@ -6,7 +6,7 @@
 including entropy as a diversity indicator.}
 \usage{
 summarizeFactors(dat = NULL, maxLevels = 5, alphaSort = TRUE,
-  sumstat = TRUE, digits = max(3, getOption("digits") - 3))
+  stats = TRUE)
 }
 \arguments{
 \item{dat}{A data frame}
@@ -17,10 +17,10 @@ summarizeFactors(dat = NULL, maxLevels = 5, alphaSort = TRUE,
 in alphabetical order. If FALSE, they are presented in the
 original order.}
 
-\item{sumstat}{If TRUE (default), report indicators of dispersion
-and the number of missing cases (NAs).}
-
-\item{digits}{integer, used for number formatting output.}
+\item{stats}{If TRUE (default), report indicators of dispersion
+and the number of missing cases (NAs). If stats is a vector
+containing either c("entropy", "normedEntropy"), then both are
+provided in the output (same as if TRUE).}
 }
 \value{
 A list of factor summaries
@@ -79,9 +79,6 @@ dat <- data.frame(xf, xn, x)
 summarizeFactors(dat)
 ##see help for summarize for more examples
 }
-\author{
-Paul E. Johnson <pauljohn@ku.edu>
-}
 \references{
 Balch, T. (2000). Hierarchic Social Entropy: An Information
 Theoretic Measure of Robot Group Diversity. Auton. Robots, 8(3),
@@ -93,4 +90,6 @@ Communication. Urbana: University of Illinois Press.
 \seealso{
 \code{\link{summarizeFactors}} and \code{\link{summarizeNumerics}}
 }
-
+\author{
+Paul E. Johnson <pauljohn@ku.edu>
+}

@@ -95,13 +95,12 @@ predictOMatic(table1model2, interval = "confidence")
 ## with here because I don't want to invoke additional imported packages.
 ## But the ordinary logit results are proof of concept.
 }
-\author{
-Paul E. Johnson \email{pauljohn@ku.edu}, on behalf of Benjamin Nyblade and Steven Reed
-}
 \references{
 Benjamin Nyblade and Steven Reed, "Who Cheats? Who
 Loots? Political Competition and Corruption in Japan, 1947-1993."
 American Journal of Political Science 52(4): 926-41. October 2008.
 }
+\author{
+Paul E. Johnson \email{pauljohn@ku.edu}, on behalf of Benjamin Nyblade and Steven Reed
+}
 \keyword{datasets}
-

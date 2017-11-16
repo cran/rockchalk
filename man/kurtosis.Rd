@@ -11,9 +11,12 @@ kurtosis(x, na.rm = TRUE, excess = TRUE, unbiased = TRUE)
 
 \item{na.rm}{default TRUE. Should missing data be removed?}
 
-\item{excess}{default TRUE. If true, function returns excess kurtosis (kurtosis -3). If false, the return is simply kurtosis as defined above.}
+\item{excess}{default TRUE. If true, function returns excess
+kurtosis (kurtosis -3). If false, the return is simply
+kurtosis as defined above.}
 
-\item{unbiased}{default TRUE. Should the denominator of the variance estimate be divided by N-1, rather than N?}
+\item{unbiased}{default TRUE. Should the denominator of the
+variance estimate be divided by N-1, rather than N?}
 }
 \value{
 A scalar value or NA
@@ -32,7 +35,7 @@ FALSE, in which case kurtosis is returned.
 If kurtosis is smaller than 3 (or excess kurtosis is negative),
 the tails are "fatter" than Normal, the distribution is "spread
 wider" than the Normal. If kurtosis is greater than 3 (excess kurtosis
-positive, then the observations are packed more closely around the
+positive), then the observations are packed more closely around the
 mean than in the normal distribution and few observations are
 found in the tails.
 
@@ -42,7 +45,7 @@ variance are undefined and this function returns NA.
 The kurtosis may be calculated with the small-sample
 bias-corrected estimate of the variance. Set unbiased = FALSE if
 this is not desired.  It appears somewhat controversial whether
-this is necessary, hence the argument unbiased. According to the
+this is necessary. According to the
 US NIST,
 \url{http://www.itl.nist.gov/div898/handbook/eda/section3/eda35b.htm},
 kurtosis is defined as
@@ -51,9 +54,10 @@ kurtosis is defined as
             
 where var(x) is calculated with the denominator N, rather than N-1.
 
-A distribution is said to be leptokurtotic if it is tightly bunched in the center (spiked) and there are long, narrow tails representing extreme values that might occur.
+A distribution is said to be leptokurtic if it is tightly bunched
+in the center (spiked) and there are long, narrow tails
+representing extreme values that might occur.
 }
 \author{
 Paul Johnson <pauljohn@ku.edu>
 }
-

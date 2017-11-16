@@ -18,4 +18,3 @@ Asks each regression model in a list for a summary and then reports the R-square
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-

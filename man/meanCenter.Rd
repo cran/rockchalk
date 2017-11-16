@@ -182,9 +182,6 @@ summary(m4mc2)
 m4mc3 <- meanCenter(m4, terms = "x1", centerDV = TRUE, standardize = TRUE)
 summary(m4mc3)
 }
-\author{
-Paul E. Johnson <pauljohn@ku.edu>
-}
 \references{
 Aiken, L. S. and West, S.G. (1991). Multiple
     Regression: Testing and Interpreting Interactions. Newbury
@@ -202,4 +199,6 @@ Marketing Science, 26(3), 438-445.
 \code{\link[rockchalk]{standardize}}
     \code{\link[rockchalk]{residualCenter}}
 }
-
+\author{
+Paul E. Johnson <pauljohn@ku.edu>
+}

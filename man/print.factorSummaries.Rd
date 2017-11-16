@@ -10,7 +10,8 @@ in the style of base::summary}
 \arguments{
 \item{x}{A factorSummaries object produced by summarizeFactors}
 
-\item{...}{optional arguments. Only value currently used is digits.}
+\item{...}{optional arguments. Only value currently used is digits,
+which defaults to 2.}
 }
 \value{
 A table of formatted output
@@ -23,12 +24,11 @@ organized for printing in a tabular summary.  This should look
 almost like R's own summary function, except for the additional
 information that these factor summaries include.
 }
-\author{
-Paul E. Johnson <pauljohn@ku.edu>
-}
 \seealso{
 \code{\link[base]{summary}} and
 \code{\link{summarize}},
 \code{\link{summarizeFactors}}
 }
-
+\author{
+Paul E. Johnson <pauljohn@ku.edu>
+}

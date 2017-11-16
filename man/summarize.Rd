@@ -2,29 +2,70 @@
 % Please edit documentation in R/summarize.R
 \name{summarize}
 \alias{summarize}
-\title{Sorts numeric from factor variables and returns separate
+\title{Sorts numeric from discrete variables and returns separate
 summaries for those types of variables.}
 \usage{
-summarize(dat, ...)
+summarize(dat, alphaSort = FALSE, stats = TRUE, digits = 2, ...)
 }
 \arguments{
 \item{dat}{A data frame}
 
-\item{...}{Optional arguments that are passed to summarizeNumerics and summarizeFactors.  These may be used:
-1) maxLevels The maximum number of levels that will be reported.
-2) alphaSort If TRUE (default), the columns are re-organized in alphabetical order. If FALSE, they are presented in the original order.
-3) digits  integer, used for number formatting output.
-4) unbiased If TRUE (default), the variance, standard deviation, skewness and kurtosis are based on the (N-1) denominator formula.}
+\item{alphaSort}{If TRUE, the columns are re-organized in
+alphabetical order. If FALSE, they are presented in the
+original order.}
+
+\item{stats}{A vector of desired summary statistics. Can be TRUE
+to select defaults.  See \code{summarizeNumerics} and
+\code{summarizeFactors} for details. TRUE implies, for numeric
+variables: \code{c("min", "med", "max", "mean", "sd",
+"skewness", "kurtosis")} and discrete variables
+\code{c("entropy", "normedEntropy")}. All summaries will
+include "nobs" and "nmiss". "nobs" is the number of
+observations with non-missing, finite scores (not NA, NaN,
+-Inf, or Inf). "nmiss" is the number of cases with values of
+NA.}
+
+\item{digits}{Decimal values to display, defaults as 2.}
+
+\item{...}{Optional arguments that are passed to
+\code{summarizeNumerics} and \code{summarizeFactors}. For
+numeric variables, one can specify \code{probs}, \code{na.rm}
+and \code{unbiased}. If \code{probs} is unspecified, the
+default is \code{probs = c(0, .50, 1.0)}, which are labeled in
+output as \code{c("min", "med", and "max")}.  For discrete
+variables (factors, ordered, logical, character), the argument
+is \code{maxLevels}, which determines the number of levels
+that will be reported in tables for discrete variables.}
 }
 \value{
-A list with 2 objects, numerics and factors. numerics is a matrix
-of summary information, while factors is a list of factor summaries.
+The on-screen output will have 2 sections, a stylized
+    display of numeric variables and one small display for each
+    factor.  The return value is a list with three objects 1)
+    numerics: a data frame with variable names on rows and summary
+    stats on columns, 2) factors: a list with summary information
+    about each discrete variable, 3) numericsfmt, a character
+    matrix that is the 'beautified' display of the numerics data
+    frame. In order to preserve the style of R's summary function,
+    this character matrix has variable names on the columns and
+    summary stats on the rows.
 }
 \description{
 The work is done by the functions \code{summarizeNumerics} and
 \code{summarizeFactors}.  Please see the help pages for those
-functions for complete details. Named argumes used here must be
-spelled fully so they can be sorted and passed to those 2 funcitons.
+functions for complete details.
+}
+\details{
+The major purpose here is to generate summary data structure
+that is more useful in subsequent data analysis.  The numeric
+portion of the summaries are a data frame that can be used in
+plots or other diagnostics.
+
+The term "factors" was used, but "discrete variables" would have
+been more accurate.  The factor summaries will collect all
+logical, factor, ordered, and character variables.
+
+Other variable types, such as Dates, will be ignored, with a
+warning.
 }
 \examples{
 library(rockchalk)
@@ -37,152 +78,72 @@ x2 <- gl(8, 3, labels = LETTERS[12:24])
 x1 <- sample(x = x1, size=N, replace = TRUE)
 x2 <- sample(x = x2, size=N, replace = TRUE)
 z1 <- rnorm(N)
-a1 <- rnorm(N, mean = 1.2, sd = 1.7)
+a1 <- rnorm(N, mean = 1.2, sd = 11.7)
 a2 <- rpois(N, lambda = 10 + a1)
 a3 <- rgamma(N, 0.5, 4)
-b1 <- rnorm(N, mean = 1.3, sd = 1.4)
+b1 <- rnorm(N, mean = 211.3, sd = 0.4)
 dat <- data.frame(z1, a1, x2, a2, x1, a3, b1)
 summary(dat)
 
-
 summarize(dat)
 
+summarize(dat, digits = 2)
 
+summarize(dat, 
+          probs = c(0, 0.20, 0.50),
+          stats = c("mean", "entropy"))
+
+## Only quantile values, no summary stats for numeric variables
+## Discrete variables get entropy
+summarize(dat, 
+          probs = c(0, 0.25, 0.50, 0.75, 1.0),
+          stats = "entropy", digits = 2)
+
+## Quantiles and the mean for numeric variables.
+## No diversity stats for discrete variables (entropy omitted)
+summarize(dat, 
+          probs = c(0, 0.25, 0.50, 0.75, 1.0),
+          stats = "mean")
+
+
+## Returns un rounded data frame, with
+## colnames on rows, values on columns
 summarizeNumerics(dat)
+
 summarizeFactors(dat, maxLevels = 5)
 
-summarize(dat, alphaSort = FALSE)
+## See actual values of factor summaries, without
+## beautified printing
+unclass(summarizeFactors(dat, maxLevels = 5))
+
+summarize(dat, alphaSort = TRUE) 
 
 summarize(dat, digits = 6, alphaSort = FALSE)
 
-summarize(dat, digits = 22, alphaSort = FALSE)
 
 summarize(dat, maxLevels = 2)
 
-datsumm <- summarize(dat)
+datsumm <- summarize(dat, stats = c("mean", "sd", "var"), props = TRUE)
 
-datsumm$numerics
-datsumm[[1]]  ## same: gets numerics
+## Unbeautified numeric data frame, variables on the rows
+datsumm[["numerics"]]
+## Beautified versions 1. shows saved version:
+datsumm[["numericsfmt"]]
+## 2. Run formatNumericSummaries to re-specify digits:
+formatNumericSummaries(datsumm[["numerics"]], digits = 10)
 
-datsumm$factors
-datsumm[[2]]
+datsumm[["factors"]]
 
-
-## Use numerics output to make plots. First,
-## transpose gives varnames x summary stat matrix
-datsummNT <- t(datsumm$numerics)
-datsummNT <- as.data.frame(datsummNT)
+datsummNT <- datsumm[["numerics"]]
 
 plot(datsummNT$mean, datsummNT$var, xlab = "The Means",
     ylab = "The Variances")
 
 plot(datsummNT$mean, datsummNT$var, xlab = "The Means",
     ylab = "The Variances", type = "n")
-text(datsummNT$mean, datsummNT$var, labels = rownames(datsummNT))
-
-## Here's a little plot wrinkle.  Note variable names are 'out to the
-##  edge' of the plot. If names are longer they don't stay inside
-##  figure. See?
-
-## Make the variable names longer
-
-rownames(datsummNT)
-rownames(datsummNT) <- c("boring var", "var with long name",
-    "tedious name var", "stupid varname", "buffoon not baboon")
-plot(datsummNT$mean, datsummNT$var, xlab = "The Means",
-    ylab = "The Variances", type = "n")
-text(datsummNT$mean, datsummNT$var, labels = rownames(datsummNT),
-    cex = 0.8)
-## That's no good. Names across the edges
-
-## We could brute force the names outside the edges like
-##  this
-par(xpd = TRUE)
-text(datsummNT$mean, datsummNT$var, labels = rownames(datsummNT),
-    cex = 0.8)
-## but that is not much better
-par(xpd = FALSE)
-
-## Here is one fix. Make the unused space inside the plot
-##  larger by
-## making xlim and ylim bigger.  I use the magRange
-##  function from
-## rockchalk to easily expand range to 1.2 times its
-##  current size.
-## otherwise, long variable names do not fit inside plot.
-##  magRange
-## could be asymmetric if we want, but this use is
-##  symmetric.
-
-rownames(datsummNT)
-rownames(datsummNT) <- c("boring var", "var with long name",
-    "tedious name var", "stupid varname", "buffoon not baboon")
-plot(datsummNT$mean, datsummNT$var, xlab = "The Means",
-    ylab = "The Variances", type = "n", xlim = magRange(datsummNT$mean,
-        1.2), ylim = magRange(datsummNT$var, 1.2))
-text(datsummNT$mean, datsummNT$var, labels = rownames(datsummNT),
-    cex = 0.8)
-
-## Here's another little plot wrinkle.  If we don't do that to keep
-## the names in bounds, we need some fancy footwork.  Note when a
-## point is near the edge, I make sure the text prints toward the
-## center of the graph.
-plot(datsummNT$mean, datsummNT$var, xlab = "The Means",
-    ylab = "The Variances")
-## calculate label positions. This is not as fancy as it could be.  If
-##  there were lots of variables, we'd have to get smarter about
-##  positioning labels on above, below, left, or right.
-labelPos <- ifelse(datsummNT$mean - mean(datsummNT$mean,
-    na.rm = TRUE) > 0, 2, 4)
-text(datsummNT$mean, datsummNT$var, labels = rownames(datsummNT),
-    cex = 0.8, pos = labelPos)
-
-
-
-x <- data.frame(x = rnorm(N), y = gl(50, 2), z = rep(1:4,
-    25), ab = gl(2, 50))
-
-summarize(x)
-summarize(x, maxLevels = 15)
-
-sumry <- summarize(x)
-sumry[[1]]  ##another way to get the numerics output
-sumry[[2]]  ##another way to get the factors output
-
-dat <- data.frame(x = rnorm(N), y = gl(50, 2), z = factor(rep(1:4,
-    25), labels = c("A", "B", "C", "D")), animal = factor(ifelse(runif(N) <
-    0.2, "cow", ifelse(runif(N) < 0.5, "pig", "duck"))))
-
-summarize(dat)
-
-## Run this if you have internet access
-
-## fn <- "http://pj.freefaculty.org/guides/stat/DataSets/USNewsCollege/USNewsCollege.csv"
-## dat <- read.table(url(fn), sep = ",")
-
-## colnames(dat) <- c("fice", "name", "state", "private", "avemath",
-##                    "aveverb", "avecomb", "aveact", "fstmath",
-##                    "trdmath", "fstverb", "trdverb", "fstact",
-##                    "trdact", "numapps", "numacc", "numenr",
-##                    "pctten", "pctquart", "numfull", "numpart",
-##                    "instate", "outstate", "rmbrdcst", "roomcst",
-##                    "brdcst", "addfees", "bookcst", "prsnl",
-##                    "pctphd", "pctterm", "stdtofac", "pctdonat",
-##                    "instcst", "gradrate")
-
-## dat$private <- factor(dat$private, labels = c("public",
-##                                    "private"))
-## sumry <- summarize(dat, digits = 2)
-## sumry
-
-## sumry[[1]]
-## sumry[[2]]
-
-## summarize(dat[, c("fice", "name", "private", "fstverb",
-##                   "avemath")], digits = 4)
-
+text(datsummNT$mean, jitter(datsummNT$var), labels = rownames(datsummNT))
+## problem with name overlap.
 }
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-

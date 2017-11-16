@@ -458,7 +458,7 @@ outreg0 <-
 
     ## Print a row for the model's fit, as -2LLR
     if ("glm" %in% myModelClass) {
-        cat(paste("$-2LLR (Model \\chi^2)$"),sep="")
+        cat(paste("$-2LLR (Model \\\\chi^2)$"), sep="")
         for (model in modelList) {
             if (is.numeric(model$deviance)){
                 n2llr <- model$null.deviance - model$deviance
@@ -790,19 +790,20 @@ NULL
 ##' newSE <- 0.3*newSE
 ##' newPvals <- rep(0.1, length(newSE))
 ##'
-##' \donttest{
+##' 
 ##' ## Pass in your own SE and P values.
 ##' outreg(list("Model A" = m1, "Model B" = m2, "Model C" = m3),
 ##'        SElist = list("Model C" = newSE), 
 ##'        PVlist = list("Model C" = newPvals), alpha = c(0.05, 0.01, 0.001))
 ##' ## It took me a while to realize we might as well allow the user to
 ##' ## pass in a vector of Beta estimates as well. Seems obvious now, though.
-##' outreg(list("Model C" = m3, "Model C Robust SE" = m3, "Model C MLv2" = m3),
+##' if(interactive())outreg(list("Model C" = m3, 
+##'        "Model C Robust SE" = m3, "Model C MLv2" = m3),
 ##'        Blist = list("Model C MLv2" = c("(Intercept)" = 0.222, "x1" = 0.222, "x2" = 0.222)),
 ##'        SElist = list("Model C Robust SE" = newSE, "Model C MLv2" = 1.4*newSE), 
 ##'        PVlist = list("Model C" = newPvals),
 ##'        alpha = c(0.05, 0.01, 0.001), type = "html")
-##' }
+##' 
 ##' 
 ##' outreg(list("I Love Long Titles" = m1,
 ##'        "Prefer Brevity" = m2,
@@ -838,10 +839,11 @@ NULL
 ##'   lm1 <- lm(Reaction ~ Days, sleepstudy)
 ##'   ## Get robust standard errors
 ##'   lm1rse <- sqrt(diag(car::hccm(lm1)))
-##' \donttest{
-##'   outreg(list("Random Effects" = fm1, "OLS" = lm1, "OLS Robust SE" = lm1),
+##' 
+##'   if(interactive())outreg(list("Random Effects" = fm1, 
+##'        "OLS" = lm1, "OLS Robust SE" = lm1),
 ##'        SElist = list("OLS Robust SE" = lm1rse), type = "html")
-##'   }
+##'   
 ##'   ## From the glmer examples
 ##'   gm2 <- glmer(cbind(incidence, size - incidence) ~ period + (1 | herd),
 ##'                    data = cbpp, family = binomial)
@@ -882,28 +884,20 @@ outreg <-
     
     ## Required methods
     req <- (c("coef", "nobs", "vcov", "summary"))
-   
+
+    checkFunctions <- function(obj, req){
+        for (i in req){
+            if (inherits(get(i)(obj), "try-error")) stop(paste("A model has no", i, "method"))
+        }
+    }
+    
     checkReg <- function(modlist){
         ##Pre-approved model classes
         knownTypes <- c("lm", "glm", "merMod")
         approved <- sapply(modlist, inherits, knownTypes)
         ## Ask trouble modl for a list of all methods that apply to it
         problematic <-  modlist[!approved]
-        if (length(problematic) == 0) return()
-        problematicClasses <- lapply(problematic, class)
-        for (x in problematicClasses) {
-            methodList <- unlist(lapply(x, function(x) if (x != "list") methods(class = x)))
-            reqCheck <- sapply(req, function(x) sum(grepl(x, methodList)))
-            ## stop if any are 0
-            missingMethods <- req[grep("0", reqCheck)]
-            print(paste("The regression model must have these methods: ", paste(req, collapse = " ")))
-            messg <- c()
-            for (i in missingMethods) {
-                messg <- c(messg, paste("The model of class", x, "is missing ",
-                                        i, "\n"))
-            }
-            stop(messg)
-        }
+        errors <- lapply(problematic, checkFunctions, req)
     }
 
 
@@ -926,8 +920,8 @@ outreg <-
                   , x)
         x <- gsub("_SEP_", ifelse(LATEX, " &", "</td><td>"), x)
         x <- gsub("_EOT_", ifelse(LATEX, "\\\\end{tabular}", "</table>"), x)
-        x <- gsub("_BOMC2_", ifelse(LATEX, "& \\\\multicolumn{2}{c}{", "<td colspan = '2'>"), x)
-        x <- gsub("_X2_",  ifelse(LATEX, "$-2LLR (Model \\chi^2)$", "&chi;<sup>2</sup>"), x)
+        x <- gsub("_BOMC2_", ifelse(LATEX, "& \\\\multicolumn{2}{l}{", "<td colspan = '2'>"), x)
+        x <- gsub("_X2_",  ifelse(LATEX, "$-2LLR (Model \\\\chi^2)$", "&chi;<sup>2</sup>"), x)
         x <- gsub("_R2_",  ifelse(LATEX, "$R^2$", "R<sup>2</sup>"), x)
         x <- gsub("_SIGMA_", ifelse(LATEX, "$\\\\sigma$", "&sigma;"), x)
         x <- gsub("_NBSP_", ifelse(LATEX, "\ ", "&nbsp;"), x)
@@ -941,25 +935,32 @@ outreg <-
         names(res) <- names(sl)
         
         for(i in seq_along(sl)) {
-            sli <- sl[[i]]
-            y <- sli[[name]]
+            y <- sl[[i]][[name]]
+            
             if (is.null(y) || !is.null(y) && is.na(y)) {
                 y <- ""
-            } else if (!is.null(y) && name == "fstatistic"){
+            } else if (name == "fstatistic"){
                 staty <- paste(format(c(y["value"]), digits = digits),
                                " df(", format(y["numdf"], digits = digits),
                                ",", format(y["dendf"], digits = digits), ")", sep = "")
 
-                nstars <- sum(pf(y["value"], df1 = y["numdf"], df2 = y["dendf"] , lower.tail = FALSE) < alpha)
+                nstars <- sum(pf(y["value"], df1 = y["numdf"], df2 = y["dendf"], lower.tail = FALSE) < alpha)
                 y <- paste(staty, paste(rep("*", nstars), collapse = ""), sep = "")
             } else if (is.numeric(y)) {
+                if (length(y) > 1){
+                    messg <- paste0("outreg: ", 
+                                    "asked for: ", paste0("\"", name,"\"."),
+                                    "These values were received: \n ",
+                                    paste(y, collapse = " "), "\n",  
+                                    "Just the first returned value is used for ", name)
+                    warning(messg)
+                    y <- y[1]
+                }
                 y <- format(round(y, digits), nsmall = digits)
-            }                 
-            if (!is.null(y)) res[i] <- y else res[i] <- ""
+            } 
+            if (!is.null(y) & !is.na(y) & !identical(y, "")) res[i] <- y else res[i] <- ""
         }
-
         if (any(res != "")) nonNull <- TRUE else nonNull <- FALSE
-        ##names(res) <- names(sl)
         attr(res, "nonNull") <- nonNull
         res
     }
@@ -1158,7 +1159,7 @@ outreg <-
                 vcnames <- c("Residual", vcnames)
         }}
         
-        VCmat <- matrix("    ", nrow = length(vcnames), ncol =
+        VCmat <- matrix("   ", nrow = length(vcnames), ncol =
                         length(modelList), dimnames = list(vcnames, modelLabels))
         for (i in seq_along(VCs)) {
             vc <- VCs[[i]]
@@ -1176,7 +1177,7 @@ outreg <-
         if (tight) hereSep <- " _SEP_ " else hereSep <-  " _SEP_     _SEP_ "
  
         bline1 <- paste0("_BR__NBSP_", paste0(rownames(VCmat)))
-        bline2 <- paste(rep(" ", max(2, (14 - nchar(rownames(VCmat))))), collapse = "")
+        bline2 <- paste(rep(" ", max(2, (5 - nchar(rownames(VCmat))))), collapse = "")
         bline3 <- paste(apply(VCmat, 1, paste, collapse = hereSep), "_EOC__EOR__EOL_")
         bline <- paste(bline1, bline2, "_SEP_",  bline3)
         c(aline, bline)
@@ -1207,7 +1208,7 @@ outreg <-
  
     ## Put model labels on top of each model column, if modelLabels were given
     if (!is.null(modelLabels)){
-        aline <- paste("_BR_",  sprintf("%14s", " "), "_EOC_", collapse = "")
+        aline <- paste("_BR_",  sprintf("%2s", " "), "_EOC_", collapse = "")
         for (modelLabel in modelLabels){
             if (tight == TRUE) {
                 aline <- c(aline, paste0("_BOC_", modelLabel, "_EOC_"))
@@ -1221,13 +1222,13 @@ outreg <-
 
     ## Print the headers "Estimate" and "(S.E.)", output depends on tight or other format
     if (tight == TRUE) {
-        aline <- paste("_BR_", sprintf("%14s", " "), paste(rep (" _SEP_Estimate", nmodels), collapse = " "), "_EOR__EOL_", collapse = "") 
+        aline <- paste("_BR_", sprintf("%2s", " "), paste(rep (" _SEP_Estimate", nmodels), collapse = " "), "_EOR__EOL_", collapse = "") 
         z <- c(z, paste(aline, collapse = ""))
 
-        aline <- c("_BRU_", sprintf("%14s", " "), paste(rep (" _SEPU_(S.E.) ", nmodels, collapse = " ")), "_EOR__EOL_")
+        aline <- c("_BRU_", sprintf("%2s", " "), paste(rep (" _SEPU_(S.E.) ", nmodels, collapse = " ")), "_EOR__EOL_")
         z <- c(z, paste(aline, collapse = ""))
     } else {
-        aline1 <- paste("_BRU_", sprintf("%14s", " "))
+        aline1 <- paste("_BRU_", sprintf("%2s", " "))
         aline2 <- paste(rep (" _SEPU_Estimate _SEPU_(S.E.) ", nmodels), collapse = " ")
         aline3 <- paste("_EOR__EOL_")
         z <- c(z, paste(aline1, aline2, aline3, collapse = ""))
@@ -1237,7 +1238,7 @@ outreg <-
    
     ## Here come the regression coefficients
     for (regname in parmnames){
-        aline <- paste(paste("_BR_ ", displayNames[regname], paste(rep(" ", max(2, (14 - nchar(displayNames[regname])))), collapse = "" ) ) , collapse = "")
+        aline <- paste(paste("_BR_ ", displayNames[regname], paste(rep(" ", max(2, (6 - nchar(displayNames[regname])))), collapse = "" ) ) , collapse = "")
         for (model in modelLabels) {
             est <- B[regname, model]
             se <- SE[regname, model]
@@ -1255,11 +1256,11 @@ outreg <-
         z <- c(z, paste(aline, collapse = ""))
 
         if (tight == TRUE){
-            aline <- paste("_BR_", paste(rep(" ", 14), sep = "", collapse = ""))
+            aline <- paste("_BR_", paste(rep(" ", 2), sep = "", collapse = ""))
             for (model in modelLabels) {
                 est <- B[regname, model]
                 se <- SE[regname, model]
-                aline2 <- if (!is.na(est)) c("_SEP_", se, rep(" ", max(2, 6 - nchar(se)), collapse=""))  else c("_SEP_  ", sprintf("%6s", " "))
+                aline2 <- if (!is.na(est)) c("_SEP_", se, rep(" ", max(2, 6 - nchar(se)), collapse=""))  else c("_SEP_  ", sprintf("%2s", " "))
                 aline <- c(aline, paste(aline2, collapse = ""))
             }
             aline <- c(aline, "_EOR__EOL_")
@@ -1272,11 +1273,11 @@ outreg <-
 
 
     ## Print a row for the number of cases
-    aline <- c("_BR_", "N", sprintf("%16s", " "))
+    aline <- c("_BR_", "N", sprintf("%2s", " "))
     for (model in modelList) {
         myN <- stats::nobs(model)
-        aline <- c(aline, "_SEP_", myN, sprintf("%6s", " "))
-        if (tight == FALSE) aline <- c(aline, "_SEP_ ", rep(" ",6))
+        aline <- c(aline, "_SEP_", myN, sprintf("%2s", " "))
+        if (tight == FALSE) aline <- c(aline, "_SEP_ ", rep(" ",2))
     }
     aline <- c(aline, " _EOR__EOL_")
     z <- c(z, paste(aline, collapse = ""))
@@ -1317,7 +1318,7 @@ outreg <-
                 aline <- c(aline, paste("      _SEP_", format(round(n2llr, digits), nsmall = digits)))
                 gmdf <- model$df.null - model$df.residual + 1
                 nstars <- sum(pchisq(n2llr, df = gmdf, lower.tail = FALSE) < alpha)
-                aline <-  paste(aline, rep("*", nstars), sep = "")
+                aline <-  paste0(paste(aline, collapse = ""), paste0(rep("*", nstars), collapse=""))
             } else {
                 aline <- c(aline, "       _SEP_")
             }
@@ -1386,7 +1387,7 @@ outreg <-
             aline <- paste0("\\multicolumn{", nColumns, "}{c}{", aline, "_EOMC__EOR__EOL_")
         } else {
             aline <- paste0("<tr>\n",
-                           "<td colspan=\"", nColumns, "2\">")
+                           "<td colspan=\"", nColumns, "\">")
             for ( i in seq_along(alpha)){
                 aline <- paste0(aline,  paste0(rep("*", i), collapse = ""), " <it>p</it> &#8804;", alpha[i], sep = "")
             }
@@ -1432,447 +1433,7 @@ outreg <-
     invisible(z)
 }
 
-
-
-
-## ## Was used until 2014-01-09
-
-## outreg <-
-##     function(modelList, title, label, modelLabels = NULL,  varLabels = NULL,
-##              tight = TRUE, showAIC = FALSE, float = FALSE, request,
-##              runFuns, digits = 3, alpha = 0.05, type = "latex")
-## {
-##     ##beautified names for gof variables
-##     gofNames <- c(sigma = "RMSE",
-##                   r.squared = paste("_R2_"),
-##                   deviance = "Deviance",
-##                   adj.r.squared = paste("adj", "_R2_"),
-##                   fstatistic = "F")
-
-##     if (!missing(request)) gofNames <- c(gofNames, request)
-
-##     ## Required methods
-##     req <- (c("coef", "nobs", "vcov", "summary"))
-   
-##     checkReg <- function(modl){
-##         ## required methods for model
-##         ## Ask modl for a list of all methods that apply to it
-##         methodList <- unlist(sapply(class(modl), function(x) if (x != "list") methods(class = x)))
-##         ## find out if methodList members have req
-##         reqCheck <- sapply(req, function(x) sum(grepl(x, methodList)))
-##         ## stop if any are 0
-##         if (length(grep("0", reqCheck)) > 0){
-##             if (y <- grep("0", reqCheck)) {
-##                 messg <- paste("The regression model must have these methods: ",
-##                                paste(req, collapse = " "), "\n",
-##                                " and the model provided is missing",
-##                                req[y])
-##                 stop(messg)
-##             }
-##         }
-##     }
-
-
-##     markup <- function(x, type){
-##         if (type == "latex") LATEX <- TRUE else LATEX <- FALSE
-##         x <- gsub("_EOMC_", ifelse(LATEX, "}", "</td>"), x)
-##         x <- gsub("_EOR_", ifelse(LATEX, "\\\\\\\\", "</td></tr>"), x)
-##         x <- gsub("_BRU_", ifelse(LATEX, "",
-##                                   paste("<tr><td style=\"border-bottom: solid thin black; border-collapse:collapse;\">&nbsp;")),
-##                   x)
-##         ##"
-##         x <- gsub("_BR_", ifelse(LATEX, "", "<tr><td>"), x)
-##         x <- gsub("_BT_", ifelse(LATEX, "\begin{tabular}", "<table>\n"), x)
-##         x <- gsub("_EOL_",  "\n", x)
-##         x <- gsub("_HL_", ifelse(LATEX, "\\\\hline", ""), x)
-##         x <- gsub("_SEPU_", ifelse(LATEX, "&",
-##                                    paste("</td><td style=\"border-bottom: solid thin black; border-collapse:collapse;\">&nbsp;"))
-##                   , x)
-##         x <- gsub("_SEP_", ifelse(LATEX, "&", "</td><td>"), x)
-##         x <- gsub("_EOT_", ifelse(LATEX, "\\\\end{tabular}", "</table>"), x)
-##         x <- gsub("_BOMC2_", ifelse(LATEX, "\\\\multicolumn{2}{c}{", "</td><td colspan = '2'>"), x)
-##         x <- gsub("_X2_",  ifelse(LATEX, "$-2LLR (Model \\chi^2)$", "&chi;<sup>2</sup>"), x)
-##         x <- gsub("_R2_",  ifelse(LATEX, "$R^2$", "R<sup>2</sup>"), x)
-##         x
-##     }
-
-
-    
-##     ## TESTME: grabs param from object by name, rounds, simplifies
-##     ## returns text. For getting r.square, adj.r.square, fstatistic.
-##     harvest <- function(sl, name) {
-##         res <- vector("character", length = length(sl))
-##         namz <- names(sl)
-##         names(res) <- namz
-
-##         for(i in seq_along(sl)) {
-##             sli <- sl[[i]]
-##             y <- sli[[name]]
-##             if (!is.null(y) && name == "fstatistic"){
-##                 staty <- paste(format(c(y["value"]), digits = digits),
-##                                " df(", format(y["numdf"], digits = digits),
-##                                ",", format(y["dendf"], digits = digits), ")", sep = "")
-
-##                 nstars <- sum(pf(y["value"], df1 = y["numdf"], df2 = y["dendf"] , lower.tail = FALSE) < alpha)
-##                 y <- paste(staty, paste(rep("*", nstars), collapse = ""), sep = "")
-##             } else if (is.numeric(y)) {
-##                 y <- round(y, digits)
-##             }
-##             if (!is.null(y)) res[i] <- y else res[i] <- ""
-##         }
-
-##         if (any(!is.na(res))) nonNull <- TRUE else nonNull <- FALSE
-##         names(res) <- names(sl)
-##         attr(res, "nonNull") <- nonNull
-##         res
-##     }
-
-##     gofRow <- function(x, xname = "fixme") {
-##         zline <- c("_BR_", xname, paste(rep(" ",  max(2, (16 - nchar(xname)))), collapse = "" ))
-##         for (mname in names(x)) {
-##             zline <- c(zline, "_SEP_", x[mname], paste(rep(" ", max(2, 6-nchar(x[mname]))), collapse = ""))
-##             if (tight == FALSE) zline <- c(zline, sprintf("%6s", " "), "_SEP_")
-##         }
-##         zline <- paste(paste(zline, collapse = ""), "_EOR__EOL_")
-##     }
-
-
-##     gofPrint <- function(sl, name){
-##         y <- harvest(sl, name)
-##         xname <- ifelse(is.na(gofNames[name]), name, gofNames[name])
-##         if (attr(y, "nonNull")) {
-##             res <- gofRow(y, xname)
-##         }
-##         res
-##     }
-
-##     ## Insert a horizontal line, or as close as we can get in an html table
-##     SL <- function(n, type) {
-##         if (type == "latex") x <- "\\hline\n"
-##         else x <- paste0("<tr><td colspan=\'", n, "\'", " style=\"border-bottom:solid thin black;\">&nbsp;</td></tr>\n")
-##         x
-##     }
-
-##     ## Double line
-##     DL <- function(n, type) {
-##         if (type == "latex") x <- "\\hline\n\\hline\n"
-##         else x <- paste0("<tr  style=\"height:5px;\"><td colspan=\'", n, "\'", " style=\"border-bottom:double thin black;\">&nbsp;</td></tr>\n")
-##         x
-##     }
-    
-    
-##     ##Problem: some models have class output like maxLik:
-##     ## > class(res)
-##     ## [1] "maxLik" "maxim"  "list"
-##     ## So we can't just ask modelList if it is a list or an object.
-
-##     ## So as if the thing is ONLY a list with setequal
-##     if ( !setequal(class(modelList), "list") ){
-##         checkReg(modelList)
-##         ## modelList is not a list only, so put it in a list
-##         modelList <- list(modelList)
-##     } else {
-##         lapply(modelList, checkReg)
-##     }
-
-##     nmodels <- length(modelList)
-
-##     if (is.null(modelLabels)){
-##         ##Make temporary names
-##         modelLabels <- paste("M", 1:nmodels, sep ="")
-##         mln <- names(modelList)
-##         for (i in seq_along(mln)){
-##             modelLabels[i] <- mln[i]
-##         }
-##     }
-
-##     ##Ugh. nonunique labels. brute force fix
-##     modelLabels <- make.unique(modelLabels)
-##     names(modelList) <- modelLabels
-
-##     ## Get a regression summary object for each fitted model
-##     summaryList <- list()
-##     parmnames <- vector()
-##     myModelClass <- vector()
-
-##     for (i in seq_along(modelList)){
-##         model <- modelList[[i]]
-##         summaryList[[i]]  <- summary(model)
-##         parmnames <- unique(c(parmnames, names(coef(model))))
-##         myModelClass[i] <- class(model)[1]
-##         i <- i+1
-##     }
-
-##     summaryList <- lapply(modelList, function(x) tryCatch(summary(x), error = NULL))
-
-##     displayNames <-  as.character(parmnames)
-##     names(displayNames) <- as.character(parmnames)
-##     displayNames[names(varLabels)] <- varLabels
-
-##     B <- matrix(NA, nrow = length(parmnames), ncol =
-##                 length(modelList), dimnames = list(parmnames))
-
-##     dimnames(B)[[2]] <- modelLabels
-
-##     SE <- matrix(NA, nrow = length(parmnames), ncol =
-##                  length(modelList), dimnames = list(parmnames))
-##     dimnames(SE)[[2]] <- modelLabels
-##     DF <- vector("numeric", length = nmodels)
-
-##     for(j in seq_along(modelList)){
-##         modl <- modelList[[j]]
-##         best <- coef(modl)
-##         B[parmnames, modelLabels[j]] <- best[parmnames]
-##         DF[j] <- modl$df.residual
-##         SE[parmnames, modelLabels[j]] <- sqrt(diag(vcov(modl)))[parmnames]
-##     }
-
-##     sigtest <- function(B, SE, DF) {
-##         PT <- matrix(NA, nrow = NROW(B), ncol =
-##                      NCOL(B), dimnames = dimnames(B))
-##         for (j in seq_along(DF)){
-##             PT[ ,j] <-  pt(abs((B/SE)[ ,j]), lower.tail = FALSE, df = DF[j]) * 2
-##         }
-##         PT
-##     }
-
-##     PT <- sigtest(B, SE, DF)
-##     ##TODO. Look back later to consider generalizing so that we
-##     ## accept B, SE and PT from coef(summary) if it exists.
-##     B <- round(B, digits)
-##     SE <- round(SE, digits)
-##     SE <- apply(SE, c(1,2), function(x){ paste0("(",x,")") })
-
-##     z <- c()
-##     ## If you want a LaTeX table float...
-##     if (type == "latex") {
-##         if (float == TRUE || !missing(title) || !missing(label)){
-##             float <- TRUE
-##             aline <- "\\begin{table}\n"
-##             if (missing(title)) title <- "A Regression"
-##             if (missing(label)) label <- "regrlabl"
-##             z <- paste0(aline, "\\caption{", title, "}\\label{", label,"}\n")
-##         }
-##     }
-    
-##     nColumns <- ifelse(tight, 1 + nmodels, 1 + 2*nmodels)
-
-##     BT <- function(n, type = "latex"){
-##         if (type == "latex") return(paste0("\\begin{tabular}{*{",n,"}{l}}\n", SL(n, type)))
-##         paste("<table>\n", SL(n, type))
-##     }
-    
-##     aline <- paste(BT(nColumns, type = type))
-##     z <- c(z, aline)
- 
-##     ## Put model labels on top of each model column, if modelLabels were given
-##     if (!is.null(modelLabels)){
-##         aline <- paste("_BR_",  sprintf("%14s", " "))
-##         for (modelLabel in modelLabels){
-##             if (tight == TRUE) {
-##                 aline <- c(aline, paste("_SEP_", modelLabel))
-##             }else{
-##                 aline <- c(aline, paste("_SEP__BOMC2_",modelLabel,"_EOMC_",sep=""))
-##             }
-##         }
-##         aline <- c(aline, "  _EOR__EOL_")
-##         z <- c(z, paste(aline, collapse = " "))
-##     }
-
-##     ## Print the headers "Estimate" and "(S.E.)", output depends on tight or other format
-##     if (tight == TRUE) {
-##         aline <- c("_BR_", sprintf("%14s", " "), paste(rep (" _SEP_Estimate", nmodels, collapse = " ")), "_EOR__EOL_")
-##         z <- c(z, paste(aline, collapse = ""))
-
-##         aline <- c("_BRU_", sprintf("%14s", " "), paste(rep (" _SEPU_(S.E.) ", nmodels, collapse = " ")), "_EOR__EOL_")
-##         z <- c(z, paste(aline, collapse = ""))
-##     } else {
-##         aline <- c("_BRU_", sprintf("%14s", " "), paste(rep (" _SEPU_Estimate _SEPU_(S.E.) ", nmodels, collapse = " ")), "_EOR__EOL_")
-##         z <- c(z, paste(aline, collapse = ""))
-##     }
-   
-##     ## Here come the regression coefficients
-##     for (regname in parmnames){
-##         aline <- paste("_BR_ ", displayNames[regname], paste(rep(" ", max(2, (14 - nchar(displayNames[regname])))), collapse = "" ) )
-##         aline <- paste(aline, collapse = "")
-##         for (model in modelLabels) {
-##             est <- B[regname, model]
-##             se <- SE[regname, model]
-##             if (!is.na(est)) {
-##                 aline <- c(aline, " _SEP_ ", if(est > 0) " ", est)
-##                 nstars <- sum(abs(PT[regname, model]) < alpha)
-##                 aline <- c(aline, paste0(rep("*", nstars), collapse = ""))
-##                 if (tight == FALSE) {
-##                     aline <- c(aline, paste("  _SEP_  ", se, collapse = " "))
-##                 }
-##             } else {
-##                 aline <- c(aline, "  _SEP_ .     ")
-##                 if (tight == FALSE) aline  <- c(aline, "  _SEP_        ")
-##             }
-##         }
-##         aline <- c(aline, " _EOR__EOL_")
-##         z <- c(z, paste(aline, collapse = ""))
-
-##         if (tight == TRUE){
-##             aline <- paste("_BR_", paste(rep(" ", 14), sep = "", collapse = ""))
-##             for (model in modelLabels) {
-##                 est <- B[regname, model]
-##                 se <- SE[regname, model]
-##                 aline2 <- if (!is.na(est)) c("_SEP_", se, rep(" ", max(2, 6 - nchar(se)), collapse=""))  else c("_SEP_  ", sprintf("%6s", " "))
-##                 aline <- c(aline, paste(aline2, collapse = ""))
-##             }
-##             aline <- c(aline, "_EOR__EOL_")
-##             z <- c(z, paste(aline, collapse = ""))
-##         }
-##     }
-
-##     aline <- SL(nColumns, type)
-##     z <- c(z, aline)
-
-
-##     ## Print a row for the number of cases
-##     aline <- c("_BR_", "N", sprintf("%16s", " "))
-##     for (model in modelList) {
-##         myN <- stats::nobs(model)
-##         aline <- c(aline, "_SEP_", myN, sprintf("%6s", " "))
-##         if (tight == FALSE) aline <- c(aline, "_SEP_ ", rep(" ",6))
-##     }
-##     aline <- c(aline, " _EOR__EOL_")
-##     z <- c(z, paste(aline, collapse = ""))
-
-##     ## The new way
-##     z <- c(z, gofPrint(summaryList, "sigma"))
-
-##     ## The new way
-##     z <- c(z, gofPrint(summaryList, "r.squared"))
-
-##     ##"adj.r.squared" if there is more than 1 predictor
-
-##     ## Print a row for the adj-R-square
-##     if (length(parmnames) > 2) {
-##         z <- c(z, gofPrint(summaryList, "adj.r.squared"))
-##     }
-
-
-##     if (!missing(request)){
-##         for (extra in names(request)){
-##             z <- c(z, gofPrint(summaryList, extra))
-##         }
-##     }
-
-##     ## Print a row for the model residual deviance
-##     if ("glm" %in% myModelClass) {
-##         z <- c(z, gofPrint(summaryList, "deviance"))
-##     }
-
-##     ## Print a row for the model's fit, as -2LLR
-##     if ("glm" %in% myModelClass) {
-##         aline <- "_BR__X2_ "
-##         for (model in modelList) {
-##             if (is.numeric(model$deviance)){
-##                 n2llr <- model$null.deviance - model$deviance
-##                 aline <- c(aline, paste("      _SEP_", round(n2llr, digits)))
-##                 gmdf <- model$df.null - model$df.residual + 1
-##                 nstars <- sum(pchisq(n2llr, df = gmdf, lower.tail = FALSE) < alpha)
-##                 aline <  paste(aline, rep("*", nstars), sep = "")
-##             } else {
-##                 aline <- c(aline, "       _SEP_")
-##             }
-##             if (tight == FALSE) aline <- c(aline, "       _SEP_")
-##         }
-##         aline <- paste(paste(aline, collapse = ""), "_EOR__EOL_")
-##         z <- c(z, paste(aline))
-##     }
-
-##     ## Print a row for the model's fit, as -2 LLR
-##     ## Can't remember why I was multiplying by -2
-
-
-##     if (showAIC == TRUE) {
-##         aline <- "_BR_AIC"
-##         for (model in modelList) {
-##             aline <- c(aline, paste("    _SEP_", if(is.numeric(AIC(model)))round(AIC(model), digits)))
-##             if (tight == FALSE) aline <- c(aline, "      _SEP_")
-##         }
-##         aline <- c(aline, "_EOR__EOL_")
-##         z <- c(z, paste(aline))
-##     }
-
-
-    
-##     ## TODO: round the following output
-##     if (!missing(runFuns)){
-##         elist <- vector("list", length = length(runFuns))
-##         runFunsFn <- names(runFuns)
-##         for (i in seq_along(runFuns)){
-##             myfn <- runFunsFn[i]
-##             if (myfn == "logLik") {
-##                 myresult <- lapply(modelList, function(x) {
-##                     y <- do.call(myfn, list(x))
-##                     fstaty <- paste(format(c(y), digits = digits), collapse = ", ",
-##                                     " (df=", format(attr(y, "df")), ")", sep = "")
-##                     invisible(fstaty)
-##                 })
-##                 elist[[i]] <- myresult
-##             } else {
-##                 myresult <- lapply(modelList, function(x){
-##                     y <- do.call(myfn, list(x))
-##                     fstaty <- format(c(y), digits = digits, nsmall = 2 )
-##                 })
-##                 elist[[i]] <- myresult
-##             }
-##         }
-##         names(elist) <- runFunsFn
-
-##         for(i in seq_along(runFuns)){
-##             z <- c(z, gofRow(elist[[i]], runFuns[i]))
-##         }
-##     }
-
-##     aline <- DL(nColumns, type)
-##     z <- c(z, aline)
-##     z <- c(z, "_EOL_")
-
-    
-
-##     pline <- function(type, alpha){
-##         aline <- ""
-##         if (type == "latex"){
-##             for ( i in seq_along(alpha)){
-##                 if (type == "latex") {
-##                     aline <- paste0(aline, "${", paste0(rep("*", i), collapse = ""), "}",  "\  p\ \\le ", alpha[i], "$", sep = "")
-##                 }
-##             }
-##             aline <- paste("_BOMC2_", aline, "_EOMC__EOR__EOL_")
-##         } else {
-##             aline <- paste0("<tr>\n",
-##                            "<td colspan=\"2\">")
-##             for ( i in seq_along(alpha)){
-##                 aline <- paste0(aline,  paste0(rep("*", i), collapse = ""), " <it>p</it> &#8804;", alpha[i], sep = "")
-##             }
-##             aline <- paste(aline, "_EOR__EOL_")
-##         }
-##         aline
-##     }
-
-        
-##     z <- c(z, pline(type, alpha))
-
-##     aline <- "_EOT__EOL_"
-##     z <- c(z, aline)
-##     if (float == TRUE){
-##         aline <- "\\end{table}_EOL_"
-##         z <- c(z, aline)
-##     }
-##     z <- markup(z, type = type)
-##     cat(z)
-##     invisible(z)
-## }
-
-
-
-
-
+NULL
 
 
 
@@ -1949,8 +1510,3 @@ outreg2HTML <-
         }
     invisible(myz2)
 }
-
-
-
-
-

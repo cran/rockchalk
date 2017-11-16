@@ -29,4 +29,3 @@ functions.
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-

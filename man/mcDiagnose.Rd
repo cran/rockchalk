@@ -57,4 +57,3 @@ mcDiagnose(m3)
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-

@@ -22,4 +22,3 @@ are equal to x. If x is a vector, check that its length is d.
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-

@@ -28,4 +28,3 @@ Johnson-Neyman interval calculations to highlight the
 \author{
 <pauljohn@ku.edu>
 }
-

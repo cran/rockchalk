@@ -2,9 +2,10 @@
 % Please edit documentation in R/pctable.R
 \name{pctable}
 \alias{pctable}
-\alias{pctable.character}
+\alias{pctable}
 \alias{pctable.default}
 \alias{pctable.formula}
+\alias{pctable.character}
 \title{Creates a cross tabulation with counts and percentages}
 \usage{
 pctable(rv, ...)
@@ -103,12 +104,11 @@ be the formula method.
 Please bear in mind the following. The output object is a
 list of tables of partial information, which are then assembled in
 various ways by the print method (print.pctable). A lovely table
-will appear on the screen, but the thing tab itself has more
-information and a less beautiful structure. In order to see the
-individual pieces, run tab[[1]], or tab[[2]], or tab[[3]].
+will appear on the screen, but the thing itself has more
+information and a less beautiful structure.
 
-The object tab is of class \code{pctable}. A print method is supplied.
-For any pctable object, it is possible to run follow-ups like
+A print method is supplied.
+For any \code{pctable} object, it is possible to run follow-ups like
 
 print(tab, rowpct = TRUE, colpct = FALSE)
 
@@ -166,11 +166,10 @@ if (require(tables) & require(Hmisc)){
 }
 }
 }
-\author{
-Paul Johnson <pauljohn@ku.edu>
-}
 \seealso{
 \code{\link[tables]{tabular}} and the CrossTable function
 in \code{gmodels} package.
 }
-
+\author{
+Paul Johnson <pauljohn@ku.edu>
+}

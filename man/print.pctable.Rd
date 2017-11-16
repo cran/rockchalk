@@ -27,4 +27,3 @@ are used to ask for the two types.
 \author{
 Paul Johnson <pauljohn@ku.edu>
 }
-

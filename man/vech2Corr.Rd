@@ -8,8 +8,9 @@ vech2Corr(vech)
 }
 \arguments{
 \item{vech}{A vector of values for the strictly lower triangle of
-a matrix. All values must be in the [0,1] interval (because they
-are correlations) and the matrix formed must be positive definite.}
+a matrix. All values must be in the [0,1] interval (because
+they are correlations) and the matrix formed must be positive
+definite.}
 }
 \value{
 A symmetric correlation matrix, with 1's on the diagonal.
@@ -32,10 +33,10 @@ vech2Corr(v)
 v <- c(0.1, 0.4, -0.4, 0.4, 0.5, 0.1)
 vech2Corr(v)
 }
+\seealso{
+Similar functions exist in many packages, see
+    \code{vec2sm} in corpcor, \code{xpnd} in MCMCpack
+}
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-\seealso{
-Similar functions exist in many packages, see  \code{vec2sm} in corpcor, \code{xpnd} in MCMCpack
-}
-

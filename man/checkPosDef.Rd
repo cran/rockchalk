@@ -21,4 +21,3 @@ in \code{MASS} package by W. N. Venables and Brian D. Ripley
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-

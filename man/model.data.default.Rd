@@ -181,4 +181,3 @@ attr(m6.data, "varNamesRHS")
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-

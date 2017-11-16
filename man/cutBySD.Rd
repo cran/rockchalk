@@ -28,4 +28,3 @@ cutBySD (x, n = 5)
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-

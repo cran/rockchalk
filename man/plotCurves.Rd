@@ -297,4 +297,3 @@ plotCurves(mc4, modx = "income", plotx = "age", plotPoints = FALSE)
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-

@@ -101,9 +101,6 @@ Y0
 Y1
 
 }
-\author{
-Ripley, B.D. with revision by Paul E. Johnson
-}
 \references{
 Venables, W. N. & Ripley, B. D. (2002) Modern Applied Statistics with
 S. Fourth Edition. Springer, New York. ISBN 0-387-95457-0
@@ -114,4 +111,6 @@ function, one which has had this fix applied to it,
 consider using the new versions of \code{\link[mvtnorm]{rmvnorm}} in the
 package \code{mvtnorm}.
 }
-
+\author{
+Ripley, B.D. with revision by Paul E. Johnson
+}

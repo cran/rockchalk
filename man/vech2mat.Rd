@@ -38,4 +38,3 @@ vech2mat(x, diag = 0, lowerOnly = TRUE)
 Similar functions exist in many packages, see
 \code{vec2sm} in corpcor, \code{xpnd} in MCMCpack
 }
-

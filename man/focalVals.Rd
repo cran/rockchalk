@@ -37,10 +37,9 @@ The built-in R function \code{pretty()}
 works as of rockchalk 1.7.2. Any function that accepts an argument
 n will work, as long as it creates a vector of values.
 }
-\author{
-Paul E. Johnson <pauljohn@ku.edu>
-}
 \seealso{
 \code{predictOMatic} \code{newdata}
 }
-
+\author{
+Paul E. Johnson <pauljohn@ku.edu>
+}

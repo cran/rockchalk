@@ -63,4 +63,3 @@ addmargins(table(z2b, z, exclude = NULL))
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
 }
-

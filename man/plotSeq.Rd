@@ -50,4 +50,3 @@ lines(x, seqy, col = "green")
 \seealso{
 \code{pretty}
 }
-

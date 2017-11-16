@@ -11,7 +11,8 @@ skewness(x, na.rm = TRUE, unbiased = TRUE)
 
 \item{na.rm}{default TRUE. Should missing data be removed?}
 
-\item{unbiased}{default TRUE. Should the denominator of the variance estimate be divided by N-1?}
+\item{unbiased}{default TRUE. Should the denominator of the
+variance estimate be divided by N-1?}
 }
 \value{
 A scalar value or NA
@@ -46,4 +47,3 @@ bias-correct the standard deviation.
 \author{
 Paul Johnson <pauljohn@ku.edu>
 }
-
