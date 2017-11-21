@@ -10,7 +10,7 @@ outreg(modelList, type = "latex", modelLabels = NULL, varLabels = NULL,
   tight = TRUE, showAIC = FALSE, float = FALSE, request, runFuns,
   digits = 3, alpha = c(0.05, 0.01, 0.001), SElist = NULL,
   PVlist = NULL, Blist = NULL, title, label, gofNames,
-  browser = identical(type, "html") && interactive())
+  browse = identical(type, "html") && interactive())
 }
 \arguments{
 \item{modelList}{A regression model or an R list of regression
@@ -20,7 +20,7 @@ specified names are allowed, such as \code{list("My Model" = m1,
 supply model lables. This is less error prone than the use of the
 modelLabels argument.}
 
-\item{type}{Default = "latex". The alternative is "html"}
+\item{type}{Default = "latex". The alternatives are "html" and "csv"}
 
 \item{modelLabels}{This is allowed, but discouraged. A vector of
 character string variables, one for each element in
@@ -90,7 +90,7 @@ Estimate I don't understand", "deviance" = "Another Mystery")}. The
 words that you might replace are "sigma", "r.squared",
 "deviance", "adj.r.squared", "fstatistic".}
 
-\item{browser}{Display the regression model in a browser? Defaults to TRUE if type = "html"}
+\item{browse}{Display the regression model in a browse? Defaults to TRUE if type = "html"}
 }
 \value{
 A character vector, one element per row of the regression table.
@@ -177,65 +177,75 @@ m1 <- lm(y1 ~ x1, data = dat)
 m2 <- lm(y1 ~ x2, data = dat)
 m3 <- lm(y1 ~ x1 + x2, data = dat)
 gm1 <- glm(y1 ~ x1, family = Gamma, data = dat)
-outreg(m1, title = "My One Tightly Printed Regression", float = TRUE )
-
-outreg(list("Fingers" = m1), tight = FALSE, 
+ex1 <- outreg(m1, title = "My One Tightly Printed Regression", float = TRUE )
+## Show markup
+cat(ex1)
+## Save to file in usual way, e.g.,
+## cat(ex1, file = "ex1.tex")
+ex2 <- outreg(list("Fingers" = m1), tight = FALSE, 
     title = "My Only Spread Out Regressions", float = TRUE,
     alpha = c(0.05, 0.01, 0.001)) 
+cat(ex2)
 
-outreg(list("Model A" = m1, "Model B label with Spaces" = m2),
-    varLabels = list(x1 = "Billie"),
+ex3 <- outreg(list("Model A" = m1, "Model B label with Spaces" = m2),
+    varLabels = list(x1 = "Billie"), 
     title = "My Two Linear Regressions", request = c(fstatistic = "F"))
+cat(ex3)
 
-outreg(list("Model A" = m1, "Model B" = m2),
+ex4 <- outreg(list("Model A" = m1, "Model B" = m2),
     modelLabels = c("Overrides ModelA", "Overrides ModelB"),
     varLabels = list(x1 = "Billie"),
     title = "Note modelLabels Overrides model names")
+cat(ex4)
 
 ex5 <- outreg(list("Whichever" = m1, "Whatever" = m2),
     title = "Still have showAIC argument, as in previous versions",
     showAIC = TRUE, float = TRUE)
-## make a file:
-## cat(ex5, file = "some_name_you_choose.tex")
+cat(ex5)
 
 \donttest{
+## Launches HTML browse
 ex5html <- outreg(list("Whichever" = m1, "Whatever" = m2),
     title = "Still have showAIC argument, as in previous versions",
     showAIC = TRUE, type = "html")
-## make a file:
-## cat(ex5html, file = "some_name_you_choose.html")
-## Open that in LibreOffice or MS Word
+## Could instead, make a file:
+## fn <- "some_name_you_choose.html"
+## cat(ex5html, file = fn)
+## browseURL(fn)
+## Open that HTML file in LibreOffice or MS Word
 }
 
-outreg(list("Whatever" = m1, "Whatever" =m2),
+ex6 <- outreg(list("Whatever" = m1, "Whatever" =m2),
     title = "Another way to get AIC output",
     runFuns = c("AIC" = "Akaike IC"))
+cat(ex6)
 
-outreg(list("Amod" = m1, "Bmod" = m2, "Gmod" = m3),
-    title = "My Three Linear Regressions", float = FALSE)
+ex7 <- outreg(list("Amod" = m1, "Bmod" = m2, "Gmod" = m3),
+       title = "My Three Linear Regressions", float = FALSE)
+cat(ex7)
 
 ## A new feature in 1.85 is ability to provide vectors of beta estimates
 ## standard errors, and p values if desired. 
 ## Suppose you have robust standard errors!
 newSE <- sqrt(diag(car::hccm(m3)))
 ## See 2 versions of m3 in the table?
-outreg(list("Model A" = m1, "Model B" = m2, "Model C" = m3, "Model C w Robust SE" = m3),
+ex8 <- outreg(list("Model A" = m1, "Model B" = m2, "Model C" = m3, "Model C w Robust SE" = m3),
         SElist= list("Model C w Robust SE" = newSE))
+cat(ex8)
 
 ## outreg uses a t or normal approximation to calculate p values, but you can
 ## calculate your own.  Let's dial down those std errors but insist they are
 ## not significantly different from zero
 newSE <- 0.3*newSE
 newPvals <- rep(0.1, length(newSE))
-
-
 ## Pass in your own SE and P values.
-outreg(list("Model A" = m1, "Model B" = m2, "Model C" = m3),
+ex9 <- outreg(list("Model A" = m1, "Model B" = m2, "Model C" = m3),
        SElist = list("Model C" = newSE), 
        PVlist = list("Model C" = newPvals), alpha = c(0.05, 0.01, 0.001))
+cat(ex9)
 ## It took me a while to realize we might as well allow the user to
 ## pass in a vector of Beta estimates as well. Seems obvious now, though.
-if(interactive())outreg(list("Model C" = m3, 
+if(interactive()) ex10 <- outreg(list("Model C" = m3, 
        "Model C Robust SE" = m3, "Model C MLv2" = m3),
        Blist = list("Model C MLv2" = c("(Intercept)" = 0.222, "x1" = 0.222, "x2" = 0.222)),
        SElist = list("Model C Robust SE" = newSE, "Model C MLv2" = 1.4*newSE), 
@@ -243,28 +253,32 @@ if(interactive())outreg(list("Model C" = m3,
        alpha = c(0.05, 0.01, 0.001), type = "html")
 
 
-outreg(list("I Love Long Titles" = m1,
-       "Prefer Brevity" = m2,
-       "Short" = m3), tight = FALSE, float = FALSE)
+ex11 <- outreg(list("I Love Long Titles" = m1,
+          "Prefer Brevity" = m2,
+          "Short" = m3), tight = FALSE, float = FALSE)
+cat(ex11)
 
-outreg(list("GLM" = gm1), float = TRUE)
+ex12 <- outreg(list("GLM" = gm1), float = TRUE)
+cat(ex12)
 
-outreg(list("OLS" = m1, "GLM" = gm1), float = TRUE,
-    alpha = c(0.05, 0.01))
+ex13 <- outreg(list("OLS" = m1, "GLM" = gm1), float = TRUE,
+        alpha = c(0.05, 0.01))
+cat(ex13)
 
-outreg(list(OLS = m1, GLM = gm1), float = TRUE,
+ex14 <- outreg(list(OLS = m1, GLM = gm1), float = TRUE,
     request = c(fstatistic = "F"), runFuns = c("BIC" = "BIC"))
+cat(ex14)
 
-outreg(list(OLS = m1, GLM = gm1), float = TRUE,
+ex15 <- outreg(list(OLS = m1, GLM = gm1), float = TRUE,
     request = c(fstatistic = "F"), runFuns = c("BIC" = "BIC"),
     digits = 5, alpha = c(0.01))
 
-outreg(list("OLS 1" = m1, "OLS 2" = m2,  GLM = gm1), float = TRUE,
+ex16 <- outreg(list("OLS 1" = m1, "OLS 2" = m2,  GLM = gm1), float = TRUE,
     request = c(fstatistic = "F"),
     runFuns = c("BIC" = "BIC", logLik = "ll"),
     digits = 5, alpha = c(0.05, 0.01, 0.001))
 
-outreg(list("Model A" = gm1, "Model B label with Spaces" = m2),
+ex17 <- outreg(list("Model A" = gm1, "Model B label with Spaces" = m2),
     request = c(fstatistic = "F"),
     runFuns = c("BIC" = "Schwarz IC", "AIC" = "Akaike IC",
     "nobs" = "N Again?"))
@@ -272,16 +286,18 @@ outreg(list("Model A" = gm1, "Model B label with Spaces" = m2),
 ## Here's a fit example from lme4.
 if (require(lme4)){
   fm1 <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
-  outreg(fm1)
+  ex18 <- outreg(fm1)
+  cat(ex18)
   ## Fit same with lm for comparison
   lm1 <- lm(Reaction ~ Days, sleepstudy)
   ## Get robust standard errors
   lm1rse <- sqrt(diag(car::hccm(lm1)))
 
-  if(interactive())outreg(list("Random Effects" = fm1, 
+  if(interactive()){
+  ex19 <- outreg(list("Random Effects" = fm1, 
        "OLS" = lm1, "OLS Robust SE" = lm1),
        SElist = list("OLS Robust SE" = lm1rse), type = "html")
-  
+  }
   ## From the glmer examples
   gm2 <- glmer(cbind(incidence, size - incidence) ~ period + (1 | herd),
                    data = cbpp, family = binomial)
@@ -290,8 +306,9 @@ if (require(lme4)){
   ## Lets see what MASS::rlm objects do? Mostly OK
   rlm2 <- MASS::rlm(incidence/size ~ period, data = cbpp)
   \donttest{
-  outreg(list("GLMER" = gm2, "lm" = lm2, "lm w/robust se" = lm2, "rlm" = rlm2),
-       SElist = list("lm w/robust se" = lm2rse), type = "html")
+  ex20 <- outreg(list("GLMER" = gm2, "lm" = lm2, "lm w/robust se" = lm2,
+            "rlm" = rlm2), SElist = list("lm w/robust se" = lm2rse),
+            type = "html")
   } 
 }
 }
