@@ -531,64 +531,6 @@ outreg0 <-
 NULL
 
 
-##' formatter for merMod objects copied from lme4
-##'
-##' R packaging started to complain about usage of non-exported
-##' functions from packages. lme4 team said they might export
-##' this function at some time in future. Until then, I need to copy it.
-##' @param varc variance estimates
-##' @param digits digits desired
-##' @param comp what do you want
-##' @param formatter a format function
-##' @param ... other arguments
-##' @return formatted text
-##' @author Doug Bates, Martin Machler, Ben Bolker, Stephen Walker
-formatVC <- function(varc, digits = max(3, getOption("digits") - 2),
-                     comp = "Std.Dev.", formatter = format, ...)
-{
-    c.nms <- c("Groups", "Name", "Variance", "Std.Dev.")
-    avail.c <- c.nms[-(1:2)]
-    if(any(is.na(mcc <- pmatch(comp, avail.c))))
-        stop("Illegal 'comp': ", comp[is.na(mcc)])
-    nc <- length(colnms <- c(c.nms[1:2], (use.c <- avail.c[mcc])))
-    if(length(use.c) == 0)
-        stop("Must *either* show variances or standard deviations")
-    useScale <- attr(varc, "useSc")
-    reStdDev <- c(lapply(varc, attr, "stddev"),
-                  if(useScale) list(Residual = unname(attr(varc, "sc"))))
-    reLens <- vapply(reStdDev, length, 1L)
-    nr <- sum(reLens)
-    reMat <- array('', c(nr, nc), list(rep.int('', nr), colnms))
-    reMat[1+cumsum(reLens)-reLens, "Groups"] <- names(reLens)
-    reMat[,"Name"] <- c(unlist(lapply(varc, colnames)), if(useScale) "")
-    if(any("Variance" == use.c))
-    reMat[,"Variance"] <- formatter(unlist(reStdDev)^2, digits = digits, ...)
-    if(any("Std.Dev." == use.c))
-    reMat[,"Std.Dev."] <- formatter(unlist(reStdDev),   digits = digits, ...)
-    if (any(reLens > 1)) {
-        maxlen <- max(reLens)
-        recorr <- lapply(varc, attr, "correlation")
-        corr <-
-            do.call("rBind",
-                    lapply(recorr,
-                           function(x) {
-                               x <- as(x, "matrix")
-                               dig <- max(2, digits - 2) # use 'digits' !
-                               ## not using formatter() for correlations
-                               cc <- format(round(x, dig), nsmall = dig)
-                               cc[!lower.tri(cc)] <- ""
-                               nr <- nrow(cc)
-                               if (nr >= maxlen) return(cc)
-                               cbind(cc, matrix("", nr, maxlen-nr))
-                           }))[, -maxlen, drop = FALSE]
-        if (nrow(corr) < nrow(reMat))
-            corr <- rbind(corr, matrix("", nrow(reMat) - nrow(corr), ncol(corr)))
-        colnames(corr) <- c("Corr", rep.int("", max(0L, ncol(corr)-1L)))
-        cbind(reMat, corr)
-    } else reMat
-}
-NULL
-
 ##' Creates a publication quality result table for
 ##' regression models. Works with models fitted with lm, glm, as well
 ##' as lme4.
@@ -606,6 +548,12 @@ NULL
 ##' transfer from the browser, they will, however, be able to open the
 ##' html file itself and automatically re-format it in the native
 ##' table format.
+##'
+##' In version 1.8.111, an argument \code{print.results} was introduced.
+##' This is TRUE by default, so the marked-up table is printed into
+##' the session, and it is returned as well.  If the function should
+##' run silently (as suggested in the last few versions), include
+##' \code{print.results = TRUE}. 
 ##'
 ##' The table includes a minimally sufficient (in my opinion) model
 ##' summary.  It offers parameter estimates, standard errors, and
@@ -716,9 +664,12 @@ NULL
 ##' Estimate I don't understand", "deviance" = "Another Mystery")}. The
 ##' words that you might replace are "sigma", "r.squared",
 ##' "deviance", "adj.r.squared", "fstatistic".
+##' @param print.results Default TRUE, marked-up table will be displayed in session.
+##' If FALSE, same result is returned as an object.
 ##' @param browse Display the regression model in a browse? Defaults to TRUE if type = "html"
 ##' @export outreg
 ##' @importFrom lme4 VarCorr
+##' @importFrom utils getFromNamespace
 ##' @import grDevices  
 ##' @rdname outreg
 ##' @return A character vector, one element per row of the regression table.
@@ -739,19 +690,21 @@ NULL
 ##' m2 <- lm(y1 ~ x2, data = dat)
 ##' m3 <- lm(y1 ~ x1 + x2, data = dat)
 ##' gm1 <- glm(y1 ~ x1, family = Gamma, data = dat)
-##' ex1 <- outreg(m1, title = "My One Tightly Printed Regression", float = TRUE )
-##' ## Show markup
+##' outreg(m1, title = "My One Tightly Printed Regression", float = TRUE)
+##' ex1 <- outreg(m1, title = "My One Tightly Printed Regression",
+##'                float = TRUE, print.results = FALSE)
+##' ## Show markup, Save to file with cat()
 ##' cat(ex1)
-##' ## Save to file in usual way, e.g.,
 ##' ## cat(ex1, file = "ex1.tex")
+##'  
 ##' ex2 <- outreg(list("Fingers" = m1), tight = FALSE, 
 ##'     title = "My Only Spread Out Regressions", float = TRUE,
 ##'     alpha = c(0.05, 0.01, 0.001)) 
-##' cat(ex2)
 ##' 
 ##' ex3 <- outreg(list("Model A" = m1, "Model B label with Spaces" = m2),
 ##'     varLabels = list(x1 = "Billie"), 
-##'     title = "My Two Linear Regressions", request = c(fstatistic = "F"))
+##'     title = "My Two Linear Regressions", request = c(fstatistic = "F"),
+##'     print.results = FALSE)
 ##' cat(ex3)
 ##' 
 ##' ex4 <- outreg(list("Model A" = m1, "Model B" = m2),
@@ -877,7 +830,9 @@ outreg <-
     function(modelList, type = "latex", modelLabels = NULL,  varLabels = NULL,
              tight = TRUE, showAIC = FALSE, float = FALSE, request,
              runFuns, digits = 3, alpha = c(0.05, 0.01, 0.001),  SElist = NULL,
-             PVlist = NULL,  Blist = NULL, title, label,  gofNames,
+             PVlist = NULL,  Blist = NULL, title, label,
+             gofNames,
+             print.results = TRUE, 
              browse = identical(type, "html") && interactive())
 {
 
@@ -1193,6 +1148,7 @@ outreg <-
     getVC.merMod <- function(modl){
         if(inherits(modl, "merMod")){
             vc <- lme4::VarCorr(modl)
+            formatVC <- getFromNamespace("formatVC", "lme4")
             vcfmt <- formatVC(vc, 3, "Std.Dev.")
             vcfmt[ ,2] <- gsub("\\(Intercept\\)", "", vcfmt[ ,2])
             
@@ -1473,21 +1429,24 @@ outreg <-
         aline <- "\\end{table}_EOL_"
         z <- c(z, aline)
     }
-    z <- markup(z, type = type)
+    
+    zresult <- markup(z, type = type)
     matchCall <- match.call()
     matchCall[["type"]] <- "html"
                
     if (type == "latex" || type == "csv") {
-        return(z)
+        if (print.results) cat(zresult)
+        return(invisible(zresult))
     } else if (browse) {
         fn <- tempfile(pattern = "file", tmpdir = tempdir(), fileext = ".html")
-        cat(z, file = fn)
-        cat(paste("\n Temp file: ", fn, "\n"))
+        cat(zresult, file = fn)
+        cat(paste("HTML file : ", fn, "\n"))
         browseURL(fn)
-        return(invisible(z))
+        attr(zresult, "file") <- fn
+        return(invisible(zresult))
     } else {
-        cat(paste("\n browse = FALSE."))
-        return(z)
+        if (print.results) cat(zresult)
+        return(invisible(zresult))
     }
 }
 

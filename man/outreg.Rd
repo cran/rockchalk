@@ -10,7 +10,7 @@ outreg(modelList, type = "latex", modelLabels = NULL, varLabels = NULL,
   tight = TRUE, showAIC = FALSE, float = FALSE, request, runFuns,
   digits = 3, alpha = c(0.05, 0.01, 0.001), SElist = NULL,
   PVlist = NULL, Blist = NULL, title, label, gofNames,
-  browse = identical(type, "html") && interactive())
+  print.results = TRUE, browse = identical(type, "html") && interactive())
 }
 \arguments{
 \item{modelList}{A regression model or an R list of regression
@@ -90,6 +90,9 @@ Estimate I don't understand", "deviance" = "Another Mystery")}. The
 words that you might replace are "sigma", "r.squared",
 "deviance", "adj.r.squared", "fstatistic".}
 
+\item{print.results}{Default TRUE, marked-up table will be displayed in session.
+If FALSE, same result is returned as an object.}
+
 \item{browse}{Display the regression model in a browse? Defaults to TRUE if type = "html"}
 }
 \value{
@@ -110,6 +113,12 @@ browser. Many word processors will not accept a cut-and paste
 transfer from the browser, they will, however, be able to open the
 html file itself and automatically re-format it in the native
 table format.
+
+In version 1.8.111, an argument \code{print.results} was introduced.
+This is TRUE by default, so the marked-up table is printed into
+the session, and it is returned as well.  If the function should
+run silently (as suggested in the last few versions), include
+\code{print.results = TRUE}.
 
 The table includes a minimally sufficient (in my opinion) model
 summary.  It offers parameter estimates, standard errors, and
@@ -177,19 +186,21 @@ m1 <- lm(y1 ~ x1, data = dat)
 m2 <- lm(y1 ~ x2, data = dat)
 m3 <- lm(y1 ~ x1 + x2, data = dat)
 gm1 <- glm(y1 ~ x1, family = Gamma, data = dat)
-ex1 <- outreg(m1, title = "My One Tightly Printed Regression", float = TRUE )
-## Show markup
+outreg(m1, title = "My One Tightly Printed Regression", float = TRUE)
+ex1 <- outreg(m1, title = "My One Tightly Printed Regression",
+               float = TRUE, print.results = FALSE)
+## Show markup, Save to file with cat()
 cat(ex1)
-## Save to file in usual way, e.g.,
 ## cat(ex1, file = "ex1.tex")
+ 
 ex2 <- outreg(list("Fingers" = m1), tight = FALSE, 
     title = "My Only Spread Out Regressions", float = TRUE,
     alpha = c(0.05, 0.01, 0.001)) 
-cat(ex2)
 
 ex3 <- outreg(list("Model A" = m1, "Model B label with Spaces" = m2),
     varLabels = list(x1 = "Billie"), 
-    title = "My Two Linear Regressions", request = c(fstatistic = "F"))
+    title = "My Two Linear Regressions", request = c(fstatistic = "F"),
+    print.results = FALSE)
 cat(ex3)
 
 ex4 <- outreg(list("Model A" = m1, "Model B" = m2),
