@@ -25,9 +25,10 @@ slopes, and interaction}
 \description{
 The output is a data frame (x1, x2, y) with user-specified
 correlation between x1 and x2. The y (output) variable is created
-according to the equation
-y = beta1 + beta2 * x1 + beta3 * x2 + beta4 * x1 *
-x2 + e.
+according to the equation\cr
+\deqn{
+y = beta1 + beta2 * x1 + beta3 * x2 + beta4 * x1 * x2 + e.
+}
 The arguments determine the scales of the X matrix, the random
 error, and the slope coefficients.
 }

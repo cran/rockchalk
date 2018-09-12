@@ -4,7 +4,7 @@
 \alias{genX}
 \title{Generate correlated data (predictors) for one unit}
 \usage{
-genX(N, means, sds, rho, Sigma = NULL, intercept = TRUE, colnames = NULL,
+genX(N, means, sds, rho, Sigma = NULL, intercept = TRUE, col.names = NULL,
   unit = NULL, idx = FALSE)
 }
 \arguments{
@@ -32,7 +32,7 @@ interpreted as the strictly lower triangle (a vech).}
 \item{intercept}{Default = TRUE, do you want a first column filled
 with 1?}
 
-\item{colnames}{Names supplied here will override column names
+\item{col.names}{Names supplied here will override column names
 supplied with the means parameter. If no names are supplied
 with means, or here, we will name variables x1, x2, x3,
 ... xp, with Intercept at front of list if intercept =
@@ -81,7 +81,7 @@ head(X3)
 X4 <- genX(10, means = c("A" = 7, "B" = 8), sds = c(3), rho = .4)
 head(X4)
 X5 <- genX(10, means = c(7, 3, 7, 5), sds = c(3, 6),
-            rho = .5, colnames = c("Fred", "Sally", "Henry", "Barbi"))
+            rho = .5, col.names = c("Fred", "Sally", "Henry", "Barbi"))
 head(X5)
 Sigma <- lazyCov(Rho = c(.2, .3, .4, .5, .2, .1), Sd = c(2, 3, 1, 4))
 X6 <- genX(10, means = c(5, 2, -19, 33), Sigma = Sigma, unit = "Winslow_AZ")

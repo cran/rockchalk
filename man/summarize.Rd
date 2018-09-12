@@ -5,7 +5,9 @@
 \title{Sorts numeric from discrete variables and returns separate
 summaries for those types of variables.}
 \usage{
-summarize(dat, alphaSort = FALSE, stats = TRUE, digits = 2, ...)
+summarize(dat, alphaSort = FALSE, stats = c("mean", "sd", "skewness",
+  "kurtosis", "entropy", "normedEntropy", "nobs", "nmiss"), probs = c(0, 0.5,
+  1), digits = 3, ...)
 }
 \arguments{
 \item{dat}{A data frame}
@@ -14,40 +16,42 @@ summarize(dat, alphaSort = FALSE, stats = TRUE, digits = 2, ...)
 alphabetical order. If FALSE, they are presented in the
 original order.}
 
-\item{stats}{A vector of desired summary statistics. Can be TRUE
-to select defaults.  See \code{summarizeNumerics} and
-\code{summarizeFactors} for details. TRUE implies, for numeric
-variables: \code{c("min", "med", "max", "mean", "sd",
-"skewness", "kurtosis")} and discrete variables
-\code{c("entropy", "normedEntropy")}. All summaries will
-include "nobs" and "nmiss". "nobs" is the number of
-observations with non-missing, finite scores (not NA, NaN,
--Inf, or Inf). "nmiss" is the number of cases with values of
-NA.}
+\item{stats}{A vector of desired summary statistics. Set
+\code{stats = NULL} to omit all stat summaries. Legal elements
+are \code{c("min", "med", "max", "mean", "sd", "var",
+"skewness", "kurtosis", "entropy", "normedEntropy", "nobs",
+"nmiss")}. The statistics \code{c("entropy", "normedEntropy")}
+are available only for factor variables, while mean, variance,
+and so forth will be calculated only for numeric variables.
+\code{"nobs"} is the number of observations with non-missing,
+finite scores (not NA, NaN, -Inf, or Inf). \code{"nmiss"} is
+the number of cases with values of NA. The default setting for
+\code{probs} will cause \code{c("min", "med", "max")} to be
+included, they need not be requested explicitly. To disable
+them, revise \code{probs}.}
+
+\item{probs}{For numeric variables, is used with the
+\code{quantile} function. The default is
+\code{probs = c(0, .50, 1.0)}, which are labeled in output as
+\code{c("min", "med", and "max")}. Set \code{probs = NULL}
+to prevent these in the output.}
 
 \item{digits}{Decimal values to display, defaults as 2.}
 
 \item{...}{Optional arguments that are passed to
 \code{summarizeNumerics} and \code{summarizeFactors}. For
-numeric variables, one can specify \code{probs}, \code{na.rm}
-and \code{unbiased}. If \code{probs} is unspecified, the
-default is \code{probs = c(0, .50, 1.0)}, which are labeled in
-output as \code{c("min", "med", and "max")}.  For discrete
-variables (factors, ordered, logical, character), the argument
-is \code{maxLevels}, which determines the number of levels
-that will be reported in tables for discrete variables.}
+numeric variables, one can specify \code{na.rm} and
+\code{unbiased}.  For discrete variables, the key argument is
+\code{maxLevels}, which determines the number of levels that
+will be reported in tables for discrete variables.}
 }
 \value{
-The on-screen output will have 2 sections, a stylized
-    display of numeric variables and one small display for each
-    factor.  The return value is a list with three objects 1)
-    numerics: a data frame with variable names on rows and summary
-    stats on columns, 2) factors: a list with summary information
-    about each discrete variable, 3) numericsfmt, a character
-    matrix that is the 'beautified' display of the numerics data
-    frame. In order to preserve the style of R's summary function,
-    this character matrix has variable names on the columns and
-    summary stats on the rows.
+Return is a list with two objects 1) output from
+    summarizeNumerics: a data frame with variable names on rows
+    and summary stats on columns, 2) output from summarizeFactors:
+    a list with summary information about each discrete
+    variable. The display on-screen is governed by a method
+    \code{print.summarize}.
 }
 \description{
 The work is done by the functions \code{summarizeNumerics} and
@@ -79,7 +83,7 @@ x1 <- sample(x = x1, size=N, replace = TRUE)
 x2 <- sample(x = x2, size=N, replace = TRUE)
 z1 <- rnorm(N)
 a1 <- rnorm(N, mean = 1.2, sd = 11.7)
-a2 <- rpois(N, lambda = 10 + a1)
+a2 <- rpois(N, lambda = 10 + abs(a1))
 a3 <- rgamma(N, 0.5, 4)
 b1 <- rnorm(N, mean = 211.3, sd = 0.4)
 dat <- data.frame(z1, a1, x2, a2, x1, a3, b1)
@@ -87,11 +91,23 @@ summary(dat)
 
 summarize(dat)
 
-summarize(dat, digits = 2)
+summarize(dat, digits = 4)
 
-summarize(dat, 
-          probs = c(0, 0.20, 0.50),
-          stats = c("mean", "entropy"))
+summarize(dat, stats = c("min", "max", "mean", "sd"),
+          probs = c(0.25, 0.75))
+
+summarize(dat, probs = c(0, 0.20, 0.80),
+          stats = c("nobs", "mean", "med", "entropy"))
+
+summarize(dat, probs = c(0, 0.20, 0.50),
+          stats = c("nobs", "nmiss", "mean", "entropy"), maxLevels=10)
+
+dat.sum <- summarize(dat, probs = c(0, 0.20, 0.50),
+                     stats = c("nobs", "nmiss", "mean", "entropy"), maxLevels=10)
+dat.sum
+## Inspect unformatted structure of objects within return
+dat.sum[["numerics"]]
+dat.sum[["factors"]]
 
 ## Only quantile values, no summary stats for numeric variables
 ## Discrete variables get entropy
@@ -105,16 +121,27 @@ summarize(dat,
           probs = c(0, 0.25, 0.50, 0.75, 1.0),
           stats = "mean")
 
+summarize(dat, 
+          probs = NULL,
+          stats = "mean")
 
-## Returns un rounded data frame, with
-## colnames on rows, values on columns
-summarizeNumerics(dat)
+## Note: output is not beautified by a print method
+dat.sn <- summarizeNumerics(dat)
+dat.sn
+formatSummarizedNumerics(dat.sn)
+formatSummarizedNumerics(dat.sn, digits = 5)
 
-summarizeFactors(dat, maxLevels = 5)
+dat.summ <- summarize(dat)
+
+
+dat.sf <- summarizeFactors(dat, maxLevels = 20)
+dat.sf
+formatSummarizedFactors(dat.sf)
 
 ## See actual values of factor summaries, without
 ## beautified printing
-unclass(summarizeFactors(dat, maxLevels = 5))
+summarizeFactors(dat, maxLevels = 5)
+formatSummarizedFactors(summarizeFactors(dat, maxLevels = 5))
 
 summarize(dat, alphaSort = TRUE) 
 
@@ -123,26 +150,18 @@ summarize(dat, digits = 6, alphaSort = FALSE)
 
 summarize(dat, maxLevels = 2)
 
-datsumm <- summarize(dat, stats = c("mean", "sd", "var"), props = TRUE)
+datsumm <- summarize(dat, stats = c("mean", "sd", "var", "entropy", "nobs"))
 
 ## Unbeautified numeric data frame, variables on the rows
 datsumm[["numerics"]]
 ## Beautified versions 1. shows saved version:
-datsumm[["numericsfmt"]]
-## 2. Run formatNumericSummaries to re-specify digits:
-formatNumericSummaries(datsumm[["numerics"]], digits = 10)
+attr(datsumm, "numeric.formatted")
+## 2. Run formatSummarizedNumerics to re-specify digits:
+formatSummarizedNumerics(datsumm[["numerics"]], digits = 10)
 
 datsumm[["factors"]]
-
-datsummNT <- datsumm[["numerics"]]
-
-plot(datsummNT$mean, datsummNT$var, xlab = "The Means",
-    ylab = "The Variances")
-
-plot(datsummNT$mean, datsummNT$var, xlab = "The Means",
-    ylab = "The Variances", type = "n")
-text(datsummNT$mean, jitter(datsummNT$var), labels = rownames(datsummNT))
-## problem with name overlap.
+formatSummarizedFactors(datsumm[["factors"]])
+formatSummarizedFactors(datsumm[["factors"]], digits = 6, maxLevels = 10)
 }
 \author{
 Paul E. Johnson <pauljohn@ku.edu>

@@ -6,7 +6,8 @@
 a workable format.}
 \usage{
 summarizeNumerics(dat, alphaSort = FALSE, probs = c(0, 0.5, 1),
-  stats = TRUE, na.rm = TRUE, unbiased = TRUE)
+  stats = c("mean", "sd", "skewness", "kurtosis", "nobs", "nmiss"),
+  na.rm = TRUE, unbiased = TRUE, digits = 2)
 }
 \arguments{
 \item{dat}{a data frame or a matrix}
@@ -15,45 +16,47 @@ summarizeNumerics(dat, alphaSort = FALSE, probs = c(0, 0.5, 1),
 alphabetical order. If FALSE, they are presented in the
 original order.}
 
-\item{probs}{Controls calculation of quantiles. If FALSE, no
-quantile estimates are provided. If TRUE, the quantile
-function is called with \code{probs = c(0, 0.5, 1.0)},
-corresponding to labels which will appear in output,
-\code{c("min", "med", "max")}. Users may specify any
-vector of real values in [0,1]. In output, however, labels
-will be \code{c("min", "med", "max")} or "pctile_dd%" for
-clarity.}
+\item{probs}{Controls calculation of quantiles (see the R
+\code{quantile} function's \code{probs} argument). If FALSE or
+NULL, no quantile estimates are provided. Default is
+\code{c("min" = 0, "med" = 0.5, "max" = 1.0)}, which will
+appear in output as \code{c("min", "med", "max")}. Other
+values between 0 and 1 are allowed. For example, \code{c(0.3, 0.7)}
+will appear in output as \code{pctile_30\%} and
+\code{pctile_70\%}.}
 
-\item{stats}{Can be TRUE/FALSE or a vector of desired summary
-stats.  The full set of allowed labels is c("mean", "sd",
-"var", "skewness", "kurtosis", "nobs", "nmiss").  If TRUE
-(default), result includes everything except variance. I.e.,
-TRUE is same as c("mean", "sd", "skewness", "kurtosis",
-"nobs", "nmiss").  If FALSE, provide none of these. "nobs"
-means number of observations with non-missing, finite scores
-(not NA, NaN, -Inf, or Inf). "nmiss" is the number of cases
-with values of NA.}
+\item{stats}{A vector including any of these: \code{c("min",
+"med", "max", "mean", "sd", "var", "skewness", "kurtosis",
+"nobs", "nmiss")}. Default includes all except \code{var}.
+"nobs" means number of observations with non-missing, finite
+scores (not NA, NaN, -Inf, or Inf). "nmiss" is the number of
+cases with values of NA. If FALSE or NULL, provide none of
+these.}
 
-\item{na.rm}{default TRUE. Should missing data be removed?}
+\item{na.rm}{default TRUE. Should missing data be removed to
+calculate summaries?}
 
 \item{unbiased}{If TRUE (default), skewness and kurtosis are
 calculated with biased corrected (N-1) divisor in the standard
-devation.}
+deviation.}
+
+\item{digits}{Number of digits reported after decimal
+point. Default is 2}
 }
 \value{
-a data.frame with one row per summary element and the rows
-    representing the variables.
+a data.frame with one column per summary element (rows are
+    the variables).
 }
 \description{
 Finds the numeric variables, and ignores the others. (See
 \code{summarizeFactors} for a function that handles non-numeric
-variables). It will provide quantiles (which ones are specified by
-\code{probs} as well as other summary statistics, as specified by
-\code{stats}.  Results are returned in a data frame. The main
-benefits from this compared to R's default summary are 1) more
-summary information is returned for each variable (dispersion), 2)
-the results are returned in a form that is easy to use in further
-analysis, 3) the columns in the output may be alphabetized.
+variables). It will provide quantiles (specified \code{probs} as
+well as other summary statistics, specified \code{stats}.  Results
+are returned in a data frame. The main benefits from this compared
+to R's default summary are 1) more summary information is returned
+for each variable (dispersion), 2) the results are returned in a
+form that is easy to use in further analysis, 3) the variables in
+the output may be alphabetized.
 }
 \seealso{
 summarize and summarizeFactors

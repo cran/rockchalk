@@ -4,7 +4,7 @@
 \alias{print.summarize}
 \title{print method for output from summarize}
 \usage{
-\method{print}{summarize}(x, digits = 2, ...)
+\method{print}{summarize}(x, digits, ...)
 }
 \arguments{
 \item{x}{Object produced by summarize}

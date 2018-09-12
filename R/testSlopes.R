@@ -38,7 +38,7 @@
 ##' the plotSlopes object, and, for numeric
 ##' modx variables, 3) the Johnson-Neyman (J-N) interval boundaries.
 ##' @export
-##' @import car
+##' @import carData
 ##' @seealso plotSlopes
 ##' @author Paul E. Johnson <pauljohn@@ku.edu>
 ##' @references
@@ -86,7 +86,7 @@ testSlopes <-
         ## 2013-02-19 Sunthud Pornprasertmanit spots bug here:
         ## Problem: diag doesn't work when argument is a single real number.
         ## Fix by inserting drop=FALSE (wrote a blog post about the "drop gotcha"
-        seslope <- sqrt(V[plotx, plotx, drop = FALSE] +  diag(V[modxContrastNames, modxContrastNames, drop = FALSE]) + 2* V[modxContrastNames, plotx, drop = FALSE])
+        seslope <- sqrt(as.vector(V[plotx, plotx, drop = FALSE]) +  diag(V[modxContrastNames, modxContrastNames, drop = FALSE]) + 2* V[modxContrastNames, plotx, drop = FALSE])
 
         modxContrastNames <- c(plotx, modxContrastNames)
         slope <- c(mcoef[plotx], slope)

@@ -4,21 +4,14 @@
 \alias{summary.factor}
 \title{Tabulates observed values and calculates entropy}
 \usage{
-summary.factor(y, maxLevels = 5, stats = TRUE)
+summary.factor(y)
 }
 \arguments{
 \item{y}{a factor (non-numeric variable)}
-
-\item{maxLevels}{The maximum number of levels that will be
-presented in the tabulation.}
-
-\item{stats}{If TRUE (default), entropy (diversity) and
-normedEntropy will be included. If false, return object
-will include stats = NULL object.}
 }
 \value{
-A list, including the summary table, and vector of summary
-    stats if requested, \code{c(entropy, normedEntropy)}.
+A list, including the summary table and vector of summary
+    stats if requested.
 }
 \description{
 This adapts code from R base summary.factor. It adds

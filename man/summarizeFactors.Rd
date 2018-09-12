@@ -6,21 +6,22 @@
 including entropy as a diversity indicator.}
 \usage{
 summarizeFactors(dat = NULL, maxLevels = 5, alphaSort = TRUE,
-  stats = TRUE)
+  stats = c("entropy", "normedEntropy", "nobs", "nmiss"), digits = 2)
 }
 \arguments{
 \item{dat}{A data frame}
 
-\item{maxLevels}{The maximum number of levels that will be reported.}
+\item{maxLevels}{The maximum number of levels that will be
+reported.}
 
 \item{alphaSort}{If TRUE (default), the columns are re-organized
 in alphabetical order. If FALSE, they are presented in the
 original order.}
 
-\item{stats}{If TRUE (default), report indicators of dispersion
-and the number of missing cases (NAs). If stats is a vector
-containing either c("entropy", "normedEntropy"), then both are
-provided in the output (same as if TRUE).}
+\item{stats}{Default is \code{c("nobs", "nmiss", "entropy",
+"normedEntropy")}.}
+
+\item{digits}{Default 2.}
 }
 \value{
 A list of factor summaries
@@ -88,7 +89,7 @@ Shannon, Claude. E. (1949). The Mathematical Theory of
 Communication. Urbana: University of Illinois Press.
 }
 \seealso{
-\code{\link{summarizeFactors}} and \code{\link{summarizeNumerics}}
+\code{\link{summarizeNumerics}}
 }
 \author{
 Paul E. Johnson <pauljohn@ku.edu>
