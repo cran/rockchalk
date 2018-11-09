@@ -604,82 +604,113 @@ NULL
 ##' used in printing. For example, \code{runFuns = c("AIC" = "Akaike
 ##' Criterion", "BIC" = "Schwartz Criterion", "logLik" = "LL")}.
 ##'
+##' About centering with dcolumn or siunitx. It appears now that
+##' results are better with \code{siunitx} but \code{dcolumn} is more
+##' familiar to users.  The user has the duty to make sure that the
+##' document preamble includes the correct package,
+##' \code{\\usepackage\{dcolumn\}} or \code{\\usepackage\{siunitx\}}.
+##' In this version, I have eliminated the need for the user to
+##' specify document-wide settings for \code{siunitx}. All of the
+##' details are explicitly written in the header of each tabular.
+##' It is done that way to more easily allow user customizations.
+##'
 ##' @param modelList A regression model or an R list of regression
-##' models. Default model names will be M1, M2, and so forth. User
-##' specified names are allowed, such as \code{list("My Model" = m1,
-##' "Her Model" = m2)}.  This is the currently recommended way to
-##' supply model lables. This is less error prone than the use of the
-##' modelLabels argument.
-##' @param type Default = "latex". The alternatives are "html" and "csv"
+##'     models. Default model names will be M1, M2, and so forth. User
+##'     specified names are allowed, such as \code{list("My Model" =
+##'     m1, "Her Model" = m2)}.  This is the currently recommended way
+##'     to supply model lables. This is less error prone than the use
+##'     of the modelLabels argument.
+##' @param type Default = "latex". The alternatives are "html" and
+##'     "csv"
 ##' @param modelLabels This is allowed, but discouraged. A vector of
-##' character string variables, one for each element in
-##' modelList. Will override the names in modelList.
+##'     character string variables, one for each element in
+##'     modelList. Will override the names in modelList.
 ##' @param varLabels To beautify the parameter names printed.  Must be
-##' a named vector in the format c(parmname = "displayName", parmname =
-##' "displayName"). Include as many parameters as desired, it is not
-##' necessary to supply new labels for all of the
-##' parameters. 
+##'     a named vector in the format c(parmname = "displayName",
+##'     parmname = "displayName"). Include as many parameters as
+##'     desired, it is not necessary to supply new labels for all of
+##'     the parameters.
 ##' @param tight Table format. If TRUE, parameter estimates and
-##' standard errors are printed in a single column.  If FALSE,
-##' parameter estimates and standard errors are printed side by side.
-##' @param showAIC This is a legacy argument, before the \code{request} argument was created.
-##' If TRUE, the AIC estimate is included with the diagnostic values. It has the same effect
-##' as described by \code{request}.
-##' @param float Default = FALSE. Include boilerplate for a LaTeX table
-##' float, with the tabular markup inside it. Not relevant if type =
-##' "html".
-##' @param request Extra information to be retrieved from the summary(model)
-##' and displayed. This must be a vector of named arguments, such as
-##' c(adj.r.squared = "adj $R^2$", fstatistic = "F"). The name must be
-##' a valid name of the output object, the value should be the label
-##' the user wants printed in the table. See details.
+##'     standard errors are printed in a single column.  If FALSE,
+##'     parameter estimates and standard errors are printed side by
+##'     side.
+##' @param centering Default is "none", but may be "siunitx" or
+##'     "dcolumn". No centering has been the only way until this
+##'     version. User feedback requested.  Don't forget to insert
+##'     usepackage statment in document preamble for siunitx or
+##'     dcolumn. If user specifies \code{centering=TRUE}, the
+##'     \code{siunitx} method will be used. The \code{dcolumn}
+##'     approach assumes that the values reported in the column use
+##'     fewer than 3 integer places and 3 decimal places. Additional
+##'     room is allocated for the significance stars.
+##' @param showAIC This is a legacy argument, before the
+##'     \code{request} argument was created.  If TRUE, the AIC
+##'     estimate is included with the diagnostic values. It has the
+##'     same effect as described by \code{request}.
+##' @param float Default = FALSE. Include boilerplate for a LaTeX
+##'     table float, with the tabular markup inside it. Not relevant
+##'     if type = "html".
+##' @param request Extra information to be retrieved from the
+##'     summary(model) and displayed. This must be a vector of named
+##'     arguments, such as c(adj.r.squared = "adj $R^2$", fstatistic =
+##'     "F"). The name must be a valid name of the output object, the
+##'     value should be the label the user wants printed in the
+##'     table. See details.
 ##' @param runFuns A list of functions
-##' @param digits Default = 3. How many digits after decimal sign are to be displayed.
-##' @param alpha Default = c(0.05, 0.01, 0.001). I think stars are dumb, but enough
-##' people have asked me for more stars that I'm caving in.
+##' @param digits Default = 3. How many digits after decimal sign are
+##'     to be displayed.
+##' @param alpha Default = c(0.05, 0.01, 0.001). I think stars are
+##'     dumb, but enough people have asked me for more stars that I'm
+##'     caving in.
 ##' @param SElist Optional. Replacement standard errors. Must be a
-##' list of named vectors. \code{outreg} uses the R \code{summary} to
-##' retrieve standard errors, but one might instead want to use robust
-##' or bootstrapped standard errors.  This argument may supply a new
-##' SE vector for each fitted regression model, but it is also allowed
-##' to supply the SE replacement for just one of the models. The
-##' format should be \code{list("A Model Label" = c(0.1, 0.3, 0.4),
-##' "Another Model Label" = c(0.4, 0.2, 0.3)}.  On the left, one must
-##' use the same names that are used in the modelList argument.
-##' @param PVlist Optional. A list of replacement "p values". It must be a list
-##' of named vectors, similar in format to SElist. The which the
-##' elements are the "p values" that the user wants to use for each
-##' model.
-##' @param Blist Optional. This is only needed in the rare case where a model's
-##' parameters cannot be discerned from its summary. List must have names
-##' for models, and vectors slope coefficient. See discussion of SElist and PVlist.
+##'     list of named vectors. \code{outreg} uses the R \code{summary}
+##'     to retrieve standard errors, but one might instead want to use
+##'     robust or bootstrapped standard errors.  This argument may
+##'     supply a new SE vector for each fitted regression model, but
+##'     it is also allowed to supply the SE replacement for just one
+##'     of the models. The format should be \code{list("A Model Label"
+##'     = c(0.1, 0.3, 0.4), "Another Model Label" = c(0.4, 0.2, 0.3)}.
+##'     On the left, one must use the same names that are used in the
+##'     modelList argument.
+##' @param PVlist Optional. A list of replacement "p values". It must
+##'     be a list of named vectors, similar in format to SElist. The
+##'     which the elements are the "p values" that the user wants to
+##'     use for each model.
+##' @param Blist Optional. This is only needed in the rare case where
+##'     a model's parameters cannot be discerned from its
+##'     summary. List must have names for models, and vectors slope
+##'     coefficient. See discussion of SElist and PVlist.
 ##' @param title A LaTeX caption for the table. Not relevant if type =
-##' "html".
-##' @param label A string to be used as a LaTeX label in the table to be
-##' created. Not relevant if type = "html".
+##'     "html".
+##' @param label A string to be used as a LaTeX label in the table to
+##'     be created. Not relevant if type = "html".
 ##' @param gofNames Optional pretty names. R regression summaries use
-##' names like "sigma" or "r.squared" that we might want to revise for
-##' presentation. I prefer to refer to "sigma" as "RMSE", but perhaps
-##' you instead prefer something like \code{gofnames = c("sigma" = "That
-##' Estimate I don't understand", "deviance" = "Another Mystery")}. The
-##' words that you might replace are "sigma", "r.squared",
-##' "deviance", "adj.r.squared", "fstatistic".
-##' @param print.results Default TRUE, marked-up table will be displayed in session.
-##' If FALSE, same result is returned as an object.
-##' @param browse Display the regression model in a browse? Defaults to TRUE if type = "html"
+##'     names like "sigma" or "r.squared" that we might want to revise
+##'     for presentation. I prefer to refer to "sigma" as "RMSE", but
+##'     perhaps you instead prefer something like \code{gofnames =
+##'     c("sigma" = "That Estimate I don't understand", "deviance" =
+##'     "Another Mystery")}. The words that you might replace are
+##'     "sigma", "r.squared", "deviance", "adj.r.squared",
+##'     "fstatistic".
+##' @param print.results Default TRUE, marked-up table will be
+##'     displayed in session.  If FALSE, same result is returned as an
+##'     object.
+##' @param browse Display the regression model in a browse? Defaults
+##'     to TRUE if type = "html"
 ##' @export outreg
 ##' @importFrom lme4 VarCorr
 ##' @importFrom utils getFromNamespace
-##' @import grDevices  
+##' @import grDevices
 ##' @rdname outreg
-##' @return A character vector, one element per row of the regression table.
+##' @return A character vector, one element per row of the regression
+##'     table.
 ##' @keywords regression
 ##' @note There are many R packages that can be used to create LaTeX
-##' regression tables. memisc, texreg, apsrtable, xtables, and rms are
-##' some. This "outreg" version was in use in our labs before we were
-##' aware that those packages were in development. It is not intended
-##' as a competitor, it is just a slightly different version of the
-##' same that is more suited to our needs.
+##'     regression tables. memisc, texreg, apsrtable, xtables, and rms
+##'     are some. This "outreg" version was in use in our labs before
+##'     we were aware that those packages were in development. It is
+##'     not intended as a competitor, it is just a slightly different
+##'     version of the same that is more suited to our needs.
 ##' @author Paul E. Johnson \email{<pauljohn@@ku.edu>}
 ##' @examples
 ##' set.seed(2134234)
@@ -692,7 +723,7 @@ NULL
 ##' gm1 <- glm(y1 ~ x1, family = Gamma, data = dat)
 ##' outreg(m1, title = "My One Tightly Printed Regression", float = TRUE)
 ##' ex1 <- outreg(m1, title = "My One Tightly Printed Regression",
-##'                float = TRUE, print.results = FALSE)
+##'                float = TRUE, print.results = FALSE, centering = "siunitx")
 ##' ## Show markup, Save to file with cat()
 ##' cat(ex1)
 ##' ## cat(ex1, file = "ex1.tex")
@@ -704,7 +735,7 @@ NULL
 ##' ex3 <- outreg(list("Model A" = m1, "Model B label with Spaces" = m2),
 ##'     varLabels = list(x1 = "Billie"), 
 ##'     title = "My Two Linear Regressions", request = c(fstatistic = "F"),
-##'     print.results = FALSE)
+##'     print.results = TRUE)
 ##' cat(ex3)
 ##' 
 ##' ex4 <- outreg(list("Model A" = m1, "Model B" = m2),
@@ -715,9 +746,12 @@ NULL
 ##'
 ##' ex5 <- outreg(list("Whichever" = m1, "Whatever" = m2),
 ##'     title = "Still have showAIC argument, as in previous versions",
-##'     showAIC = TRUE, float = TRUE)
-##' cat(ex5)
-##'
+##'     showAIC = TRUE, float = TRUE, centering = "siunitx")
+##' 
+##' ex5s <- outreg(list("Whichever" = m1, "Whatever" = m2),
+##'     title = "Still have showAIC argument, as in previous versions",
+##'     showAIC = TRUE, float = TRUE, centering = "siunitx")
+##' 
 ##' \donttest{
 ##' ## Launches HTML browse
 ##' ex5html <- outreg(list("Whichever" = m1, "Whatever" = m2),
@@ -809,19 +843,25 @@ NULL
 ##' }
 outreg <-
     function(modelList, type = "latex", modelLabels = NULL,  varLabels = NULL,
-             tight = TRUE, showAIC = FALSE, float = FALSE, request,
+             tight = TRUE, centering = c("none", "siunitx", "dcolumn"),
+             showAIC = FALSE, float = FALSE, request,
              runFuns, digits = 3, alpha = c(0.05, 0.01, 0.001),  SElist = NULL,
              PVlist = NULL,  Blist = NULL, title, label,
-             gofNames,
-             print.results = TRUE, 
+             gofNames, print.results = TRUE, 
              browse = identical(type, "html") && interactive())
 {
 
+    if (is.character(centering)) {
+        centering <- match.arg(tolower(centering), c("none", "siunitx", "dcolumn"))
+    } else if (is.logical(centering)){
+        centering <- if(isTRUE(centering)) "siunitx" else "none"
+    }
+    
     myGofNames <- c(sigma = "RMSE",
                     r.squared = paste("_R2_"),
-                    deviance = "Deviance",
                     adj.r.squared = paste("adj", "_R2_"),
-                    fstatistic = "F")
+                    fstatistic = "_Fmarkup_",
+                    deviance = "Deviance")
  
     if (missing(gofNames)) {
         gofNames <- myGofNames
@@ -854,7 +894,7 @@ outreg <-
     }
 
     latex.markup <- c("_EOC_" = "",
-                      "_BOC_" = "& ",
+                      "_BOC_" = "&",
                       "_EOMC_" = "}",
                       "_EOR_" = "\\\\tabularnewline",
                       "_BRU_" = "",
@@ -862,12 +902,17 @@ outreg <-
                       "_BT_" = "\begin{tabular}",
                       "_EOL_" = "\n",
                       "_HL_" = "\\\\hline",
-                      "_SEPU_" = " &",
+                      "_BOCU_" = " &",
+                      "_DOT_" = paste0("\\\\_"), 
                       "_SEP_" = " &",
                       "_EOT_" = "\\\\end{tabular}",
-                      "_BOMC2_" = "& \\\\multicolumn{2}{l}{", 
+                      "_BOMC1_" = "& \\\\multicolumn{1}{l}{",
+                      "_BOMC2_" = "& \\\\multicolumn{2}{l}{",
+                      "_BOMC1C_" = "& \\\\multicolumn{1}{c}{", 
+                      "_BOMC2C_" = "& \\\\multicolumn{2}{c}{", 
                       "_X2_" = "$-2LLR (Model \\\\chi^2)$",
-                      "_R2_" = "$R^2$", 
+                      "_R2_" = "$R^2$",
+                      "_Fmarkup_" = "F($df_{num}$,$df_{denom}$)",
                       "_SIGMA_" = "$\\\\sigma$",
                       "_NBSP_" = "\ ")
 
@@ -881,12 +926,17 @@ outreg <-
         "_BT_" =  "<table>\n",
         "_EOL_" = "\n",
         "_HL_" = "",
-        "_SEPU_" = paste("</td><td style=\"border-bottom: solid thin black; border-collapse:collapse;\">&nbsp;"),
+        "_BOCU_" = paste("<td style=\"border-bottom: solid thin black; border-collapse:collapse;\">&nbsp;"),
+        "_DOT_" = "_",
         "_SEP_" = "</td><td>",
         "_EOT_" = "</table>",
+        "_BOMC1_" = "<td colspan = '1'>",
         "_BOMC2_" = "<td colspan = '2'>",
+        "_BOMC1C_" = "<td colspan = '2'>", ##20181002 TODO what about centering??
+        "_BOMC2C_" = "<td colspan = '2'>",
         "_X2_" =  "&chi;<sup>2</sup>",
         "_R2_" =  "R<sup>2</sup>",
+        "_Fmarkup_" = "F(df1,df2)",
         "_SIGMA_" =  "&sigma;",
         "_NBSP_" = "&nbsp;")
 
@@ -900,12 +950,17 @@ outreg <-
         "_BT_" =  "",
         "_EOL_" = "\n",
         "_HL_" = "",
-        "_SEPU_" = ",",
+        "_BOCU_" = ",",
+        "_DOT_" = ".",
         "_SEP_" = ",",
         "_EOT_" = "",
+        "_BOMC1_" = ",",
         "_BOMC2_" = ",",
+        "_BOMC1C_" = ",",
+        "_BOMC2C_" = ",",
         "_X2_" =  "chi2",
         "_R2_" =  "R2",
+        "_Fmarkup_" = "F",
         "_SIGMA_" =  "sigma",
         "_NBSP_" = " ")
     
@@ -925,6 +980,16 @@ outreg <-
         x
     }
 
+    # cs = column start
+    # uses environment for tight, defaults as centered
+    bomc <- function(ctr = TRUE, n){
+        if(missing(n)) n <- if(tight)1 else 2
+        if(ctr) {
+            return(paste0("_BOMC", n, "C_"))
+        } else {
+            return(paste0("_BOMC", n, "_"))
+        }
+    }
     
     ## TESTME: grabs param from object by name, rounds, simplifies
     ## returns text. For getting r.square, adj.r.square, fstatistic.
@@ -939,11 +1004,11 @@ outreg <-
                 y <- ""
             } else if (name == "fstatistic"){
                 staty <- paste(format(c(y["value"]), digits = digits),
-                               " df(", format(y["numdf"], digits = digits),
+                               "(", format(y["numdf"], digits = digits),
                                ",", format(y["dendf"], digits = digits), ")", sep = "")
 
                 nstars <- sum(pf(y["value"], df1 = y["numdf"], df2 = y["dendf"], lower.tail = FALSE) < alpha)
-                y <- paste(staty, paste(rep("*", nstars), collapse = ""), sep = "")
+                y <- paste0(bomc(), staty, paste(rep("*", nstars), collapse = ""), "_EOMC_")
             } else if (is.numeric(y)) {
                 if (length(y) > 1){
                     messg <- paste0("outreg: ", 
@@ -954,7 +1019,7 @@ outreg <-
                     warning(messg)
                     y <- y[1]
                 }
-                y <- format(round(y, digits), nsmall = digits)
+                y <- paste0("_BOC_", format(round(y, digits), nsmall = digits), "_EOC_")
             } 
             if (!is.null(y) & !is.na(y) & !identical(y, "")) res[i] <- y else res[i] <- ""
         }
@@ -966,7 +1031,7 @@ outreg <-
     gofRow <- function(x, xname = "fixme") {
         zline <- c("_BR_", xname, paste(rep(" ",  max(2, (16 - nchar(xname)))), collapse = "" ))
         for (mname in names(x)) {
-            zline <- c(zline, "_SEP_", x[mname], paste(rep(" ", max(2, 6-nchar(x[mname]), na.rm = TRUE)), collapse = ""))
+            zline <- c(zline,  x[mname], paste(rep(" ", max(2, 6-nchar(x[mname]), na.rm = TRUE)), collapse = ""))
             if (tight == FALSE) zline <- c(zline, sprintf("%6s", " "), "_SEP_")
         }
         zline <- paste(paste(zline, collapse = ""), "_EOC__EOR__EOL_")
@@ -1035,7 +1100,9 @@ outreg <-
         if (is.null(best <- tryCatch(Blist[[modLab]], error = function(e) NULL))) {
             if (!is.null(estTable <- coef(summaryList[[modLab]], digits = 11))) {
                 validColNum <-  which(colnames(estTable) %in% c("Estimate", "Value", "Param"))
-                if (length(validColNum) > 1) stop(paste("Model ", modLab, " has a summary table with unusual column names. They are ", colnames(estTable)))
+                if (length(validColNum) > 1) stop(paste("Model ", modLab,
+                      " has a summary table with unusual column names. They are ",
+                      colnames(estTable)))
                 if (length(validColNum) == 0) {
                     warning(paste("Model ", modLab, " summary table does not have a column named Estimate, Value, or Param, so we are guessing on column 1"))
                     validColNum <- 1
@@ -1197,50 +1264,70 @@ outreg <-
     }
     
     nColumns <- ifelse(tight, 1 + nmodels, 1 + 2*nmodels)
-
+    ## siunitxmarkup
+    ## Smarkup <- paste0("S[table-format=1.", digits, ", table-align-text-post=false]")
+    Smarkup <- paste0("{S[
+                         input-symbols = ( ),   
+                         group-digits = false,   
+                         table-number-alignment = center,   
+                         %table-space-text-pre = (, 
+                         table-align-text-pre = false,
+                         table-align-text-post = false,
+                         table-space-text-post = {", paste0(rep("*", length(alpha)), collapse=""),"},   
+                         parse-units = false]}")
+    ## Dcolumn treat all columns same with digits, not quite perfect
+    ## Here we guess on 3.6, seems only way out of bad mis-alignment
+    Dmarkup  <- paste0("{D{.}{.}{3.", digits + length(alpha), "}}")
+    
     BT <- function(n, type = "latex"){
-        if (type == "latex") return(paste0("\\begin{tabular}{*{",n,"}{l}}\n", SL(n, type)))
+        if (type == "latex") {
+            if(centering == "dcolumn"){
+                return(paste0("\\begin{tabular}{@{}l*{",n-1,"}", Dmarkup, "@{}}\n", SL(n, type)))
+            } else if (centering == "siunitx"){
+                return(paste0("\\begin{tabular}{@{}l*{", n-1,"}", Smarkup, "@{}}\n", SL(n, type)))
+            }
+            else {
+                return(paste0("\\begin{tabular}{@{}l*{",n,"}{l}@{}}\n", SL(n, type)))
+            }
+        }
         if (type == "html")  return(paste("<table>\n", SL(n, type)))
-        ""
     }
 
-   
-    aline <- paste(BT(nColumns, type = type))
+    aline <- paste0(BT(nColumns, type = type))
     z <- c(z, aline)
  
     ## Put model labels on top of each model column, if modelLabels were given
     if (!is.null(modelLabels)){
-        aline <- paste("_BR_",  sprintf("%2s", " "), "_EOC_", collapse = "")
+        aline <- paste0("_BR_",  sprintf("%2s", " "), "_EOC_", collapse = "")
         for (modelLabel in modelLabels){
-            if (tight == TRUE) {
-                aline <- c(aline, paste0("_BOC_ ", modelLabel, "_EOC_"))
-            } else {
-                aline <- c(aline, paste0("_BOMC2_ ", modelLabel, "_EOMC_"))
-            }
+                 aline <- c(aline, paste0(bomc(centering %in% c("dcolumn", "siunitx")), modelLabel, "_EOMC_"))
         }
         aline <- c(aline, "_EOR__EOL_")
-        z <- c(z, paste(aline, collapse = ""))
+        z <- c(z, paste0(aline, collapse = ""))
     }
 
     ## Print the headers "Estimate" and "(S.E.)", output depends on tight or other format
     if (tight == TRUE) {
-        aline <- paste("_BR_", paste(rep ("_SEP_ Estimate", nmodels), collapse = ""), "_EOR__EOL_", collapse = "") 
-        z <- c(z, paste(aline, collapse = ""))
-
-        aline <- c("_BRU_", sprintf("%2s", " "), paste(rep ("_SEPU_ (S.E.)", nmodels, collapse = "")), "_EOR__EOL_")
-        z <- c(z, paste(aline, collapse = ""))
+        aline <- paste0("_BR_", paste0(rep(paste0(bomc(centering %in% c("dcolumn", "siunitx")), "Estimate_EOMC_"), nmodels), collapse = ""),
+                       "_EOR__EOL_", collapse = "") 
+        z <- c(z, paste0(aline, collapse = ""))
+        ##aline <- c("_BRU_", sprintf("%2s", " "), paste(rep ("_EOC__BOCU_ (S.E.)", nmodels, collapse = "")), "_EOR__EOL_")
+        aline <- c("_BRU_", sprintf("%2s", " "), paste0(rep(paste0("_EOC_", bomc(centering %in% c("dcolumn", "siunitx")), "(S.E.)_EOMC_"), nmodels, collapse = "")), "_EOR__EOL_")
+        z <- c(z, paste0(aline, collapse = ""))
     } else {
-        aline1 <- paste("_BRU_", sprintf("%2s", " "))
-        aline2 <- paste(rep ("_SEPU_ Estimate _SEPU_ (S.E.)", nmodels), collapse = "")
-        aline3 <- paste("_EOR__EOL_")
-        z <- c(z, paste(aline1, aline2, aline3, collapse = ""))
+        aline1 <- paste0("_BRU_", sprintf("%2s", " "))
+        #aline2 <- paste(rep ("_EOC__BOCU_ Estimate _EOC__BOCU_ (S.E.)", nmodels), collapse = "")
+        aline2 <- paste0(rep ("_EOC__BOMC1C_Estimate_EOMC__EOC__BOMC1C_(S.E.)_EOMC_", nmodels), collapse = "")
+        aline3 <- paste0("_EOR__EOL_")
+        z <- c(z, paste0(aline1, aline2, aline3, collapse = ""))
     }
 
     if (type == "latex") z <- c(z, SL(1, "latex"), SL(1, "latex"))
    
     ## Here come the regression coefficients
     for (regname in parmnames){
-        aline <- paste(paste("_BR_", displayNames[regname], paste(rep(" ", max(2, (6 - nchar(displayNames[regname])))), collapse = "" )), collapse = "")
+        aline <- paste(paste("_BR_", displayNames[regname],
+                             paste(rep(" ", max(2, (6 - nchar(displayNames[regname])))), collapse = "" )), collapse = "")
         for (model in modelLabels) {
             est <- B[regname, model]
             se <- SE[regname, model]
@@ -1250,7 +1337,7 @@ outreg <-
                     aline <- c(aline, paste("_SEP_  ", se, collapse = " "))
                 }
             } else {
-                aline <- c(aline, "_SEP_ .     ")
+                aline <- c(aline, paste0(bomc(centering %in% c("dcolumn", "siunitx"), 1), "_DOT__EOMC_"))
                 if (tight == FALSE) aline  <- c(aline, "_SEP_    ")
             }
         }
@@ -1278,8 +1365,8 @@ outreg <-
     aline <- c("_BR_", "N")
     for (model in modelList) {
         myN <- stats::nobs(model)
-        aline <- c(aline, "_SEP_ ", myN)
-        if (tight == FALSE) aline <- c(aline, "_SEP_ ")
+        aline <- c(aline, "_BOMC1C_", myN, "_EOMC_", if(tight==FALSE) "_SEP_")
+        ## if (tight == FALSE) aline <- c(aline, "_SEP_ ")
     }
     aline <- c(aline, " _EOR__EOL_")
     z <- c(z, paste(aline, collapse = ""))
@@ -1332,15 +1419,19 @@ outreg <-
 
     ## Print a row for the model's fit, as -2 LLR
     ## Can't remember why I was multiplying by -2
-
     if (showAIC == TRUE) {
-        aline <- "_BR_AIC"
-        for (model in modelList) {
-            aline <- paste0(aline, paste("_SEP_", if(is.numeric(AIC(model)))format(round(AIC(model), digits), nsmall = 3)))
-            if (tight == FALSE) aline <- c(aline, "_SEP_")
+        aline <- "_BR_AIC    _SEP_"
+        aicv <- lapply(modelList, function(x) {
+            aic.x <- AIC(x)
+            if(is.numeric(aic.x)) format(aic.x, digits=digits, nsmall=3) else ""
+        })
+        if (tight == FALSE){
+            aline <- paste0(aline, paste(aicv, collapse = "_SEP__SEP_"))
+        }else{
+            aline <- paste0(aline, paste(aicv, collapse = "_SEP_"))
         }
         aline <- paste0(aline, "_EOR__EOL_")
-        z <- c(z, paste(aline))
+        z <- c(z, aline)
     }
 
     ## TODO: round the following output
@@ -1352,15 +1443,17 @@ outreg <-
             if (myfn == "logLik") {
                 myresult <- lapply(modelList, function(x) {
                     y <- do.call(myfn, list(x))
-                    fstaty <- paste(format(c(y), digits = digits), collapse = ", ",
-                                    " (df=", format(attr(y, "df")), ")", sep = "")
+                    fstaty <- paste(format(y[1], digits = digits), collapse = ", ",
+                                    "(", format(attr(y, "df")), ")", sep = "")
+                    fstaty <- paste0(if(tight)"_BOMC1C_" else "_BOMC2C_", fstaty, "_EOMC_")
                     invisible(fstaty)
                 })
                 elist[[i]] <- myresult
             } else {
                 myresult <- lapply(modelList, function(x){
                     y <- do.call(myfn, list(x))
-                    fstaty <- format(c(y), digits = digits, nsmall = 2 )
+                    fstaty <- format(c(y), digits = digits, nsmall = 2)
+                    fstaty <- paste0(if(tight)"_BOMC1C_" else "_BOCMC2_", fstaty, "_EOMC_")
                 })
                 elist[[i]] <- myresult
             }
@@ -1384,7 +1477,7 @@ outreg <-
             for ( i in seq_along(alpha)){
                 aline <- paste0(aline, "${", paste0(rep("*", i), collapse = "\\!\\!"), "\  p}",  "\\le ", alpha[i], "$", sep = "")
             }
-            aline <- paste0("\\multicolumn{", nColumns, "}{c}{", aline, "_EOMC__EOR__EOL_")
+            aline <- paste0("\\multicolumn{", nColumns, "}{l}{", aline, "_EOMC__EOR__EOL_")
         } else if (type == "html"){
             aline <- paste0("<tr>\n",
                             "<td colspan=\"", nColumns, "\">")
@@ -1407,7 +1500,7 @@ outreg <-
     aline <- "_EOT__EOL_"
     z <- c(z, aline)
     if (float == TRUE && type == "latex"){
-        aline <- "\\end{table}_EOL_"
+        aline <- "\\end{table}_EOL_\n"
         z <- c(z, aline)
     }
     

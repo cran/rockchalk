@@ -7,96 +7,119 @@ regression models. Works with models fitted with lm, glm, as well
 as lme4.}
 \usage{
 outreg(modelList, type = "latex", modelLabels = NULL, varLabels = NULL,
-  tight = TRUE, showAIC = FALSE, float = FALSE, request, runFuns,
-  digits = 3, alpha = c(0.05, 0.01, 0.001), SElist = NULL,
-  PVlist = NULL, Blist = NULL, title, label, gofNames,
-  print.results = TRUE, browse = identical(type, "html") && interactive())
+  tight = TRUE, centering = c("none", "siunitx", "dcolumn"),
+  showAIC = FALSE, float = FALSE, request, runFuns, digits = 3,
+  alpha = c(0.05, 0.01, 0.001), SElist = NULL, PVlist = NULL,
+  Blist = NULL, title, label, gofNames, print.results = TRUE,
+  browse = identical(type, "html") && interactive())
 }
 \arguments{
 \item{modelList}{A regression model or an R list of regression
 models. Default model names will be M1, M2, and so forth. User
-specified names are allowed, such as \code{list("My Model" = m1,
-"Her Model" = m2)}.  This is the currently recommended way to
-supply model lables. This is less error prone than the use of the
-modelLabels argument.}
+specified names are allowed, such as \code{list("My Model" =
+m1, "Her Model" = m2)}.  This is the currently recommended way
+to supply model lables. This is less error prone than the use
+of the modelLabels argument.}
 
-\item{type}{Default = "latex". The alternatives are "html" and "csv"}
+\item{type}{Default = "latex". The alternatives are "html" and
+"csv"}
 
 \item{modelLabels}{This is allowed, but discouraged. A vector of
 character string variables, one for each element in
 modelList. Will override the names in modelList.}
 
 \item{varLabels}{To beautify the parameter names printed.  Must be
-a named vector in the format c(parmname = "displayName", parmname =
-"displayName"). Include as many parameters as desired, it is not
-necessary to supply new labels for all of the
-parameters.}
+a named vector in the format c(parmname = "displayName",
+parmname = "displayName"). Include as many parameters as
+desired, it is not necessary to supply new labels for all of
+the parameters.}
 
 \item{tight}{Table format. If TRUE, parameter estimates and
 standard errors are printed in a single column.  If FALSE,
-parameter estimates and standard errors are printed side by side.}
+parameter estimates and standard errors are printed side by
+side.}
 
-\item{showAIC}{This is a legacy argument, before the \code{request} argument was created.
-If TRUE, the AIC estimate is included with the diagnostic values. It has the same effect
-as described by \code{request}.}
+\item{centering}{Default is "none", but may be "siunitx" or
+"dcolumn". No centering has been the only way until this
+version. User feedback requested.  Don't forget to insert
+usepackage statment in document preamble for siunitx or
+dcolumn. If user specifies \code{centering=TRUE}, the
+\code{siunitx} method will be used. The \code{dcolumn}
+approach assumes that the values reported in the column use
+fewer than 3 integer places and 3 decimal places. Additional
+room is allocated for the significance stars.}
 
-\item{float}{Default = FALSE. Include boilerplate for a LaTeX table
-float, with the tabular markup inside it. Not relevant if type =
-"html".}
+\item{showAIC}{This is a legacy argument, before the
+\code{request} argument was created.  If TRUE, the AIC
+estimate is included with the diagnostic values. It has the
+same effect as described by \code{request}.}
 
-\item{request}{Extra information to be retrieved from the summary(model)
-and displayed. This must be a vector of named arguments, such as
-c(adj.r.squared = "adj $R^2$", fstatistic = "F"). The name must be
-a valid name of the output object, the value should be the label
-the user wants printed in the table. See details.}
+\item{float}{Default = FALSE. Include boilerplate for a LaTeX
+table float, with the tabular markup inside it. Not relevant
+if type = "html".}
+
+\item{request}{Extra information to be retrieved from the
+summary(model) and displayed. This must be a vector of named
+arguments, such as c(adj.r.squared = "adj $R^2$", fstatistic =
+"F"). The name must be a valid name of the output object, the
+value should be the label the user wants printed in the
+table. See details.}
 
 \item{runFuns}{A list of functions}
 
-\item{digits}{Default = 3. How many digits after decimal sign are to be displayed.}
+\item{digits}{Default = 3. How many digits after decimal sign are
+to be displayed.}
 
-\item{alpha}{Default = c(0.05, 0.01, 0.001). I think stars are dumb, but enough
-people have asked me for more stars that I'm caving in.}
+\item{alpha}{Default = c(0.05, 0.01, 0.001). I think stars are
+dumb, but enough people have asked me for more stars that I'm
+caving in.}
 
 \item{SElist}{Optional. Replacement standard errors. Must be a
-list of named vectors. \code{outreg} uses the R \code{summary} to
-retrieve standard errors, but one might instead want to use robust
-or bootstrapped standard errors.  This argument may supply a new
-SE vector for each fitted regression model, but it is also allowed
-to supply the SE replacement for just one of the models. The
-format should be \code{list("A Model Label" = c(0.1, 0.3, 0.4),
-"Another Model Label" = c(0.4, 0.2, 0.3)}.  On the left, one must
-use the same names that are used in the modelList argument.}
+list of named vectors. \code{outreg} uses the R \code{summary}
+to retrieve standard errors, but one might instead want to use
+robust or bootstrapped standard errors.  This argument may
+supply a new SE vector for each fitted regression model, but
+it is also allowed to supply the SE replacement for just one
+of the models. The format should be \code{list("A Model Label"
+= c(0.1, 0.3, 0.4), "Another Model Label" = c(0.4, 0.2, 0.3)}.
+On the left, one must use the same names that are used in the
+modelList argument.}
 
-\item{PVlist}{Optional. A list of replacement "p values". It must be a list
-of named vectors, similar in format to SElist. The which the
-elements are the "p values" that the user wants to use for each
-model.}
+\item{PVlist}{Optional. A list of replacement "p values". It must
+be a list of named vectors, similar in format to SElist. The
+which the elements are the "p values" that the user wants to
+use for each model.}
 
-\item{Blist}{Optional. This is only needed in the rare case where a model's
-parameters cannot be discerned from its summary. List must have names
-for models, and vectors slope coefficient. See discussion of SElist and PVlist.}
+\item{Blist}{Optional. This is only needed in the rare case where
+a model's parameters cannot be discerned from its
+summary. List must have names for models, and vectors slope
+coefficient. See discussion of SElist and PVlist.}
 
 \item{title}{A LaTeX caption for the table. Not relevant if type =
 "html".}
 
-\item{label}{A string to be used as a LaTeX label in the table to be
-created. Not relevant if type = "html".}
+\item{label}{A string to be used as a LaTeX label in the table to
+be created. Not relevant if type = "html".}
 
 \item{gofNames}{Optional pretty names. R regression summaries use
-names like "sigma" or "r.squared" that we might want to revise for
-presentation. I prefer to refer to "sigma" as "RMSE", but perhaps
-you instead prefer something like \code{gofnames = c("sigma" = "That
-Estimate I don't understand", "deviance" = "Another Mystery")}. The
-words that you might replace are "sigma", "r.squared",
-"deviance", "adj.r.squared", "fstatistic".}
+names like "sigma" or "r.squared" that we might want to revise
+for presentation. I prefer to refer to "sigma" as "RMSE", but
+perhaps you instead prefer something like \code{gofnames =
+c("sigma" = "That Estimate I don't understand", "deviance" =
+"Another Mystery")}. The words that you might replace are
+"sigma", "r.squared", "deviance", "adj.r.squared",
+"fstatistic".}
 
-\item{print.results}{Default TRUE, marked-up table will be displayed in session.
-If FALSE, same result is returned as an object.}
+\item{print.results}{Default TRUE, marked-up table will be
+displayed in session.  If FALSE, same result is returned as an
+object.}
 
-\item{browse}{Display the regression model in a browse? Defaults to TRUE if type = "html"}
+\item{browse}{Display the regression model in a browse? Defaults
+to TRUE if type = "html"}
 }
 \value{
-A character vector, one element per row of the regression table.
+A character vector, one element per row of the regression
+    table.
 }
 \description{
 This provides "markup" that the user is will copy into a LaTeX
@@ -168,14 +191,24 @@ should work, as long as it returns a single value.  This is a
 two-part specification, a function name and a pretty label to be
 used in printing. For example, \code{runFuns = c("AIC" = "Akaike
 Criterion", "BIC" = "Schwartz Criterion", "logLik" = "LL")}.
+
+About centering with dcolumn or siunitx. It appears now that
+results are better with \code{siunitx} but \code{dcolumn} is more
+familiar to users.  The user has the duty to make sure that the
+document preamble includes the correct package,
+\code{\\usepackage\{dcolumn\}} or \code{\\usepackage\{siunitx\}}.
+In this version, I have eliminated the need for the user to
+specify document-wide settings for \code{siunitx}. All of the
+details are explicitly written in the header of each tabular.
+It is done that way to more easily allow user customizations.
 }
 \note{
 There are many R packages that can be used to create LaTeX
-regression tables. memisc, texreg, apsrtable, xtables, and rms are
-some. This "outreg" version was in use in our labs before we were
-aware that those packages were in development. It is not intended
-as a competitor, it is just a slightly different version of the
-same that is more suited to our needs.
+    regression tables. memisc, texreg, apsrtable, xtables, and rms
+    are some. This "outreg" version was in use in our labs before
+    we were aware that those packages were in development. It is
+    not intended as a competitor, it is just a slightly different
+    version of the same that is more suited to our needs.
 }
 \examples{
 set.seed(2134234)
@@ -188,7 +221,7 @@ m3 <- lm(y1 ~ x1 + x2, data = dat)
 gm1 <- glm(y1 ~ x1, family = Gamma, data = dat)
 outreg(m1, title = "My One Tightly Printed Regression", float = TRUE)
 ex1 <- outreg(m1, title = "My One Tightly Printed Regression",
-               float = TRUE, print.results = FALSE)
+               float = TRUE, print.results = FALSE, centering = "siunitx")
 ## Show markup, Save to file with cat()
 cat(ex1)
 ## cat(ex1, file = "ex1.tex")
@@ -200,7 +233,7 @@ ex2 <- outreg(list("Fingers" = m1), tight = FALSE,
 ex3 <- outreg(list("Model A" = m1, "Model B label with Spaces" = m2),
     varLabels = list(x1 = "Billie"), 
     title = "My Two Linear Regressions", request = c(fstatistic = "F"),
-    print.results = FALSE)
+    print.results = TRUE)
 cat(ex3)
 
 ex4 <- outreg(list("Model A" = m1, "Model B" = m2),
@@ -211,8 +244,11 @@ cat(ex4)
 
 ex5 <- outreg(list("Whichever" = m1, "Whatever" = m2),
     title = "Still have showAIC argument, as in previous versions",
-    showAIC = TRUE, float = TRUE)
-cat(ex5)
+    showAIC = TRUE, float = TRUE, centering = "siunitx")
+
+ex5s <- outreg(list("Whichever" = m1, "Whatever" = m2),
+    title = "Still have showAIC argument, as in previous versions",
+    showAIC = TRUE, float = TRUE, centering = "siunitx")
 
 \donttest{
 ## Launches HTML browse

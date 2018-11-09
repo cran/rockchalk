@@ -14,13 +14,17 @@
 ##' @param probs Probability cut points to be used in the calculation
 ##'      of summaries of numeric variables.  Default is c(0, 0.5, 1), meaning
 ##'      \code{min, median, max}.
+##' @param varLabels A named vector of variables labels, as in outreg function.
+##'      Format is c("oldname"="newlabel").
 ##' @param ... Other arguments passed to rockchalk::summarizeNumerics and
 ##'      summarizeFactors.
+##' @importFrom kutils mgsub
 ##' @export
 ##' @return a character matrix
 ##' @author Paul Johnson <pauljohn@@ku.edu>
 ##' @examples
-##' dat <- genCorrelatedData2(1000, means=c(10, 10, 10), sds = 3, stde = 3, beta = c(1, 1, -1, 0.5))
+##' dat <- genCorrelatedData2(1000, means=c(10, 10, 10), sds = 3, 
+##'                           stde = 3, beta = c(1, 1, -1, 0.5))
 ##' dat$xcat1 <- factor(sample(c("a", "b", "c", "d"), 1000, replace=TRUE))
 ##' dat$xcat2 <- factor(sample(c("M", "F"), 1000, replace=TRUE), levels = c("M", "F"),
 ##' labels = c("Male", "Female"))
@@ -28,11 +32,21 @@
 ##' m4 <- lm(y ~ x1 + x2  + x3 + xcat1 + xcat2, dat)
 ##' m4.desc <- descriptiveTable(m4)
 ##' m4.desc
+##' ## Following may cause scientific notation, want to avoid.
+##' dat <- genCorrelatedData2(1000, means=c(10, 100, 400), 
+##'                  sds = c(3, 10, 20), stde = 3, beta = c(1, 1, -1, 0.5))
+##' m5 <- lm(y ~ x1 + x2  + x3, dat)
+##' m5.desc <- descriptiveTable(m5, digits = 4)
+##' m5.desc
+##' 
 descriptiveTable <- function(object, stats = c("mean", "sd", "min", "max"), 
-                            digits = 2, probs = c(0, .5, 1), ...){
+                            digits = 4, probs = c(0, .5, 1), varLabels, ...){
     mc <- match.call(expand.dots = TRUE)
     dots <- list(...)
-
+    options.orig <- options()
+    options(scipen=20)
+    on.exit(options(options.orig))
+    
     dat <- model.frame(object)
     arglist <- list(dat = dat, stats = stats, digits = digits, maxLevels = 20)
     arglist <- modifyList(arglist, dots)
@@ -60,5 +74,8 @@ descriptiveTable <- function(object, stats = c("mean", "sd", "min", "max"),
     
     reslt4 <- rbindFill(reslt, reslt3)
     reslt4[is.na(reslt4)] <- ""
+    if(!missing(varLabels) && !is.null(varLabels)){
+        reslt4$variable <- kutils::mgsub(names(varLabels), varLabels, reslt4$variable)
+    }
     reslt4
 }
