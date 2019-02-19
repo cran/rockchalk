@@ -145,7 +145,7 @@ cutByQuantile <-
         invisible(qs)
     }
 }
-
+NULL
 
 ##' Returns center values of x, the mean, mean-std.dev, mean+std.dev
 ##'
@@ -193,7 +193,7 @@ cutBySD <-
         invisible(qs)
     }
 }
-
+NULL
 
 
 
@@ -220,7 +220,6 @@ getFocal <-
 {
     UseMethod("getFocal")
 }
-
 NULL
 
 ##' Select focal values from a numeric variable
@@ -280,7 +279,7 @@ getFocal.default <- function(x, xvals = NULL, n = 3, pct = TRUE, ...)
         return(xfocal <- cutByQuantile(x, n))
 
     if (is.numeric(xvals)) {
-        if ((xvals > max(xRange)) || (xvals < min(xRange))){
+        if ((max(xvals) > max(xRange)) || (min(xvals) < min(xRange))){
             warning("values requested out of observed range in getFocal")
         }
         xvals <- sort(xvals)
@@ -305,7 +304,6 @@ getFocal.default <- function(x, xvals = NULL, n = 3, pct = TRUE, ...)
 
     stop("getFocal received unexpected input for xvals")
 }
-
 NULL
 
 ##' @export
@@ -318,6 +316,8 @@ NULL
 ##'
 getFocal.factor <- function(x, xvals = NULL, n = 3, pct = TRUE, ...)
 {
+    ## drop unused levels from x
+    x <- droplevels(x)
     if (is.null(xvals)) {
         xvals <- cutByTable(x, n, pct = pct)
         return(xvals)
@@ -347,7 +347,7 @@ getFocal.factor <- function(x, xvals = NULL, n = 3, pct = TRUE, ...)
 
     stop("getFocal received unexpected input xvals")
 }
-
+NULL
 
 ##' @export
 ##' @method getFocal character
@@ -379,7 +379,6 @@ getFocal.character <- function(x, xvals = NULL, n = 3, pct = TRUE, ...)
                     stop("Sorry, only known algorithm for character variables is 'table'"))
     xvals
 }
-
 NULL
 
 ##' Pad with 0's.

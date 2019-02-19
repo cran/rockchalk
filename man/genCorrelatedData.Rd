@@ -4,8 +4,8 @@
 \alias{genCorrelatedData}
 \title{Generates a data frame for regression analysis}
 \usage{
-genCorrelatedData(N = 100, means = c(50, 50), sds = c(10, 10), rho = 0,
-  stde = 1, beta = c(0, 0.2, 0.2, 0))
+genCorrelatedData(N = 100, means = c(50, 50), sds = c(10, 10),
+  rho = 0, stde = 1, beta = c(0, 0.2, 0.2, 0))
 }
 \arguments{
 \item{N}{Number of cases desired}

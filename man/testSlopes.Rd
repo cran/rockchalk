@@ -51,7 +51,7 @@ here.  A plot method is provided to illustrate the result.
 }
 \examples{
 library(rockchalk)
-library(car)
+library(carData)
 m1 <- lm(statusquo ~ income * age + education + sex + age, data = Chile)
 m1ps <- plotSlopes(m1, modx = "income", plotx = "age")
 m1psts <- testSlopes(m1ps)

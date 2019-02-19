@@ -46,8 +46,6 @@ data = argument in the original regression model. The attribute
 \description{
 This is a generic function. The default method covers almost all
 regression models.
-
-Creates a new data frame from which a model could be re-estimated.
 }
 \details{
 It scans the fitted model, discerns the names of the predictors,

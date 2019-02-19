@@ -6,12 +6,13 @@
 regression models. Works with models fitted with lm, glm, as well
 as lme4.}
 \usage{
-outreg(modelList, type = "latex", modelLabels = NULL, varLabels = NULL,
-  tight = TRUE, centering = c("none", "siunitx", "dcolumn"),
-  showAIC = FALSE, float = FALSE, request, runFuns, digits = 3,
-  alpha = c(0.05, 0.01, 0.001), SElist = NULL, PVlist = NULL,
-  Blist = NULL, title, label, gofNames, print.results = TRUE,
-  browse = identical(type, "html") && interactive())
+outreg(modelList, type = "latex", modelLabels = NULL,
+  varLabels = NULL, tight = TRUE, centering = c("none", "siunitx",
+  "dcolumn"), showAIC = FALSE, float = FALSE, request, runFuns,
+  digits = 3, alpha = c(0.05, 0.01, 0.001), SElist = NULL,
+  PVlist = NULL, Blist = NULL, title, label, gofNames,
+  print.results = TRUE, browse = identical(type, "html") &&
+  interactive())
 }
 \arguments{
 \item{modelList}{A regression model or an R list of regression
@@ -241,7 +242,7 @@ ex4 <- outreg(list("Model A" = m1, "Model B" = m2),
     varLabels = list(x1 = "Billie"),
     title = "Note modelLabels Overrides model names")
 cat(ex4)
-
+##'
 ex5 <- outreg(list("Whichever" = m1, "Whatever" = m2),
     title = "Still have showAIC argument, as in previous versions",
     showAIC = TRUE, float = TRUE, centering = "siunitx")
@@ -285,18 +286,17 @@ ex11 <- outreg(list("I Love Long Titles" = m1,
           "Prefer Brevity" = m2,
           "Short" = m3), tight = FALSE, float = FALSE)
 cat(ex11)
-
+##'
 ex12 <- outreg(list("GLM" = gm1), float = TRUE)
 cat(ex12)
 
 ex13 <- outreg(list("OLS" = m1, "GLM" = gm1), float = TRUE,
         alpha = c(0.05, 0.01))
 cat(ex13)
-
+##'
 ex14 <- outreg(list(OLS = m1, GLM = gm1), float = TRUE,
     request = c(fstatistic = "F"), runFuns = c("BIC" = "BIC"))
 cat(ex14)
-
 ex15 <- outreg(list(OLS = m1, GLM = gm1), float = TRUE,
     request = c(fstatistic = "F"), runFuns = c("BIC" = "BIC"),
     digits = 5, alpha = c(0.01))

@@ -4,7 +4,8 @@
 \alias{waldt}
 \title{T-test for the difference in 2 regression parameters}
 \usage{
-waldt(parm1, parm2, model, model.cov = NULL, digits = getOption("digits"))
+waldt(parm1, parm2, model, model.cov = NULL,
+  digits = getOption("digits"))
 }
 \arguments{
 \item{parm1}{A parameter name, in quotes!}

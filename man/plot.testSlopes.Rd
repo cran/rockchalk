@@ -4,7 +4,8 @@
 \alias{plot.testSlopes}
 \title{Plot testSlopes objects}
 \usage{
-\method{plot}{testSlopes}(x, ..., shade = TRUE, col = rgb(1, 0, 0, 0.1))
+\method{plot}{testSlopes}(x, ..., shade = TRUE, col = rgb(1, 0, 0,
+  0.1))
 }
 \arguments{
 \item{x}{A testSlopes object.}

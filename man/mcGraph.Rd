@@ -8,11 +8,11 @@
 \usage{
 mcGraph1(x1, x2, y, x1lab, x2lab, ylab, ...)
 
-mcGraph2(x1, x2, y, rescaley = 1, drawArrows = TRUE, x1lab, x2lab, ylab,
-  ...)
-
-mcGraph3(x1, x2, y, interaction = FALSE, drawArrows = TRUE, x1lab, x2lab,
+mcGraph2(x1, x2, y, rescaley = 1, drawArrows = TRUE, x1lab, x2lab,
   ylab, ...)
+
+mcGraph3(x1, x2, y, interaction = FALSE, drawArrows = TRUE, x1lab,
+  x2lab, ylab, ...)
 }
 \arguments{
 \item{x1}{a predictor vector}
@@ -52,18 +52,6 @@ where e is Normal(0, stde^2).
 
 mcGraph1 draws the 3D regression space, but all of the points
 are illustrated "in" the flat plane of x1-x2 variables.
-
-mcGraph2 draws a 3-D representation of a scatterplot with shadows
-in the x1-x2 plane.  The observations are represented by blue
-points floating above the x1-x2 plane. If scaley=1, the end result
-is a scatterplot "cloud" of the y points above the x1-x2 plane,
-and gray shadows of the points are cast down from the cloud onto
-the x1-x2 plane itself. This uses persp to make the actual
-drawing.
-
-With mcGraph3, the observations are scattered in 3-dimensions, the
-fitted values are represented by a mesh, and their shadows in the
-x1-x2 plane are also represented.
 }
 \details{
 These functions are specialized to a particular purpose. If you

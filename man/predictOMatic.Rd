@@ -5,8 +5,8 @@
 \title{Create predicted values after choosing values of predictors.  Can
 demonstrate marginal effects of the predictor variables.}
 \usage{
-predictOMatic(model = NULL, predVals = "margins", divider = "quantile",
-  n = 5, ...)
+predictOMatic(model = NULL, predVals = "margins",
+  divider = "quantile", n = 5, ...)
 }
 \arguments{
 \item{model}{Required. A fitted regression model. A \code{predict}

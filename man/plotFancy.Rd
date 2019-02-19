@@ -4,15 +4,18 @@
 \alias{plotFancy}
 \title{Regression plots with predicted value lines, confidence intervals, color coded interactions}
 \usage{
-plotFancy(newdf, olddf, plotx, modx, modxVals, interval, plotPoints, plotLegend,
-  legendTitle, col = NULL, llwd = 2, opacity, ...)
+plotFancy(newdf, olddf, plotx, modx, modxVals, interval, plotPoints,
+  legendArgs, col = NULL, llwd = 2, opacity, ...)
 }
 \arguments{
-\item{newdf}{The new data frame with predictors and fit, lwr, upr variables}
+\item{newdf}{The new data frame with predictors and fit, lwr, upr
+variables}
 
-\item{olddf}{A data frame with variables(modxVar, plotxVar, depVar)}
+\item{olddf}{A data frame with variables(modxVar, plotxVar,
+depVar)}
 
-\item{plotx}{Character string for name of variable on horizontal axis}
+\item{plotx}{Character string for name of variable on horizontal
+axis}
 
 \item{modx}{Character string for name of moderator variable.}
 
@@ -20,14 +23,14 @@ plotFancy(newdf, olddf, plotx, modx, modxVals, interval, plotPoints, plotLegend,
 
 \item{interval}{TRUE or FALSE: want confidence intervals?}
 
-\item{plotPoints}{TRUE or FALSE: want to see observed values in plot?}
+\item{plotPoints}{TRUE or FALSE: want to see observed values in
+plot?}
 
-\item{plotLegend}{TRUE or FALSE: draw defaut legend}
+\item{legendArgs}{Set as "none" for no legend. Otherwise, a list
+of arguments for the legend function}
 
-\item{legendTitle}{Optional. You'll get an automatically generated title, such as "Moderator: modx",
-but if you don't like that, specify your own string here.}
-
-\item{col}{requested color scheme for lines and points. One per value of modxVals.}
+\item{col}{requested color scheme for lines and points. One per
+value of modxVals.}
 
 \item{llwd}{requested line width, will re-cycle.}
 

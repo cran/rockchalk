@@ -2,7 +2,6 @@
 % Please edit documentation in R/pctable.R
 \name{pctable}
 \alias{pctable}
-\alias{pctable}
 \alias{pctable.default}
 \alias{pctable.formula}
 \alias{pctable.character}
@@ -14,10 +13,12 @@ pctable(rv, ...)
   colpct = TRUE, rowpct = FALSE, rounded = FALSE, ...)
 
 \method{pctable}{formula}(formula, data = NULL, rvlab = NULL,
-  cvlab = NULL, colpct = TRUE, rowpct = FALSE, rounded = FALSE, ...)
+  cvlab = NULL, colpct = TRUE, rowpct = FALSE, rounded = FALSE,
+  ...)
 
 \method{pctable}{character}(rv, cv, data = NULL, rvlab = NULL,
-  cvlab = NULL, colpct = TRUE, rowpct = FALSE, rounded = FALSE, ...)
+  cvlab = NULL, colpct = TRUE, rowpct = FALSE, rounded = FALSE,
+  ...)
 }
 \arguments{
 \item{rv}{A row variable name}
@@ -87,9 +88,6 @@ or
 Tables that include only row or column percentages will be
 compatible with the html and latex exporters in the
 excellent \code{tables} package.
-
-The method pctable.default is the calculator, I don't expect
-many users will need to call it directly.
 
 The formula method is the recommended method for users. Run
 \code{pctable(myrow ~ mycol, data = dat)}. In an earlier version,

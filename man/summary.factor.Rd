@@ -4,7 +4,7 @@
 \alias{summary.factor}
 \title{Tabulates observed values and calculates entropy}
 \usage{
-summary.factor(y)
+\method{summary}{factor}(y)
 }
 \arguments{
 \item{y}{a factor (non-numeric variable)}

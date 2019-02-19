@@ -4,8 +4,8 @@
 \alias{genCorrelatedData2}
 \title{Generates a data frame for regression analysis.}
 \usage{
-genCorrelatedData2(N = 100, means = c(50, 50, 50), sds = c(10, 10, 10),
-  rho = c(0, 0, 0), stde = 100, beta = c(0, 0.15, 0.1, -0.1),
+genCorrelatedData2(N = 100, means = c(50, 50, 50), sds = c(10, 10,
+  10), rho = c(0, 0, 0), stde = 100, beta = c(0, 0.15, 0.1, -0.1),
   intercept = FALSE, verbose = TRUE)
 }
 \arguments{

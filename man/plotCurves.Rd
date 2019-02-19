@@ -7,7 +7,8 @@
 plotCurves(model, plotx, nx = 40, modx, plotxRange = NULL, n,
   modxVals = NULL, interval = c("none", "confidence", "prediction"),
   plotPoints = TRUE, plotLegend = TRUE, legendTitle = NULL,
-  legendPct = TRUE, col = NULL, llwd = 2, opacity = 100,
+  legendPct = TRUE, col = c("black", "blue", "darkgreen", "red",
+  "orange", "purple", "green3"), llwd = 2, opacity = 100,
   envir = environment(formula(model)), ...)
 }
 \arguments{
@@ -53,11 +54,10 @@ specify your own string here.}
 
 \item{legendPct}{Default = TRUE. Variable labels print with sample percentages.}
 
-\item{col}{Optional.  A color vector to differentiate the moderator
-values in the plot. If not specified, the R's builtin palette()
-will be used. User may supply a vector of valid color names,
-either explicitly c("pink","black", "gray70") or implicitly,
-rainbow(10) or gray.colors(5). Color names will be recycled if there
+\item{col}{I offer my preferred color vector as default.
+Replace if you like. User may supply a vector of valid
+color names, or  \code{rainbow(10)} or
+\code{gray.colors(5)}. Color names will be recycled if there
 are more focal values of \code{modx} than colors provided.}
 
 \item{llwd}{Optional. Line widths for predicted values. Can be
