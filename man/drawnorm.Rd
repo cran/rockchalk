@@ -4,8 +4,15 @@
 \alias{drawnorm}
 \title{draw a normal distribution with beautiful illustrations}
 \usage{
-drawnorm(mu = 0, sigma = 1, xlab = "A Normally Distributed Variable",
-  ylab = "Probability Density", main, ps = par("ps"), ...)
+drawnorm(
+  mu = 0,
+  sigma = 1,
+  xlab = "A Normally Distributed Variable",
+  ylab = "Probability Density",
+  main,
+  ps = par("ps"),
+  ...
+)
 }
 \arguments{
 \item{mu}{The mu parameter}

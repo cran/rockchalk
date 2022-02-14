@@ -6,13 +6,28 @@
 regression models. Works with models fitted with lm, glm, as well
 as lme4.}
 \usage{
-outreg(modelList, type = "latex", modelLabels = NULL,
-  varLabels = NULL, tight = TRUE, centering = c("none", "siunitx",
-  "dcolumn"), showAIC = FALSE, float = FALSE, request, runFuns,
-  digits = 3, alpha = c(0.05, 0.01, 0.001), SElist = NULL,
-  PVlist = NULL, Blist = NULL, title, label, gofNames,
-  print.results = TRUE, browse = identical(type, "html") &&
-  interactive())
+outreg(
+  modelList,
+  type = "latex",
+  modelLabels = NULL,
+  varLabels = NULL,
+  tight = TRUE,
+  centering = c("none", "siunitx", "dcolumn"),
+  showAIC = FALSE,
+  float = FALSE,
+  request,
+  runFuns,
+  digits = 3,
+  alpha = c(0.05, 0.01, 0.001),
+  SElist = NULL,
+  PVlist = NULL,
+  Blist = NULL,
+  title,
+  label,
+  gofNames,
+  print.results = TRUE,
+  browse = identical(type, "html") && interactive()
+)
 }
 \arguments{
 \item{modelList}{A regression model or an R list of regression
@@ -142,7 +157,7 @@ In version 1.8.111, an argument \code{print.results} was introduced.
 This is TRUE by default, so the marked-up table is printed into
 the session, and it is returned as well.  If the function should
 run silently (as suggested in the last few versions), include
-\code{print.results = TRUE}.
+\code{print.results = TRUE}. 
 
 The table includes a minimally sufficient (in my opinion) model
 summary.  It offers parameter estimates, standard errors, and

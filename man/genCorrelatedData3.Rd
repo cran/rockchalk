@@ -4,10 +4,20 @@
 \alias{genCorrelatedData3}
 \title{Generate correlated data for simulations (third edition)}
 \usage{
-genCorrelatedData3(formula, N = 100, means = c(x1 = 50, x2 = 50, x3 =
-  50), sds = 10, rho = 0, stde = 1, beta = c(0, 0.15, 0.1, -0.1),
-  intercept = FALSE, col.names, verbose = FALSE, ...,
-  distrib = rnorm)
+genCorrelatedData3(
+  formula,
+  N = 100,
+  means = c(x1 = 50, x2 = 50, x3 = 50),
+  sds = 10,
+  rho = 0,
+  stde = 1,
+  beta = c(0, 0.15, 0.1, -0.1),
+  intercept = FALSE,
+  col.names,
+  verbose = FALSE,
+  ...,
+  distrib = rnorm
+)
 }
 \arguments{
 \item{formula}{a text variable, e.g., \code{"y ~ 1 + 2*x1"}. Use

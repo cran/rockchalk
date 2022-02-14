@@ -4,9 +4,16 @@
 \alias{genCorrelatedData2}
 \title{Generates a data frame for regression analysis.}
 \usage{
-genCorrelatedData2(N = 100, means = c(50, 50, 50), sds = c(10, 10,
-  10), rho = c(0, 0, 0), stde = 100, beta = c(0, 0.15, 0.1, -0.1),
-  intercept = FALSE, verbose = TRUE)
+genCorrelatedData2(
+  N = 100,
+  means = c(50, 50, 50),
+  sds = c(10, 10, 10),
+  rho = c(0, 0, 0),
+  stde = 100,
+  beta = c(0, 0.15, 0.1, -0.1),
+  intercept = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{N}{Number of cases desired}
@@ -101,7 +108,7 @@ triangle of a coefficient matrix. In the example with 4
 predictors, beta[1:5] are used for the intercepts and slopes. The
 rest of the  beta elements lay in like so:\cr
 
-X1   X2  X3  X4\cr
+   X1   X2  X3  X4\cr
 X1 b6   .    .\cr
 X2 b7   b10  .\cr
 X3 b8   b11  b13\cr

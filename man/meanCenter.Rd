@@ -5,11 +5,21 @@
 \alias{meanCenter.default}
 \title{meanCenter}
 \usage{
-meanCenter(model, centerOnlyInteractors = TRUE, centerDV = FALSE,
-  standardize = FALSE, terms = NULL)
+meanCenter(
+  model,
+  centerOnlyInteractors = TRUE,
+  centerDV = FALSE,
+  standardize = FALSE,
+  terms = NULL
+)
 
-\method{meanCenter}{default}(model, centerOnlyInteractors = TRUE,
-  centerDV = FALSE, standardize = FALSE, terms = NULL)
+\method{meanCenter}{default}(
+  model,
+  centerOnlyInteractors = TRUE,
+  centerDV = FALSE,
+  standardize = FALSE,
+  terms = NULL
+)
 }
 \arguments{
 \item{model}{a fitted regression model (presumably from lm)}

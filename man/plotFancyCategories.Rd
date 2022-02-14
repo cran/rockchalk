@@ -4,11 +4,27 @@
 \alias{plotFancyCategories}
 \title{Draw display for discrete predictor in plotSlopes}
 \usage{
-plotFancyCategories(newdf, olddf, plotx, modx = NULL, modxVals, xlab,
-  xlim, ylab, ylim, col = c("black", "blue", "darkgreen", "red",
-  "orange", "purple", "green3"), opacity = 120, main, space = c(0, 1),
-  width = 0.2, llwd = 1, offset = 0, ..., gridArgs = list(lwd =
-  0.3, lty = 5), legendArgs)
+plotFancyCategories(
+  newdf,
+  olddf,
+  plotx,
+  modx = NULL,
+  modxVals,
+  xlab,
+  xlim,
+  ylab,
+  ylim,
+  col = c("black", "blue", "darkgreen", "red", "orange", "purple", "green3"),
+  opacity = 120,
+  main,
+  space = c(0, 1),
+  width = 0.2,
+  llwd = 1,
+  offset = 0,
+  ...,
+  gridArgs = list(lwd = 0.3, lty = 5),
+  legendArgs
+)
 }
 \arguments{
 \item{newdf}{The new data object, possibly from predictOMatic}

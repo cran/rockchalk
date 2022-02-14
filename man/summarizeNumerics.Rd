@@ -5,9 +5,15 @@
 \title{Extracts numeric variables and presents an summary in
 a workable format.}
 \usage{
-summarizeNumerics(dat, alphaSort = FALSE, probs = c(0, 0.5, 1),
+summarizeNumerics(
+  dat,
+  alphaSort = FALSE,
+  probs = c(0, 0.5, 1),
   stats = c("mean", "sd", "skewness", "kurtosis", "nobs", "nmiss"),
-  na.rm = TRUE, unbiased = TRUE, digits = 2)
+  na.rm = TRUE,
+  unbiased = TRUE,
+  digits = 2
+)
 }
 \arguments{
 \item{dat}{a data frame or a matrix}

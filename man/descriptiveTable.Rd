@@ -4,8 +4,14 @@
 \alias{descriptiveTable}
 \title{Summary stats table-maker for regression users}
 \usage{
-descriptiveTable(object, stats = c("mean", "sd", "min", "max"),
-  digits = 4, probs = c(0, 0.5, 1), varLabels, ...)
+descriptiveTable(
+  object,
+  stats = c("mean", "sd", "min", "max"),
+  digits = 4,
+  probs = c(0, 0.5, 1),
+  varLabels,
+  ...
+)
 }
 \arguments{
 \item{object}{A fitted regression or an R data.frame, or any

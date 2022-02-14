@@ -4,8 +4,17 @@
 \alias{genX}
 \title{Generate correlated data (predictors) for one unit}
 \usage{
-genX(N, means, sds, rho, Sigma = NULL, intercept = TRUE,
-  col.names = NULL, unit = NULL, idx = FALSE)
+genX(
+  N,
+  means,
+  sds,
+  rho,
+  Sigma = NULL,
+  intercept = TRUE,
+  col.names = NULL,
+  unit = NULL,
+  idx = FALSE
+)
 }
 \arguments{
 \item{N}{Number of cases desired}

@@ -1,5 +1,4 @@
 ### R code from vignette source 'outreg.Rnw'
-### Encoding: UTF-8
 
 ###################################################
 ### code chunk number 1: outreg.Rnw:26-27
@@ -47,7 +46,7 @@ blankpdf(fn2)
 
 
 ###################################################
-### code chunk number 5: outreg.Rnw:659-667
+### code chunk number 5: outreg.Rnw:660-668
 ###################################################
 set.seed(2134234)
 dat <- data.frame(x1 = rnorm(100), x2 = rnorm(100))
@@ -110,45 +109,45 @@ cat(ex1ws)
 
 
 ###################################################
-### code chunk number 12: outreg.Rnw:739-740
+### code chunk number 12: outreg.Rnw:740-741
 ###################################################
 ex2p <- outreg(list("Fingers" = m1), tight = FALSE, title = "Ability to change p values (not centered)", label = "tab:ex2p",  float = TRUE, alpha = c(0.1, 0.05, 0.01)) 
 
 
 ###################################################
-### code chunk number 13: outreg.Rnw:743-744
+### code chunk number 13: outreg.Rnw:744-745
 ###################################################
 ex2pd <- outreg(list("Fingers" = m1), tight = FALSE,  title = "Ability to change p values (dcolumn)", label = "tab:ex2pd", centering = "dcolumn", float = TRUE, alpha = c(0.1, 0.05, 0.01)) 
 
 
 ###################################################
-### code chunk number 14: outreg.Rnw:747-748
+### code chunk number 14: outreg.Rnw:748-749
 ###################################################
 ex2ps <- outreg(list("Fingers" = m1), tight = FALSE,  title = "Ability to change p values (siunitx)", label = "tab:ex2ps", centering = "siunitx", float = TRUE, alpha = c(0.1, 0.05, 0.01)) 
 
 
 ###################################################
-### code chunk number 15: outreg.Rnw:766-768
+### code chunk number 15: outreg.Rnw:767-769
 ###################################################
 ex3 <- outreg(list("Model A" = m1, "Model B has a longer heading" = m2), varLabels = list(x1 = "Billie"),   title = "My Two Linear Regressions (uncentered)", label = "tab:ex3", request = c(fstatistic = "F"),  print.results = FALSE)
 cat(ex3)
 
 
 ###################################################
-### code chunk number 16: outreg.Rnw:778-780
+### code chunk number 16: outreg.Rnw:779-781
 ###################################################
 ex3b <- outreg(list("Model A" = m1, "Model B" = m2),   modelLabels = c("Overrides ModelA", "Overrides ModelB"), varLabels = list(x1 = "Billie"), title = "Note modelLabels Overrides model names (uncentered)",  label = "tab:ex3b"
 )
 
 
 ###################################################
-### code chunk number 17: outreg.Rnw:786-787
+### code chunk number 17: outreg.Rnw:787-788
 ###################################################
 ex3bd <- outreg(list("Model A" = m1, "Model B" = m2), modelLabels = c("Overrides ModelA", "Overrides ModelB"), varLabels = list(x1 = "Billie"), title = "Note modelLabels Overrides model names (dcolumn)", label = "tab:ex3bd", centering = "dcolumn")
 
 
 ###################################################
-### code chunk number 18: outreg.Rnw:790-791
+### code chunk number 18: outreg.Rnw:791-792
 ###################################################
 ex3bs <- outreg(list("Model A" = m1, "Model B" = m2), modelLabels = c("Overrides ModelA", "Overrides ModelB"),  varLabels = list(x1 = "Billie"), title = "Note modelLabels Overrides model names (siunitx)", label = "tab:ex3bs", centering = "siunitx")
 
@@ -179,37 +178,37 @@ cat(ex6d)
 
 
 ###################################################
-### code chunk number 23: outreg.Rnw:854-855
+### code chunk number 23: outreg.Rnw:855-856
 ###################################################
 ex7 <- outreg(list("Amod" = m1, "Bmod" = m2, "Gmod" = m3), title = "My Three Linear Regressions", label="tab:ex7")
 
 
 ###################################################
-### code chunk number 24: outreg.Rnw:861-862
+### code chunk number 24: outreg.Rnw:862-863
 ###################################################
 ex7d <- outreg(list("Amod" = m1, "Bmod" = m2, "Gmod" = m3), centering = "dcolumn", title = "My Three Linear Regressions (decimal aligned)", label="tab:ex7d")
 
 
 ###################################################
-### code chunk number 25: outreg.Rnw:875-876
+### code chunk number 25: outreg.Rnw:876-877
 ###################################################
 ex11 <- outreg(list("I Love Long Titles" = m1, "Prefer Brevity" = m2, "Captain. Kirk. Named. This." = m3), tight = FALSE, float = FALSE, centering = "dcolumn")
 
 
 ###################################################
-### code chunk number 26: outreg.Rnw:882-883
+### code chunk number 26: outreg.Rnw:884-885
 ###################################################
 ex11td <- outreg(list("I Love Long Titles" = m1, "Prefer Brevity" = m2, "Captain. Kirk. Named. This" = m3), float = FALSE,  centering = "dcolumn")
 
 
 ###################################################
-### code chunk number 27: outreg.Rnw:889-890
+### code chunk number 27: outreg.Rnw:892-893
 ###################################################
 ex11ts <- outreg(list("I Love Long Titles" = m1, "Prefer Brevity" = m2, "Captain. Kirk. Named. This" = m3), float = FALSE, centering = "siunitx")
 
 
 ###################################################
-### code chunk number 28: outreg.Rnw:908-914
+### code chunk number 28: outreg.Rnw:912-918
 ###################################################
 if (require(car)){
    newSE <- sqrt(diag(car::hccm(m3)))
@@ -220,7 +219,7 @@ if (require(car)){
 
 
 ###################################################
-### code chunk number 29: outreg.Rnw:920-927
+### code chunk number 29: outreg.Rnw:925-932
 ###################################################
 if (require(car)){
    newSE <- sqrt(diag(car::hccm(m3)))
@@ -232,7 +231,7 @@ if (require(car)){
 
 
 ###################################################
-### code chunk number 30: outreg.Rnw:933-940
+### code chunk number 30: outreg.Rnw:939-946
 ###################################################
 if (require(car)){
    newSE <- sqrt(diag(car::hccm(m3)))
@@ -244,7 +243,7 @@ if (require(car)){
 
 
 ###################################################
-### code chunk number 31: outreg.Rnw:952-955
+### code chunk number 31: outreg.Rnw:959-962
 ###################################################
 ex13 <- outreg(list("OLS" = m1, "GLM" = gm1), float = TRUE,
                title = "OLS and Logit in same table (dcolumn)", 
@@ -252,7 +251,7 @@ ex13 <- outreg(list("OLS" = m1, "GLM" = gm1), float = TRUE,
 
 
 ###################################################
-### code chunk number 32: outreg.Rnw:961-966
+### code chunk number 32: outreg.Rnw:968-973
 ###################################################
 ex14 <- outreg(list(OLS = m1, GLM = gm1), float = TRUE,
          title = "OLS and Logit with summary report features (dcolumn)",
@@ -262,7 +261,7 @@ ex14 <- outreg(list(OLS = m1, GLM = gm1), float = TRUE,
 
 
 ###################################################
-### code chunk number 33: outreg.Rnw:972-977
+### code chunk number 33: outreg.Rnw:979-984
 ###################################################
 ex15 <- outreg(list(OLS = m1, GLM = gm1), float = TRUE,
          title="OLS and GLM with more digits (digits)", 
@@ -272,7 +271,7 @@ ex15 <- outreg(list(OLS = m1, GLM = gm1), float = TRUE,
 
 
 ###################################################
-### code chunk number 34: outreg.Rnw:984-990
+### code chunk number 34: outreg.Rnw:991-997
 ###################################################
 ex16d <- outreg(list("OLS 1" = m1, "OLS 2" = m2,  GLM = gm1), float = TRUE,
            title = "2 OLS and 1 Logit (dcolumn), additional runFuns", 
@@ -283,7 +282,7 @@ ex16d <- outreg(list("OLS 1" = m1, "OLS 2" = m2,  GLM = gm1), float = TRUE,
 
 
 ###################################################
-### code chunk number 35: outreg.Rnw:993-999
+### code chunk number 35: outreg.Rnw:1000-1006
 ###################################################
 ex16s <- outreg(list("OLS 1" = m1, "OLS 2" = m2,  GLM = gm1), float = TRUE,
            title = "2 OLS and 1 Logit (siunitx), additional runFuns", 
@@ -294,7 +293,7 @@ ex16s <- outreg(list("OLS 1" = m1, "OLS 2" = m2,  GLM = gm1), float = TRUE,
 
 
 ###################################################
-### code chunk number 36: outreg.Rnw:1011-1015
+### code chunk number 36: outreg.Rnw:1018-1022
 ###################################################
 ex17 <- outreg(list("Model A" = gm1, "Model B label with Spaces" = m2),
          request = c(fstatistic = "F"),
@@ -303,7 +302,7 @@ ex17 <- outreg(list("Model A" = gm1, "Model B label with Spaces" = m2),
 
 
 ###################################################
-### code chunk number 37: outreg.Rnw:1021-1025
+### code chunk number 37: outreg.Rnw:1029-1033
 ###################################################
 ex17s <- outreg(list("Model A" = gm1, "Model B label with Spaces" = m2),
          request = c(fstatistic = "F"),

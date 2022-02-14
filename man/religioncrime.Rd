@@ -4,7 +4,9 @@
 \name{religioncrime}
 \alias{religioncrime}
 \title{Religious beliefs and crime rates}
-\format{data.frame: 51 obs. of 3 variables}
+\format{
+data.frame: 51 obs. of 3 variables
+}
 \source{
 Anonymous researcher who claims the data is real.
 }

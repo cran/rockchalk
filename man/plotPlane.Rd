@@ -5,20 +5,67 @@
 \alias{plotPlane.default}
 \title{Draw a 3-D regression plot for two predictors from any linear or nonlinear lm or glm object}
 \usage{
-plotPlane(model = NULL, plotx1 = NULL, plotx2 = NULL,
-  drawArrows = FALSE, plotPoints = TRUE, npp = 20, x1lab, x2lab,
-  ylab, x1lim, x2lim, x1floor = 5, x2floor = 5, pch = 1,
-  pcol = "blue", plwd = 0.5, pcex = 1, llwd = 0.3, lcol = 1,
-  llty = 1, acol = "red", alty = 4, alwd = 0.3, alength = 0.1,
-  linesFrom, lflwd = 3, envir = environment(formula(model)), ...)
+plotPlane(
+  model = NULL,
+  plotx1 = NULL,
+  plotx2 = NULL,
+  drawArrows = FALSE,
+  plotPoints = TRUE,
+  npp = 20,
+  x1lab,
+  x2lab,
+  ylab,
+  x1lim,
+  x2lim,
+  x1floor = 5,
+  x2floor = 5,
+  pch = 1,
+  pcol = "blue",
+  plwd = 0.5,
+  pcex = 1,
+  llwd = 0.3,
+  lcol = 1,
+  llty = 1,
+  acol = "red",
+  alty = 4,
+  alwd = 0.3,
+  alength = 0.1,
+  linesFrom,
+  lflwd = 3,
+  envir = environment(formula(model)),
+  ...
+)
 
-\method{plotPlane}{default}(model = NULL, plotx1 = NULL,
-  plotx2 = NULL, drawArrows = FALSE, plotPoints = TRUE, npp = 20,
-  x1lab, x2lab, ylab, x1lim, x2lim, x1floor = 5, x2floor = 5,
-  pch = 1, pcol = "blue", plwd = 0.5, pcex = 1, llwd = 0.3,
-  lcol = 1, llty = 1, acol = "red", alty = 4, alwd = 0.3,
-  alength = 0.1, linesFrom, lflwd = 3,
-  envir = environment(formula(model)), ...)
+\method{plotPlane}{default}(
+  model = NULL,
+  plotx1 = NULL,
+  plotx2 = NULL,
+  drawArrows = FALSE,
+  plotPoints = TRUE,
+  npp = 20,
+  x1lab,
+  x2lab,
+  ylab,
+  x1lim,
+  x2lim,
+  x1floor = 5,
+  x2floor = 5,
+  pch = 1,
+  pcol = "blue",
+  plwd = 0.5,
+  pcex = 1,
+  llwd = 0.3,
+  lcol = 1,
+  llty = 1,
+  acol = "red",
+  alty = 4,
+  alwd = 0.3,
+  alength = 0.1,
+  linesFrom,
+  lflwd = 3,
+  envir = environment(formula(model)),
+  ...
+)
 }
 \arguments{
 \item{model}{an lm or glm fitted model object}

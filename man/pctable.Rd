@@ -9,16 +9,39 @@
 \usage{
 pctable(rv, ...)
 
-\method{pctable}{default}(rv, cv, rvlab = NULL, cvlab = NULL,
-  colpct = TRUE, rowpct = FALSE, rounded = FALSE, ...)
+\method{pctable}{default}(
+  rv,
+  cv,
+  rvlab = NULL,
+  cvlab = NULL,
+  colpct = TRUE,
+  rowpct = FALSE,
+  rounded = FALSE,
+  ...
+)
 
-\method{pctable}{formula}(formula, data = NULL, rvlab = NULL,
-  cvlab = NULL, colpct = TRUE, rowpct = FALSE, rounded = FALSE,
-  ...)
+\method{pctable}{formula}(
+  formula,
+  data = NULL,
+  rvlab = NULL,
+  cvlab = NULL,
+  colpct = TRUE,
+  rowpct = FALSE,
+  rounded = FALSE,
+  ...
+)
 
-\method{pctable}{character}(rv, cv, data = NULL, rvlab = NULL,
-  cvlab = NULL, colpct = TRUE, rowpct = FALSE, rounded = FALSE,
-  ...)
+\method{pctable}{character}(
+  rv,
+  cv,
+  data = NULL,
+  rvlab = NULL,
+  cvlab = NULL,
+  colpct = TRUE,
+  rowpct = FALSE,
+  rounded = FALSE,
+  ...
+)
 }
 \arguments{
 \item{rv}{A row variable name}

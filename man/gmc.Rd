@@ -4,8 +4,7 @@
 \alias{gmc}
 \title{Group Mean Center: Generate group summaries and individual deviations within groups}
 \usage{
-gmc(dframe, x, by, FUN = mean, suffix = c("_mn", "_dev"),
-  fulldataframe = TRUE)
+gmc(dframe, x, by, FUN = mean, suffix = c("_mn", "_dev"), fulldataframe = TRUE)
 }
 \arguments{
 \item{dframe}{a data frame.}

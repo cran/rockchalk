@@ -7,8 +7,14 @@
 \usage{
 newdata(model, predVals, n, ...)
 
-\method{newdata}{default}(model = NULL, predVals = NULL, n = 3,
-  emf = NULL, divider = "quantile", ...)
+\method{newdata}{default}(
+  model = NULL,
+  predVals = NULL,
+  n = 3,
+  emf = NULL,
+  divider = "quantile",
+  ...
+)
 }
 \arguments{
 \item{model}{Required. Fitted regression model}

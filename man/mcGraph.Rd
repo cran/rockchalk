@@ -8,11 +8,19 @@
 \usage{
 mcGraph1(x1, x2, y, x1lab, x2lab, ylab, ...)
 
-mcGraph2(x1, x2, y, rescaley = 1, drawArrows = TRUE, x1lab, x2lab,
-  ylab, ...)
+mcGraph2(x1, x2, y, rescaley = 1, drawArrows = TRUE, x1lab, x2lab, ylab, ...)
 
-mcGraph3(x1, x2, y, interaction = FALSE, drawArrows = TRUE, x1lab,
-  x2lab, ylab, ...)
+mcGraph3(
+  x1,
+  x2,
+  y,
+  interaction = FALSE,
+  drawArrows = TRUE,
+  x1lab,
+  x2lab,
+  ylab,
+  ...
+)
 }
 \arguments{
 \item{x1}{a predictor vector}

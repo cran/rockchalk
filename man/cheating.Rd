@@ -4,9 +4,11 @@
 \name{cheating}
 \alias{cheating}
 \title{Cheating and Looting in Japanese Electoral Politics}
-\format{data.frame: 16623 obs. on 27 variables}
+\format{
+data.frame: 16623 obs. on 27 variables
+}
 \source{
-\url{http://faculty.arts.ubc.ca/bnyblade/publications.html}.
+\url{https://bnyblade.com/research/publications/}.
 }
 \usage{
 data(cheating)

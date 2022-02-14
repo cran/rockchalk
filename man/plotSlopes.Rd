@@ -7,12 +7,25 @@
 \usage{
 plotSlopes(model, plotx, ...)
 
-\method{plotSlopes}{lm}(model, plotx, modx = NULL, n = 3,
-  modxVals = NULL, plotxRange = NULL, interval = c("none",
-  "confidence", "prediction"), plotPoints = TRUE, legendPct = TRUE,
-  legendArgs, llwd = 2, opacity = 100, ..., col = c("black", "blue",
-  "darkgreen", "red", "orange", "purple", "green3"), type = c("response",
-  "link"), gridArgs, width = 0.2)
+\method{plotSlopes}{lm}(
+  model,
+  plotx,
+  modx = NULL,
+  n = 3,
+  modxVals = NULL,
+  plotxRange = NULL,
+  interval = c("none", "confidence", "prediction"),
+  plotPoints = TRUE,
+  legendPct = TRUE,
+  legendArgs,
+  llwd = 2,
+  opacity = 100,
+  ...,
+  col = c("black", "blue", "darkgreen", "red", "orange", "purple", "green3"),
+  type = c("response", "link"),
+  gridArgs,
+  width = 0.2
+)
 }
 \arguments{
 \item{model}{Required. A fitted Regression}
@@ -228,7 +241,7 @@ plotSlopes(m1, plotx = "x1", modx = "x2", n = 5)
 plotSlopes(m1, plotx = "x1", modx = "x2", modxVals = c(-2, 0, 0.5))
 ## Alternative algorithm?
 plotSlopes(m1, plotx = "x1", modx = "x2", modxVals = "std.dev.",
-           main = "Uses \\"std.dev.\\" Divider for the Moderator",
+           main = "Uses \"std.dev.\" Divider for the Moderator",
            xlab = "My Predictor", ylab = "Write Anything You Want for ylab")
 
 ## Will catch output object from this one

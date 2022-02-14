@@ -5,8 +5,13 @@
 \title{Extracts non-numeric variables, calculates summary information,
 including entropy as a diversity indicator.}
 \usage{
-summarizeFactors(dat = NULL, maxLevels = 5, alphaSort = TRUE,
-  stats = c("entropy", "normedEntropy", "nobs", "nmiss"), digits = 2)
+summarizeFactors(
+  dat = NULL,
+  maxLevels = 5,
+  alphaSort = TRUE,
+  stats = c("entropy", "normedEntropy", "nobs", "nmiss"),
+  digits = 2
+)
 }
 \arguments{
 \item{dat}{A data frame}

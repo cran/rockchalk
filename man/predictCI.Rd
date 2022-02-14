@@ -5,9 +5,17 @@
 \title{Calculate a predicted value matrix (fit, lwr, upr) for a
 regression, either lm or glm, on either link or response scale.}
 \usage{
-predictCI(object, newdata = NULL, type = c("response", "link"),
-  interval = c("none", "confidence", "prediction"), dispersion = NULL,
-  scale = NULL, na.action = na.pass, level = 0.95, ...)
+predictCI(
+  object,
+  newdata = NULL,
+  type = c("response", "link"),
+  interval = c("none", "confidence", "prediction"),
+  dispersion = NULL,
+  scale = NULL,
+  na.action = na.pass,
+  level = 0.95,
+  ...
+)
 }
 \arguments{
 \item{object}{Regression object, class must include glm or lm.}

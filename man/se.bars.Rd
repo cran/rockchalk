@@ -4,8 +4,7 @@
 \alias{se.bars}
 \title{Draw standard error bar for discrete variables}
 \usage{
-se.bars(x, y, lwr, upr, width = 0.2, col, opacity = 120, lwd = 1,
-  lty = 1)
+se.bars(x, y, lwr, upr, width = 0.2, col, opacity = 120, lwd = 1, lty = 1)
 }
 \arguments{
 \item{x}{The x center point}

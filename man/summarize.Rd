@@ -5,9 +5,15 @@
 \title{Sorts numeric from discrete variables and returns separate
 summaries for those types of variables.}
 \usage{
-summarize(dat, alphaSort = FALSE, stats = c("mean", "sd", "skewness",
-  "kurtosis", "entropy", "normedEntropy", "nobs", "nmiss"), probs = c(0,
-  0.5, 1), digits = 3, ...)
+summarize(
+  dat,
+  alphaSort = FALSE,
+  stats = c("mean", "sd", "skewness", "kurtosis", "entropy", "normedEntropy", "nobs",
+    "nmiss"),
+  probs = c(0, 0.5, 1),
+  digits = 3,
+  ...
+)
 }
 \arguments{
 \item{dat}{A data frame}

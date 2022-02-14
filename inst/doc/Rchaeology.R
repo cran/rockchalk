@@ -1,5 +1,4 @@
 ### R code from vignette source 'Rchaeology.Rnw'
-### Encoding: UTF-8
 
 ###################################################
 ### code chunk number 1: Rchaeology.Rnw:24-25
@@ -29,7 +28,7 @@ dat <- data.frame(x1 = rnorm(100, m = 50), x2 = rnorm(100, m = 50),
   x3 = rnorm(100, m = 50), x4 = rnorm(100, m=50), y = rnorm(100))
 m2 <- lm(y ~ log(x1) + x2*x3, data = dat)
 suffixX <- function(fmla, x, s){
-    upform <- as.formula(paste(". ~ .", "-", x, "+", paste(x, s, sep = ""), sep=""))
+    upform <- as.formula(paste(". ~ .", "-", x, "+", paste(x, s, sep = ""), sep="", collapse=" "))
     update.formula(fmla, upform)
 }
 newFmla <- formula(m2)
@@ -105,7 +104,7 @@ f1expeval <- eval(f1exp)
 class(f1expeval)
 all.equal(f1expeval, f1)
 m7 <- lm(f1expeval, data=dat)
-all.equal(coef(m5), coef(m6), coef(m7))	
+all.equal(coef(m6), coef(m7))	
 
 
 ###################################################
@@ -257,7 +256,7 @@ plotme <- function(x, y, data, ...){
     if(missing(data) | !is.data.frame(data)) 
         stop(paste0("plotme: the object you supplied as data: '", 
         deparse(substitute(data)) , "' is not a data.frame"))
-    plot(as.formula(paste(y,  "~",  x)), data = data, ...)
+    plot(as.formula(paste(y,  "~",  x, collapse=" ")), data = data, ...)
 }
 myx <- rnorm(10)
 myy <- rnorm(10)

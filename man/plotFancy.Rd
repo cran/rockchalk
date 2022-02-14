@@ -4,8 +4,20 @@
 \alias{plotFancy}
 \title{Regression plots with predicted value lines, confidence intervals, color coded interactions}
 \usage{
-plotFancy(newdf, olddf, plotx, modx, modxVals, interval, plotPoints,
-  legendArgs, col = NULL, llwd = 2, opacity, ...)
+plotFancy(
+  newdf,
+  olddf,
+  plotx,
+  modx,
+  modxVals,
+  interval,
+  plotPoints,
+  legendArgs,
+  col = NULL,
+  llwd = 2,
+  opacity,
+  ...
+)
 }
 \arguments{
 \item{newdf}{The new data frame with predictors and fit, lwr, upr

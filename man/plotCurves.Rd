@@ -4,12 +4,25 @@
 \alias{plotCurves}
 \title{Assists creation of predicted value curves for regression models.}
 \usage{
-plotCurves(model, plotx, nx = 40, modx, plotxRange = NULL, n,
-  modxVals = NULL, interval = c("none", "confidence", "prediction"),
-  plotPoints = TRUE, plotLegend = TRUE, legendTitle = NULL,
-  legendPct = TRUE, col = c("black", "blue", "darkgreen", "red",
-  "orange", "purple", "green3"), llwd = 2, opacity = 100,
-  envir = environment(formula(model)), ...)
+plotCurves(
+  model,
+  plotx,
+  nx = 40,
+  modx,
+  plotxRange = NULL,
+  n,
+  modxVals = NULL,
+  interval = c("none", "confidence", "prediction"),
+  plotPoints = TRUE,
+  plotLegend = TRUE,
+  legendTitle = NULL,
+  legendPct = TRUE,
+  col = c("black", "blue", "darkgreen", "red", "orange", "purple", "green3"),
+  llwd = 2,
+  opacity = 100,
+  envir = environment(formula(model)),
+  ...
+)
 }
 \arguments{
 \item{model}{Required. Fitted regression object. Must have a

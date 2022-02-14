@@ -59,7 +59,7 @@ mcDiagnose(m1)
 ## These will be parallel lines
 
 plotSlopes(m1, plotx = "x1", modx = "x2", modxVals = "std.dev.",
-           n = 5, main = "A plotSlopes result with \\"std.dev.\\" values of modx")
+           n = 5, main = "A plotSlopes result with \"std.dev.\" values of modx")
 
 
 m1ps <- plotSlopes(m1, plotx = "x1", modx = "x2", modxVals = c(-2,0,2))

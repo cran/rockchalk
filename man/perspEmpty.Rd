@@ -4,8 +4,17 @@
 \alias{perspEmpty}
 \title{perspEmpty}
 \usage{
-perspEmpty(x1, x2, y, x1lab = "x1", x2lab = "x2", ylab = "y", x1lim,
-  x2lim, ...)
+perspEmpty(
+  x1,
+  x2,
+  y,
+  x1lab = "x1",
+  x2lab = "x2",
+  ylab = "y",
+  x1lim,
+  x2lim,
+  ...
+)
 }
 \arguments{
 \item{x1}{data for the first horizontal axis, an R vector}
