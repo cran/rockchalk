@@ -356,6 +356,6 @@ if (require(lme4) && require(car)){
 }
 }
 \author{
-Paul E. Johnson \email{<pauljohn@ku.edu>}
+Paul E. Johnson \email{pauljohn@ku.edu}
 }
 \keyword{regression}
