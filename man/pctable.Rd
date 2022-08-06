@@ -176,6 +176,7 @@ if (require(tables) & require(Hmisc)){
     Hmisc::html(tabsumtab, file = fn)
     print(paste("The file saved was named", fn, "go get it."))
     if (interactive()) browseURL(fn)
+    unlink(fn)
     ## go get the fn file if you want to import it in document
     ## Now LaTeX output
     ## have to escape the percent signs
@@ -192,5 +193,5 @@ if (require(tables) & require(Hmisc)){
 in \code{gmodels} package.
 }
 \author{
-Paul Johnson <pauljohn@ku.edu>
+Paul Johnson \email{pauljohn@ku.edu}
 }

@@ -82,5 +82,5 @@ plotPlane(m1, plotx1 = "x1", plotx2 = "x2", ticktype = "detailed",
 ## be converted to solid lines in plotPlane.
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

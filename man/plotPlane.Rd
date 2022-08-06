@@ -290,5 +290,5 @@ plotPlane(gm2, plotx1 = "x1", plotx2 = "x2", ticktype = c("detailed"))
 \code{\link[graphics]{persp}}, \code{\link[scatterplot3d]{scatterplot3d}}, \code{\link[HH]{regr2.plot}}
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

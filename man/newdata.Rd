@@ -344,5 +344,5 @@ summarize(m3.data)
 \code{predictOMatic}
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

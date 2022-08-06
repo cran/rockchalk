@@ -45,5 +45,5 @@ The unbiased variant uses the standard deviation divisor (N-1) to
 bias-correct the standard deviation.
 }
 \author{
-Paul Johnson <pauljohn@ku.edu>
+Paul Johnson \email{pauljohn@ku.edu}
 }

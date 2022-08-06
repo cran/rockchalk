@@ -170,5 +170,5 @@ formatSummarizedFactors(datsumm[["factors"]])
 formatSummarizedFactors(datsumm[["factors"]], digits = 6, maxLevels = 10)
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

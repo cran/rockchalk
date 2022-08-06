@@ -64,5 +64,5 @@ summarize(datc5)
 attributes(datc5)
 }
 \author{
-<pauljohn@ku.edu>
+\email{pauljohn@ku.edu}
 }

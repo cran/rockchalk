@@ -68,5 +68,5 @@ the output may be alphabetized.
 summarize and summarizeFactors
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

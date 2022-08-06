@@ -18,5 +18,5 @@ Nothing is returned
 prints pctab objects. Needed only to deal properly with quotes
 }
 \author{
-Paul Johnson <pauljohn@ku.edu>
+Paul Johnson \email{pauljohn@ku.edu}
 }

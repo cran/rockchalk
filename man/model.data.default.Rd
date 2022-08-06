@@ -179,5 +179,5 @@ attr(m6.data, "varNamesRHS")
 
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

@@ -23,5 +23,5 @@ Creates a column and/or row percent display of a pctable
 result
 }
 \author{
-Paul Johnson <pauljohn@ku.edu>
+Paul Johnson \email{pauljohn@ku.edu}
 }

@@ -57,5 +57,5 @@ col, lty, and lwd information
 This is the back-end for the functions plotSlopes and plotCurves. Don't use it directly.
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

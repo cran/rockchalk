@@ -218,5 +218,5 @@ summary(lm1c)
 
 }
 \author{
-Paul Johnson <pauljohn@ku.edu> and Gabor Grothendieck <ggrothendieck@gmail.com>
+Paul Johnson \email{pauljohn@ku.edu} and Gabor Grothendieck <ggrothendieck@gmail.com>
 }

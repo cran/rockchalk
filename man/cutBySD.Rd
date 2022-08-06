@@ -26,5 +26,5 @@ cutBySD (x, n = 3)
 cutBySD (x, n = 5)
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

@@ -135,7 +135,7 @@ dat3 <- genCorrelatedData(rho = .981, stde = 100, beta=c(0.1, 0.2, 0.3, -0.1))
 mcGraph3(dat3$x1, dat3$x2, dat3$y, theta=-10, interaction = TRUE)
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }
 \keyword{hplot}
 \keyword{regression}

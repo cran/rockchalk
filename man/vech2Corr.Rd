@@ -38,5 +38,5 @@ Similar functions exist in many packages, see
     \code{vec2sm} in corpcor, \code{xpnd} in MCMCpack
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

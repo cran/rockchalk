@@ -43,5 +43,5 @@ TRUE. If usedate = FALSE, then output names will be like
 "../output-1/", "../output-2/", and so forth.
 }
 \author{
-Paul E Johnson <pauljohn@ku.edu>
+Paul E Johnson \email{pauljohn@ku.edu}
 }

@@ -26,5 +26,5 @@ Johnson-Neyman interval calculations to highlight the
 "statistically significantly different from zero" slopes.
 }
 \author{
-<pauljohn@ku.edu>
+\email{pauljohn@ku.edu}
 }

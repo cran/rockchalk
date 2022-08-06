@@ -181,7 +181,7 @@
 ##'     we were aware that those packages were in development. It is
 ##'     not intended as a competitor, it is just a slightly different
 ##'     version of the same that is more suited to our needs.
-##' @author Paul E. Johnson \email{pauljohn@@ku.edu}
+##' @author Paul E. Johnson  \email{pauljohn@@ku.edu}
 ##' @examples
 ##' set.seed(2134234)
 ##' dat <- data.frame(x1 = rnorm(100), x2 = rnorm(100))

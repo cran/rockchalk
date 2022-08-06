@@ -210,5 +210,5 @@ Marketing Science, 26(3), 438-445.
     \code{\link[rockchalk]{residualCenter}}
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

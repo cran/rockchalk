@@ -33,5 +33,5 @@ formatSummarizedFactors(summarizeFactors(dat))
 \code{\link{summarize}}, \code{\link{summarizeFactors}}, \code{\link{formatSummarizedNumerics}}
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

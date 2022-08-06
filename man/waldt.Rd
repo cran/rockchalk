@@ -61,5 +61,5 @@ if(require(car)){
 ## would not need this function, actually.
 }
 \author{
-Paul Johnson <pauljohn@ku.edu>
+Paul Johnson \email{pauljohn@ku.edu}
 }

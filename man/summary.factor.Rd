@@ -18,5 +18,5 @@ This adapts code from R base summary.factor. It adds
 the calculation of entropy as a measure of diversity.
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

@@ -97,5 +97,5 @@ Communication. Urbana: University of Illinois Press.
 \code{\link{summarizeNumerics}}
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

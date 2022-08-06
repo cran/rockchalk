@@ -32,5 +32,5 @@ m2 <- lm(y ~ x1 + x2, data=dat2)
 getDeltaRsquare(m2)
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

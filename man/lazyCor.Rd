@@ -31,5 +31,5 @@ lazyCor(c(0.1, 0.2, 0.3))
 lazyCor(c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6))
 }
 \author{
-Paul Johnson <pauljohn@ku.edu>
+Paul Johnson \email{pauljohn@ku.edu}
 }

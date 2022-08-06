@@ -61,5 +61,5 @@ in the center (spiked) and there are long tails. The long tails
 reflect the probability of extreme values.
 }
 \author{
-Paul Johnson <pauljohn@ku.edu>
+Paul Johnson \email{pauljohn@ku.edu}
 }

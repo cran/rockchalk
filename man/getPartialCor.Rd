@@ -54,5 +54,5 @@ WorkingExample file matrix-partial-correlations-1.R that
 discusses this, in case you are interested (http://pj.freefaculty.org/R).
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

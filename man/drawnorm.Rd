@@ -42,5 +42,5 @@ drawnorm(mu = 0, sigma = 1, main = "A Standard Normal Distribution, N(0,1)",
 drawnorm(mu = 0, sigma = 1, ylab = "Density", ps = 14) 
 }
 \author{
-Paul Johnson <pauljohn@ku.edu>
+Paul Johnson \email{pauljohn@ku.edu}
 }

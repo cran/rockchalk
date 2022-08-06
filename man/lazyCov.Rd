@@ -43,5 +43,5 @@ lazyCov(Rho = newRho, Sd = 1.0)
 lazyCov(Rho = newRho, Sd = c(3, 4, 5, 6))
 }
 \author{
-<pauljohn@ku.edu>
+\email{pauljohn@ku.edu}
 }

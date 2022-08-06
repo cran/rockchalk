@@ -76,5 +76,5 @@ None
 There's plotFancy for numeric predictor. This is for discrete
 }
 \author{
-Paul Johnson <pauljohn@ku.edu>
+Paul Johnson \email{pauljohn@ku.edu}
 }

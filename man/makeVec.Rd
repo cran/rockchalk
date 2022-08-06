@@ -20,5 +20,5 @@ single value, it makes a vector of length d in which all values
 are equal to x. If x is a vector, check that its length is d.
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

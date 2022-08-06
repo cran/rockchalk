@@ -32,5 +32,5 @@ x <- rpois(7, lambda = 11)
 x <- c("Alabama", "Iowa", "Washington")
 }
 \author{
-Paul Johnson <pauljohn@ku.edu>
+Paul Johnson \email{pauljohn@ku.edu}
 }

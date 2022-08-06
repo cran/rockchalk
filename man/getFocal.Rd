@@ -91,5 +91,5 @@ getFocal(x, n = 2)
 
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

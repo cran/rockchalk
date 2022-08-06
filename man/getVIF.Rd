@@ -16,5 +16,5 @@ a vector of vif estimates
 calculates vif = 1/(1-R-square)
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

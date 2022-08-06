@@ -52,5 +52,5 @@ summary(m2c)
 re-scale only numberic variables
 }
 \author{
-Paul Johnson <pauljohn@ku.edu>
+Paul Johnson \email{pauljohn@ku.edu}
 }

@@ -16,5 +16,5 @@ a numeric vector of the same length as auxRegs.
 Asks each regression model in a list for a summary and then reports the R-squares.
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

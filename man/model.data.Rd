@@ -26,5 +26,5 @@ manages log(x + 10). The default method works for standarad R
 regression models like lm and glm.
 }
 \author{
-Paul Johnson <pauljohn@ku.edu>
+Paul Johnson \email{pauljohn@ku.edu}
 }

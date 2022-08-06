@@ -175,5 +175,5 @@ Interactions Among Latent Variables.
 Structural Equation Modeling, 13(4), 497-519.
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

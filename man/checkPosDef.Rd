@@ -19,5 +19,5 @@ Uses eigen to check positive definiteness. Follows example used
 in \code{MASS} package by W. N. Venables and Brian D. Ripley
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

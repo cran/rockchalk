@@ -16,5 +16,5 @@ a list of fitted regressions, one for each omitted variable.
 This is a convenience for analysis of multicollinearity in regression.
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

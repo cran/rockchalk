@@ -25,5 +25,5 @@ include 0.5 and evenly spaced points out to proportions 0 and
 calculated by R's \code{pretty} function.
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

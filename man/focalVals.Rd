@@ -41,5 +41,5 @@ n will work, as long as it creates a vector of values.
 \code{predictOMatic} \code{newdata}
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

@@ -110,5 +110,5 @@ Statistical Research Memoirs, 1, 57-93.
 plotSlopes
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

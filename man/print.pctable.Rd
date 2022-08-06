@@ -25,5 +25,5 @@ column and row percentages. The arguments colpct and rowpct
 are used to ask for the two types.
 }
 \author{
-Paul Johnson <pauljohn@ku.edu>
+Paul Johnson \email{pauljohn@ku.edu}
 }

@@ -27,5 +27,5 @@ This is used by plotSlopes, plotCurves, and other "newdata" making
 functions.
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }

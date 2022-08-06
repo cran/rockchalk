@@ -355,5 +355,5 @@ Sciences (Third.). Routledge Academic.
 \code{\link[rockchalk]{testSlopes}} \code{\link[rockchalk]{plotCurves}}
 }
 \author{
-Paul E. Johnson <pauljohn@ku.edu>
+Paul E. Johnson \email{pauljohn@ku.edu}
 }
